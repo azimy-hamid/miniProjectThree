@@ -1,0 +1,21 @@
+import express, { response } from "express";
+import cors from "cors";
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+app.get("/", async (req, res) => {
+  try {
+    res
+      .status(200)
+      .json({
+        response: "This is the root end point for 3rd mini project app",
+      });
+  } catch (error) {
+    res.status(500).json({ rootEndpointError: error });
+  }
+});
+
+export default app;
