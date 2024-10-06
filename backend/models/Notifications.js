@@ -1,62 +1,47 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { v4 as uuidv4 } from "uuid";
+import Users from "./Users";
 
-const Notification = sequelize.define(
-  "Notification",
+const Notifications = sequelize.define(
+  "Notifications",
   {
     notification_id_pk: {
-      type: DataTypes.UUID, // Use UUID for the primary key
+      type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: uuidv4, // Automatically generates UUID on creation
+      defaultValue: DataTypes.UUIDV4,
     },
-    recipient_id_fk: {
-      type: DataTypes.UUID, // Use UUID for recipient foreign key
-      allowNull: false,
-    },
-    recipient_type: {
-      type: DataTypes.STRING(10), // Can be either "student" or "teacher"
-      allowNull: false,
-      validate: {
-        isIn: [["student", "teacher"]], // Validate recipient type
+    user_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Users,
+        key: "user_id_pk",
       },
     },
     notification_message: {
-      type: DataTypes.TEXT, // Notification message
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    send_date: {
-      type: DataTypes.DATE, // Date and time the notification was sent
+    notification_type: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    status: {
-      type: DataTypes.STRING(10), // Status can be Sent, Delivered, or Read
-      allowNull: false,
-      validate: {
-        isIn: [["Sent", "Delivered", "Read"]], // Validate status
-      },
+    notification_status: {
+      type: DataTypes.STRING,
+      defaultValue: "unread",
+    },
+    is_deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
-    tableName: "notification", // Name of the table in the database
+    tableName: "notifications", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
 
 // Associations
-Notification.associate = (models) => {
-  // Define association to Student or Teacher model based on recipient_type
-  Notification.belongsTo(models.Student, {
-    foreignKey: "recipient_id_fk", // FK in Notification model
-    targetKey: "student_id_pk", // PK in Student model
-    constraints: false, // Disable foreign key constraints for polymorphic associations
-  });
+Users.hasMany(Notifications, { foreignKey: "user_id_fk", as: "notifications" });
+Notifications.belongsTo(Users, { foreignKey: "user_id_fk", as: "user" });
 
-  Notification.belongsTo(models.Teacher, {
-    foreignKey: "recipient_id_fk", // FK in Notification model
-    targetKey: "teacher_id_pk", // PK in Teacher model
-    constraints: false, // Disable foreign key constraints for polymorphic associations
-  });
-};
-
-export default Notification;
+export default Notifications;

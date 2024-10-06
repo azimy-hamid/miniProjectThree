@@ -1,35 +1,41 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../config/dbConfig.js";
+import sequelize from "../config/database.js";
+import Users from "./Users.js";
+import User_Roles from "./UserRoles.js";
 
-const UserRoleAssignment = sequelize.define(
-  "UserRoleAssignment",
+const User_Role_Assignment = sequelize.define(
+  "User_Role_Assignment",
   {
-    user_role_assignment_id: {
-      type: DataTypes.UUID, // Use UUID for the primary key
-      primaryKey: true,
-      defaultValue: uuidv4, // Automatically generates UUID on creation
-    },
     user_id_fk: {
-      type: DataTypes.UUID, // FK referencing User
-      allowNull: false,
+      type: DataTypes.UUID,
       references: {
-        model: "users", // Reference to Users model
-        key: "user_id_pk", // PK in Users model
+        model: Users,
+        key: "user_id_pk",
       },
     },
     role_id_fk: {
-      type: DataTypes.UUID, // FK referencing UserRole
-      allowNull: false,
+      type: DataTypes.UUID,
       references: {
-        model: "user_roles", // Reference to User Roles model
-        key: "role_id_pk", // PK in User Roles model
+        model: User_Roles,
+        key: "role_id_pk",
       },
     },
   },
   {
-    tableName: "user_role_assignments", // Name of the table in the database
+    tableName: "user_role_assignment", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
 
-export default UserRoleAssignment;
+// Associations
+Users.belongsToMany(User_Roles, {
+  through: User_Role_Assignment,
+  foreignKey: "user_id_fk",
+});
+
+User_Roles.belongsToMany(Users, {
+  through: User_Role_Assignment,
+  foreignKey: "role_id_fk",
+});
+
+export default User_Role_Assignment;
