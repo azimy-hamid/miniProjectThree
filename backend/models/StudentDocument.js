@@ -45,6 +45,7 @@ Students.hasMany(StudentDocuments, {
   foreignKey: "student_id_fk",
   as: "documents",
 });
+
 StudentDocuments.belongsTo(Students, {
   foreignKey: "student_id_fk",
   as: "student",

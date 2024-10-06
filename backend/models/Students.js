@@ -18,7 +18,14 @@ const Students = sequelize.define(
       allowNull: false,
     },
     gender: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("Male", "Female", "Prefer not to say"),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["Male", "Female", "Prefer not to say"]],
+          msg: "Gender must be one of the following: Male, Female, or Prefer not to say.",
+        },
+      },
     },
     dob: {
       type: DataTypes.DATE,

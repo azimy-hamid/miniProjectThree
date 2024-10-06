@@ -18,7 +18,14 @@ const Teachers = sequelize.define(
       allowNull: false,
     },
     gender: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("Male", "Female", "Prefer not to say"),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["Male", "Female", "Prefer not to say"]],
+          msg: "Gender must be one of the following: Male, Female, or Prefer not to say.",
+        },
+      },
     },
     dob: {
       type: DataTypes.DATE,
@@ -36,7 +43,38 @@ const Teachers = sequelize.define(
       type: DataTypes.DATE,
     },
     working_days: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+        "Weekdays", // Monday to Friday
+        "Weekends", // Saturday, Sunday
+        "Full Week" // All days
+      ),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [
+            [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+              "Weekdays",
+              "Weekends",
+              "Full Week",
+            ],
+          ],
+          msg: "Working days must be one of the following: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Weekdays, Weekends, or Full Week.",
+        },
+      },
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,

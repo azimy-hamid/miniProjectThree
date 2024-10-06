@@ -33,10 +33,4 @@ const Users = sequelize.define(
   }
 );
 
-// Associations
-Users.belongsToMany(User_Role_Assignment, {
-  through: "User_Role_Assignment",
-  foreignKey: "user_id_fk",
-});
-
 export default Users;

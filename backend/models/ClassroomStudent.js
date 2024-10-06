@@ -25,6 +25,10 @@ const Classroom_Student = sequelize.define(
         key: "student_id_pk",
       },
     },
+    grade: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     is_deleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

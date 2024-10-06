@@ -42,7 +42,14 @@ const Subjects = sequelize.define(
       type: DataTypes.STRING,
     },
     semester: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.ENUM("1", "2", "3", "4"), // Specify valid semester values as ENUM
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["1", "2", "3", "4"]], // Optional, since ENUM already restricts values
+          msg: "Subject Semester must be one of the following values: '1', '2', '3', or '4'.",
+        },
+      },
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,

@@ -11,18 +11,18 @@ const Event_Registration = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    event_id_fk: {
-      type: DataTypes.UUID,
-      references: {
-        model: Events,
-        key: "event_id_pk",
-      },
-    },
     student_id_fk: {
       type: DataTypes.UUID,
       references: {
         model: Students,
         key: "student_id_pk",
+      },
+    },
+    event_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Events,
+        key: "event_id_pk",
       },
     },
     registration_date: {

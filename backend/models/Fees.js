@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Students from "./Students";
+import Students from "./Students.js";
 
 const Fees = sequelize.define(
   "Fees",
@@ -17,17 +17,59 @@ const Fees = sequelize.define(
         key: "student_id_pk",
       },
     },
+    fee_type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     fee_amount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    fee_status: {
-      type: DataTypes.STRING,
+    due_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    payment_status: {
+      type: DataTypes.ENUM("Pending", "Paid", "Overdue", "Partially Paid"),
       defaultValue: "Pending",
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["Pending", "Paid", "Overdue", "Partially Paid"]],
+          msg: "Payment status must be one of the following: 'Pending', 'Paid', 'Overdue', or 'Partially Paid'.",
+        },
+      },
+    },
+    payment_date: {
+      type: DataTypes.DATE,
+    },
+    penalty: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0.0, // Default penalty amount for late payment
+    },
+    discounts: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0.0, // Default discount applied to the fee
+    },
+    payment_mode: {
+      type: DataTypes.STRING(50), // Specifies max length for payment mode
+    },
+    semester: {
+      type: DataTypes.ENUM("1", "2", "3", "4"), // Specify valid semester values as ENUM
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["1", "2", "3", "4"]], // Optional, since ENUM already restricts values
+          msg: "Fee Semester must be one of the following values: '1', '2', '3', or '4'.",
+        },
+      },
+    },
+    year: {
+      type: DataTypes.INTEGER, // Using INTEGER for year
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: false, // Soft delete flag
     },
   },
   {

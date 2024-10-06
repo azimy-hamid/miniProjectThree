@@ -13,16 +13,28 @@ const Events = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    event_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
     event_description: {
       type: DataTypes.TEXT,
     },
+    event_start_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    event_end_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    event_capacity: {
+      type: DataTypes.INTEGER,
+      allowNull: false, // Adjust based on whether this should be required
+    },
+    event_location: {
+      type: DataTypes.STRING(255), // Specifies max length
+      allowNull: false,
+    },
     is_deleted: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: false, // Soft delete flag
     },
   },
   {

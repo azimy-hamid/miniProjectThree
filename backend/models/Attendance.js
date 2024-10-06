@@ -11,13 +11,6 @@ const Attendance = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    subject_id_fk: {
-      type: DataTypes.UUID,
-      references: {
-        model: Subjects,
-        key: "subject_id_pk",
-      },
-    },
     student_id_fk: {
       type: DataTypes.UUID,
       references: {
@@ -25,10 +18,42 @@ const Attendance = sequelize.define(
         key: "student_id_pk",
       },
     },
+    subject_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Subjects,
+        key: "subject_id_pk",
+      },
+    },
     attendance_date: {
       type: DataTypes.DATE,
     },
     attendance_status: {
+      type: DataTypes.ENUM(
+        "Present",
+        "Absent",
+        "Late",
+        "Excused" // You can add more statuses as needed
+      ),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["Present", "Absent", "Late", "Excused"]],
+          msg: "Attendance status must be one of the following: 'Present', 'Absent', 'Late', or 'Excused'.",
+        },
+      },
+    },
+    attendance_type: {
+      type: DataTypes.ENUM("In-Person", "Online", "Hybrid"),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["In-Person", "Online", "Hybrid"]],
+          msg: "Attendance type must be one of the following: 'In-Person', 'Online', or 'Hybrid'.",
+        },
+      },
+    },
+    reason: {
       type: DataTypes.STRING,
     },
     is_deleted: {

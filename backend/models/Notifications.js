@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, DATE } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Users from "./Users";
 
@@ -10,24 +10,31 @@ const Notifications = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    user_id_fk: {
-      type: DataTypes.UUID,
-      references: {
-        model: Users,
-        key: "user_id_pk",
-      },
+    recipient_type: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     notification_message: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    send_date: {
+      type: DATE,
+    },
+    notification_status: {
+      type: DataTypes.ENUM("unread", "read", "archived"), // Using ENUM for notification status
+      defaultValue: "unread",
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["sent", "delivered", "read"]],
+          msg: "Notification status must be one of the following: 'sent', 'delivered', or 'read'.",
+        },
+      },
+    },
     notification_type: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    notification_status: {
-      type: DataTypes.STRING,
-      defaultValue: "unread",
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,
@@ -39,9 +46,5 @@ const Notifications = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Users.hasMany(Notifications, { foreignKey: "user_id_fk", as: "notifications" });
-Notifications.belongsTo(Users, { foreignKey: "user_id_fk", as: "user" });
 
 export default Notifications;

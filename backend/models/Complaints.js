@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Users from "./Users";
+import Students from "./Students.js";
 
 const Complaints = sequelize.define(
   "Complaints",
@@ -10,24 +10,42 @@ const Complaints = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    user_id_fk: {
+    student_id_fk: {
       type: DataTypes.UUID,
+      allowNull: false,
       references: {
-        model: Users,
-        key: "user_id_pk",
+        model: "students", // Name of the Students table
+        key: "student_id_pk", // Key in the Students table
       },
     },
-    complaint_text: {
-      type: DataTypes.STRING,
+    complaint_message: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    complaint_status: {
-      type: DataTypes.STRING,
-      defaultValue: "Pending",
+    status: {
+      type: DataTypes.ENUM("Open", "In Progress", "Resolved", "Closed"),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [["Open", "In Progress", "Resolved", "Closed"]],
+          msg: "Status must be one of the following: 'Open', 'In Progress', 'Resolved', or 'Closed'.",
+        },
+      },
+    },
+    resolution_message: {
+      type: DataTypes.TEXT,
+    },
+    submitted_date: {
+      type: DataTypes.TIMESTAMP,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    resolution_date: {
+      type: DataTypes.TIMESTAMP,
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: false, // Soft delete flag
     },
   },
   {
@@ -36,8 +54,19 @@ const Complaints = sequelize.define(
   }
 );
 
-// Associations
-Users.hasMany(Complaints, { foreignKey: "user_id_fk", as: "complaints" });
-Complaints.belongsTo(Users, { foreignKey: "user_id_fk", as: "user" });
+Students.associate = () => {
+  Students.hasMany(StudentDocuments, {
+    foreignKey: "student_id_fk",
+    as: "documents",
+  });
+};
+
+Complaints.associate = () => {
+  Complaints.belongsTo(Students, {
+    foreignKey: "student_id_fk", // Foreign key in Complaints
+    targetKey: "student_id_pk", // Target key in Students
+    as: "student", // Alias for accessing the related student
+  });
+};
 
 export default Complaints;

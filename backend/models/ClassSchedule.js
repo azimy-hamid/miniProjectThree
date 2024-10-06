@@ -26,7 +26,38 @@ const ClassSchedule = sequelize.define(
       },
     },
     day_of_week: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+        "Weekdays", // Monday to Friday
+        "Weekends", // Saturday, Sunday
+        "Full Week" // All days
+      ),
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [
+            [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+              "Weekdays",
+              "Weekends",
+              "Full Week",
+            ],
+          ],
+          msg: "Must be one of the following: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Weekdays, Weekends, or Full Week.",
+        },
+      },
     },
     start_time: {
       type: DataTypes.TIME,

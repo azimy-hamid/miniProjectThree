@@ -6,6 +6,11 @@ import User_Roles from "./UserRoles.js";
 const User_Role_Assignment = sequelize.define(
   "User_Role_Assignment",
   {
+    user_role_assignment_id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4, // Automatically generate a UUID
+    },
     user_id_fk: {
       type: DataTypes.UUID,
       references: {

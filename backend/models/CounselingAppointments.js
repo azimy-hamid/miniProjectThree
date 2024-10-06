@@ -18,7 +18,7 @@ const Counseling_Appointments = sequelize.define(
         key: "student_id_pk",
       },
     },
-    counselor_id_fk: {
+    teacher_id_fk: {
       type: DataTypes.UUID,
       references: {
         model: Teachers,
@@ -29,9 +29,19 @@ const Counseling_Appointments = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    appointment_status: {
+    appointment_purpose: {
       type: DataTypes.STRING,
-      defaultValue: "Scheduled",
+    },
+    appointment_status: {
+      type: DataTypes.ENUM("Scheduled", "Completed", "Canceled", "No Show"),
+      allowNull: false,
+      defaultValue: "Scheduled", // Default value for the appointment status
+      validate: {
+        isIn: {
+          args: [["Scheduled", "Completed", "Canceled", "No Show"]],
+          msg: "Appointment status must be one of the following: 'Scheduled', 'Completed', 'Canceled', or 'No Show'.",
+        },
+      },
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,
@@ -47,7 +57,7 @@ const Counseling_Appointments = sequelize.define(
 // Associations
 Students.hasMany(Counseling_Appointments, {
   foreignKey: "student_id_fk",
-  as: "appointments",
+  as: "counseling_appointments",
 });
 Counseling_Appointments.belongsTo(Students, {
   foreignKey: "student_id_fk",
@@ -55,11 +65,11 @@ Counseling_Appointments.belongsTo(Students, {
 });
 
 Teachers.hasMany(Counseling_Appointments, {
-  foreignKey: "counselor_id_fk",
+  foreignKey: "teacher_id_fk",
   as: "counseling_sessions",
 });
 Counseling_Appointments.belongsTo(Teachers, {
-  foreignKey: "counselor_id_fk",
+  foreignKey: "teacher_id_fk",
   as: "counselor",
 });
 
