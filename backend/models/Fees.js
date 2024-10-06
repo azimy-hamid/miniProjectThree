@@ -1,20 +1,12 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Students from "./Students";
-import Classrooms from "./Classrooms";
 
-const Classroom_Student = sequelize.define("Classroom_Student", {
-  classroom_student_id_pk: {
+const Fees = sequelize.define("Fees", {
+  fee_id_pk: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4,
-  },
-  classroom_id_fk: {
-    type: DataTypes.UUID,
-    references: {
-      model: Classrooms,
-      key: "classroom_id_pk",
-    },
   },
   student_id_fk: {
     type: DataTypes.UUID,
@@ -22,6 +14,14 @@ const Classroom_Student = sequelize.define("Classroom_Student", {
       model: Students,
       key: "student_id_pk",
     },
+  },
+  fee_amount: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
+  fee_status: {
+    type: DataTypes.STRING,
+    defaultValue: "Pending",
   },
   is_deleted: {
     type: DataTypes.BOOLEAN,
@@ -37,15 +37,7 @@ const Classroom_Student = sequelize.define("Classroom_Student", {
 });
 
 // Associations
-Classrooms.belongsToMany(Students, {
-  through: Classroom_Student,
-  foreignKey: "classroom_id_fk",
-  as: "students",
-});
-Students.belongsToMany(Classrooms, {
-  through: Classroom_Student,
-  foreignKey: "student_id_fk",
-  as: "classrooms",
-});
+Students.hasMany(Fees, { foreignKey: "student_id_fk", as: "fees" });
+Fees.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
 
-export default Classroom_Student;
+export default Fees;

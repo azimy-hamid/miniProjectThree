@@ -1,27 +1,31 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Students from "./Students";
-import Classrooms from "./Classrooms";
+import Students from "./Students.js";
 
-const Classroom_Student = sequelize.define("Classroom_Student", {
-  classroom_student_id_pk: {
+const StudentDocuments = sequelize.define("StudentDocuments", {
+  document_id_pk: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4,
   },
-  classroom_id_fk: {
-    type: DataTypes.UUID,
-    references: {
-      model: Classrooms,
-      key: "classroom_id_pk",
-    },
-  },
   student_id_fk: {
     type: DataTypes.UUID,
+    allowNull: false,
     references: {
       model: Students,
       key: "student_id_pk",
     },
+  },
+  document_type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  document_url: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  uploaded_date: {
+    type: DataTypes.DATE,
   },
   is_deleted: {
     type: DataTypes.BOOLEAN,
@@ -37,15 +41,13 @@ const Classroom_Student = sequelize.define("Classroom_Student", {
 });
 
 // Associations
-Classrooms.belongsToMany(Students, {
-  through: Classroom_Student,
-  foreignKey: "classroom_id_fk",
-  as: "students",
-});
-Students.belongsToMany(Classrooms, {
-  through: Classroom_Student,
+Students.hasMany(StudentDocuments, {
   foreignKey: "student_id_fk",
-  as: "classrooms",
+  as: "documents",
+});
+StudentDocuments.belongsTo(Students, {
+  foreignKey: "student_id_fk",
+  as: "student",
 });
 
-export default Classroom_Student;
+export default StudentDocuments;

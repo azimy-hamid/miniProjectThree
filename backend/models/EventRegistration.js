@@ -1,53 +1,55 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { v4 as uuidv4 } from "uuid";
+import Events from "./Events";
+import Students from "./Students";
 
-const EventRegistration = sequelize.define(
-  "EventRegistration",
-  {
-    registration_id_pk: {
-      type: DataTypes.UUID, // Use UUID for the primary key
-      primaryKey: true,
-      defaultValue: uuidv4, // Automatically generates UUID on creation
-    },
-    student_id_fk: {
-      type: DataTypes.UUID, // UUID for Student foreign key
-      allowNull: false,
-      references: {
-        model: "students", // Reference to Student model
-        key: "student_id_pk", // PK in Student model
-      },
-    },
-    event_id_fk: {
-      type: DataTypes.UUID, // UUID for Event foreign key
-      allowNull: false,
-      references: {
-        model: "events", // Reference to Event model
-        key: "event_id_pk", // PK in Event model
-      },
-    },
-    registration_date: {
-      type: DataTypes.DATEONLY, // Date of registration
-      allowNull: false,
+const Event_Registration = sequelize.define("Event_Registration", {
+  registration_id_pk: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
+  },
+  event_id_fk: {
+    type: DataTypes.UUID,
+    references: {
+      model: Events,
+      key: "event_id_pk",
     },
   },
-  {
-    tableName: "event_registration", // Name of the table in the database
-    timestamps: true, // Automatically manage createdAt and updatedAt
-  }
-);
+  student_id_fk: {
+    type: DataTypes.UUID,
+    references: {
+      model: Students,
+      key: "student_id_pk",
+    },
+  },
+  registration_date: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  is_deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+});
 
 // Associations
-EventRegistration.associate = (models) => {
-  EventRegistration.belongsTo(models.Student, {
-    foreignKey: "student_id_fk", // FK in EventRegistration model
-    targetKey: "student_id_pk", // PK in Student model
-  });
+Events.hasMany(Event_Registration, {
+  foreignKey: "event_id_fk",
+  as: "registrations",
+});
+Event_Registration.belongsTo(Events, {
+  foreignKey: "event_id_fk",
+  as: "event",
+});
 
-  EventRegistration.belongsTo(models.Events, {
-    foreignKey: "event_id_fk", // FK in EventRegistration model
-    targetKey: "event_id_pk", // PK in Events model
-  });
-};
+Students.hasMany(Event_Registration, {
+  foreignKey: "student_id_fk",
+  as: "event_registrations",
+});
+Event_Registration.belongsTo(Students, {
+  foreignKey: "student_id_fk",
+  as: "student",
+});
 
-export default EventRegistration;
+export default Event_Registration;

@@ -1,60 +1,52 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { v4 as uuidv4 } from "uuid";
+import Students from "./Students";
+import Subjects from "./Subjects";
 
-const Attendance = sequelize.define(
-  "Attendance",
-  {
-    attendance_id_pk: {
-      type: DataTypes.UUID, // Use UUID for the primary key
-      primaryKey: true,
-      defaultValue: uuidv4, // Automatically generates UUID on creation
-    },
-    student_id_fk: {
-      type: DataTypes.UUID, // Use UUID for Student foreign key
-      allowNull: false,
-      references: {
-        model: "students", // Reference to Student model
-        key: "student_id_pk", // Primary key in Student model
-      },
-    },
-    class_id_fk: {
-      type: DataTypes.UUID, // Use UUID for Classroom foreign key
-      allowNull: false,
-      references: {
-        model: "classrooms", // Reference to Classroom model
-        key: "classroom_id_pk", // Primary key in Classroom model
-      },
-    },
-    attendance_date: {
-      type: DataTypes.DATEONLY, // Date only for attendance date
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.STRING(10), // Status can be Present, Absent, Late
-      allowNull: false,
-      validate: {
-        isIn: [["Present", "Absent", "Late"]], // Validate the status
-      },
+const Attendance = sequelize.define("Attendance", {
+  attendance_id_pk: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
+  },
+  subject_id_fk: {
+    type: DataTypes.UUID,
+    references: {
+      model: Subjects,
+      key: "subject_id_pk",
     },
   },
-  {
-    tableName: "attendance", // Name of the table in the database
-    timestamps: true, // Automatically manage createdAt and updatedAt
-  }
-);
+  student_id_fk: {
+    type: DataTypes.UUID,
+    references: {
+      model: Students,
+      key: "student_id_pk",
+    },
+  },
+  attendance_date: {
+    type: DataTypes.DATE,
+  },
+  attendance_status: {
+    type: DataTypes.STRING,
+  },
+  is_deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  created_date: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updated_date: {
+    type: DataTypes.DATE,
+  },
+});
 
 // Associations
-Attendance.associate = (models) => {
-  Attendance.belongsTo(models.Student, {
-    foreignKey: "student_id_fk", // FK in Attendance model
-    targetKey: "student_id_pk", // PK in Student model
-  });
+Students.hasMany(Attendance, { foreignKey: "student_id_fk", as: "attendance" });
+Attendance.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
 
-  Attendance.belongsTo(models.Classroom, {
-    foreignKey: "class_id_fk", // FK in Attendance model
-    targetKey: "classroom_id_pk", // PK in Classroom model
-  });
-};
+Subjects.hasMany(Attendance, { foreignKey: "subject_id_fk", as: "attendance" });
+Attendance.belongsTo(Subjects, { foreignKey: "subject_id_fk", as: "subject" });
 
 export default Attendance;

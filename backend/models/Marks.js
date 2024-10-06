@@ -1,19 +1,19 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Students from "./Students";
-import Classrooms from "./Classrooms";
+import Subjects from "./Subjects";
 
-const Classroom_Student = sequelize.define("Classroom_Student", {
-  classroom_student_id_pk: {
+const Marks = sequelize.define("Marks", {
+  mark_id_pk: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4,
   },
-  classroom_id_fk: {
+  subject_id_fk: {
     type: DataTypes.UUID,
     references: {
-      model: Classrooms,
-      key: "classroom_id_pk",
+      model: Subjects,
+      key: "subject_id_pk",
     },
   },
   student_id_fk: {
@@ -22,6 +22,9 @@ const Classroom_Student = sequelize.define("Classroom_Student", {
       model: Students,
       key: "student_id_pk",
     },
+  },
+  subject_mark: {
+    type: DataTypes.DECIMAL,
   },
   is_deleted: {
     type: DataTypes.BOOLEAN,
@@ -37,15 +40,10 @@ const Classroom_Student = sequelize.define("Classroom_Student", {
 });
 
 // Associations
-Classrooms.belongsToMany(Students, {
-  through: Classroom_Student,
-  foreignKey: "classroom_id_fk",
-  as: "students",
-});
-Students.belongsToMany(Classrooms, {
-  through: Classroom_Student,
-  foreignKey: "student_id_fk",
-  as: "classrooms",
-});
+Students.hasMany(Marks, { foreignKey: "student_id_fk", as: "marks" });
+Marks.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
 
-export default Classroom_Student;
+Subjects.hasMany(Marks, { foreignKey: "subject_id_fk", as: "marks" });
+Marks.belongsTo(Subjects, { foreignKey: "subject_id_fk", as: "subject" });
+
+export default Marks;
