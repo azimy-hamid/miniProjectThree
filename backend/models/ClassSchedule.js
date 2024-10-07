@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Classrooms from "./Classrooms.js";
-import Subjects from "./Subjects";
+import Subjects from "./Subjects.js";
 
 const ClassSchedule = sequelize.define(
   "ClassSchedule",
@@ -75,24 +75,5 @@ const ClassSchedule = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Subjects.hasMany(ClassSchedule, {
-  foreignKey: "subject_id_fk",
-  as: "schedules",
-});
-ClassSchedule.belongsTo(Subjects, {
-  foreignKey: "subject_id_fk",
-  as: "subject",
-});
-
-Classrooms.hasMany(ClassSchedule, {
-  foreignKey: "classroom_id_fk",
-  as: "schedules",
-});
-ClassSchedule.belongsTo(Classrooms, {
-  foreignKey: "classroom_id_fk",
-  as: "classroom",
-});
 
 export default ClassSchedule;

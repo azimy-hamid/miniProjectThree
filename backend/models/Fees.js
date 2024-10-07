@@ -78,8 +78,4 @@ const Fees = sequelize.define(
   }
 );
 
-// Associations
-Students.hasMany(Fees, { foreignKey: "student_id_fk", as: "fees" });
-Fees.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
-
 export default Fees;

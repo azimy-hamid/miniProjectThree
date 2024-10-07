@@ -55,16 +55,4 @@ const StudentGrades = sequelize.define(
   }
 );
 
-Students.hasMany(StudentGrades, {
-  foreignKey: "student_id_fk",
-  sourceKey: "student_id_pk", // Source key in Students
-  as: "grades", // Alias for accessing related grades
-});
-
-StudentGrades.belongsTo(Students, {
-  foreignKey: "student_id_fk",
-  targetKey: "student_id_pk", // Target key in Students
-  as: "student", // Alias for accessing the related student
-});
-
 export default StudentGrades;

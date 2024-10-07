@@ -1,6 +1,6 @@
 import { DataTypes, DATE } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Users from "./Users";
+import Users from "./Users.js";
 
 const Notifications = sequelize.define(
   "Notifications",

@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import sequelize from "../config/dbConfig.js";
 import Users from "./Users.js";
 import User_Roles from "./UserRoles.js";
 
@@ -31,16 +31,5 @@ const User_Role_Assignment = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Users.belongsToMany(User_Roles, {
-  through: User_Role_Assignment,
-  foreignKey: "user_id_fk",
-});
-
-User_Roles.belongsToMany(Users, {
-  through: User_Role_Assignment,
-  foreignKey: "role_id_fk",
-});
 
 export default User_Role_Assignment;

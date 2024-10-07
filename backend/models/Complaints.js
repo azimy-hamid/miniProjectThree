@@ -36,12 +36,12 @@ const Complaints = sequelize.define(
       type: DataTypes.TEXT,
     },
     submitted_date: {
-      type: DataTypes.TIMESTAMP,
+      type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
     resolution_date: {
-      type: DataTypes.TIMESTAMP,
+      type: DataTypes.DATE,
     },
     is_deleted: {
       type: DataTypes.BOOLEAN,
@@ -53,20 +53,5 @@ const Complaints = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-Students.associate = () => {
-  Students.hasMany(StudentDocuments, {
-    foreignKey: "student_id_fk",
-    as: "documents",
-  });
-};
-
-Complaints.associate = () => {
-  Complaints.belongsTo(Students, {
-    foreignKey: "student_id_fk", // Foreign key in Complaints
-    targetKey: "student_id_pk", // Target key in Students
-    as: "student", // Alias for accessing the related student
-  });
-};
 
 export default Complaints;

@@ -40,15 +40,4 @@ const StudentDocuments = sequelize.define(
   }
 );
 
-// Associations
-Students.hasMany(StudentDocuments, {
-  foreignKey: "student_id_fk",
-  as: "documents",
-});
-
-StudentDocuments.belongsTo(Students, {
-  foreignKey: "student_id_fk",
-  as: "student",
-});
-
 export default StudentDocuments;

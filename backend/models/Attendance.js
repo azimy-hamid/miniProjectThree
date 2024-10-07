@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Students from "./Students";
-import Subjects from "./Subjects";
+import Students from "./Students.js";
+import Subjects from "./Subjects.js";
 
 const Attendance = sequelize.define(
   "Attendance",
@@ -66,12 +66,5 @@ const Attendance = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Students.hasMany(Attendance, { foreignKey: "student_id_fk", as: "attendance" });
-Attendance.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
-
-Subjects.hasMany(Attendance, { foreignKey: "subject_id_fk", as: "attendance" });
-Attendance.belongsTo(Subjects, { foreignKey: "subject_id_fk", as: "subject" });
 
 export default Attendance;

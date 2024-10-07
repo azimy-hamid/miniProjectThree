@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import { v4 as uuidv4 } from "uuid";
-import Students from "./Students";
-import Teachers from "./Teachers";
+import Students from "./Students.js";
+import Teachers from "./Teachers.js";
 import Classrooms from "./Classrooms.js";
 
 const Subjects = sequelize.define(
@@ -61,18 +61,5 @@ const Subjects = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Students.hasMany(Subjects, { foreignKey: "student_id_fk", as: "subjects" });
-Subjects.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
-
-Teachers.hasMany(Subjects, { foreignKey: "teacher_id_fk", as: "subjects" });
-Subjects.belongsTo(Teachers, { foreignKey: "teacher_id_fk", as: "teacher" });
-
-Classrooms.hasMany(Subjects, { foreignKey: "classroom_id_fk", as: "subjects" });
-Subjects.belongsTo(Classrooms, {
-  foreignKey: "classroom_id_fk",
-  as: "classroom",
-});
 
 export default Subjects;

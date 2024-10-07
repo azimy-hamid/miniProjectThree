@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Students from "./Students";
-import Teachers from "./Teachers";
+import Students from "./Students.js";
+import Teachers from "./Teachers.js";
 
 const Counseling_Appointments = sequelize.define(
   "Counseling_Appointments",
@@ -53,24 +53,5 @@ const Counseling_Appointments = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Students.hasMany(Counseling_Appointments, {
-  foreignKey: "student_id_fk",
-  as: "counseling_appointments",
-});
-Counseling_Appointments.belongsTo(Students, {
-  foreignKey: "student_id_fk",
-  as: "student",
-});
-
-Teachers.hasMany(Counseling_Appointments, {
-  foreignKey: "teacher_id_fk",
-  as: "counseling_sessions",
-});
-Counseling_Appointments.belongsTo(Teachers, {
-  foreignKey: "teacher_id_fk",
-  as: "counselor",
-});
 
 export default Counseling_Appointments;

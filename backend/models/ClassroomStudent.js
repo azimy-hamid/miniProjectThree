@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import Students from "./Students";
-import Classrooms from "./Classrooms";
+import Students from "./Students.js";
+import Classrooms from "./Classrooms.js";
 
 const Classroom_Student = sequelize.define(
   "Classroom_Student",
@@ -39,17 +39,5 @@ const Classroom_Student = sequelize.define(
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
-
-// Associations
-Classrooms.belongsToMany(Students, {
-  through: Classroom_Student,
-  foreignKey: "classroom_id_fk",
-  as: "students",
-});
-Students.belongsToMany(Classrooms, {
-  through: Classroom_Student,
-  foreignKey: "student_id_fk",
-  as: "classrooms",
-});
 
 export default Classroom_Student;
