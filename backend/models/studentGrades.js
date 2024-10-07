@@ -14,8 +14,8 @@ const StudentGrades = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "students", // Name of the Students table
-        key: "student_id_pk", // Foreign key that references Students
+        model: "students",
+        key: "student_id_pk",
       },
     },
     grade: {
