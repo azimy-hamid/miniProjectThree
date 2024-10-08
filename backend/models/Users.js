@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import User_Role_Assignment from "./UserRoleAssignment.js";
 
 const Users = sequelize.define(
   "Users",

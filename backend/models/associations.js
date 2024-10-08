@@ -71,23 +71,18 @@ const setupAssociations = () => {
     foreignKey: "classroom_id_fk",
     as: "classroom",
   });
-
   // students - complaints
 
-  Students.associate = () => {
-    Students.hasMany(StudentDocuments, {
-      foreignKey: "student_id_fk",
-      as: "documents",
-    });
-  };
+  Students.hasMany(StudentDocuments, {
+    foreignKey: "student_id_fk",
+    as: "documents",
+  });
 
-  Complaints.associate = () => {
-    Complaints.belongsTo(Students, {
-      foreignKey: "student_id_fk", // Foreign key in Complaints
-      targetKey: "student_id_pk", // Target key in Students
-      as: "student", // Alias for accessing the related student
-    });
-  };
+  Complaints.belongsTo(Students, {
+    foreignKey: "student_id_fk", // Foreign key in Complaints
+    targetKey: "student_id_pk", // Target key in Students
+    as: "student", // Alias for accessing the related student
+  });
 
   // students - Counseling_Appointments - Teachers
   Students.hasMany(Counseling_Appointments, {
@@ -139,11 +134,6 @@ const setupAssociations = () => {
   Marks.belongsTo(Subjects, { foreignKey: "subject_id_fk", as: "subject" });
 
   // Students - StudentDocuments
-  Students.hasMany(StudentDocuments, {
-    foreignKey: "student_id_fk",
-    as: "documents",
-  });
-
   StudentDocuments.belongsTo(Students, {
     foreignKey: "student_id_fk",
     as: "student",
