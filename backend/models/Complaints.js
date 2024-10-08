@@ -23,12 +23,12 @@ const Complaints = sequelize.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("Open", "In Progress", "Resolved", "Closed"),
+      type: DataTypes.ENUM("open", "in progress", "resolved", "closed"),
       allowNull: false,
       validate: {
         isIn: {
-          args: [["Open", "In Progress", "Resolved", "Closed"]],
-          msg: "Status must be one of the following: 'Open', 'In Progress', 'Resolved', or 'Closed'.",
+          args: [["open", "in progress", "resolved", "closed"]],
+          msg: "Status must be one of the following: open, in progress, resolved, closed.",
         },
       },
     },

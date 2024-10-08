@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
+import { text } from "express";
 
 const User_Roles = sequelize.define(
   "User_Roles",
@@ -12,6 +13,7 @@ const User_Roles = sequelize.define(
     role_name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     role_description: {
       type: DataTypes.TEXT,

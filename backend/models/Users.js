@@ -14,14 +14,19 @@ const Users = sequelize.define(
       allowNull: false, // Optional: enforce that this field is always present
     },
     user_type: {
-      type: DataTypes.ENUM("Student", "Teacher", "Admin"),
+      type: DataTypes.ENUM("student", "teacher", "admin"),
       allowNull: false,
       validate: {
         isIn: {
-          args: [["Student", "Teacher", "Admin"]],
-          msg: "User Type must be one of the following values: Student, Teacher, Admin.",
+          args: [["student", "teacher", "admin"]],
+          msg: "User Type must be one of the following values: student, teacher, admin.",
         },
       },
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     username: {
       type: DataTypes.STRING,

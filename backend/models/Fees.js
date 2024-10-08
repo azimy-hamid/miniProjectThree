@@ -30,13 +30,13 @@ const Fees = sequelize.define(
       allowNull: false,
     },
     payment_status: {
-      type: DataTypes.ENUM("Pending", "Paid", "Overdue", "Partially Paid"),
-      defaultValue: "Pending",
+      type: DataTypes.ENUM("pending", "paid", "overdue", "partially paid"),
+      defaultValue: "pending",
       allowNull: false,
       validate: {
         isIn: {
-          args: [["Pending", "Paid", "Overdue", "Partially Paid"]],
-          msg: "Payment status must be one of the following: 'Pending', 'Paid', 'Overdue', or 'Partially Paid'.",
+          args: [["pending", "paid", "overdue", "partially paid"]],
+          msg: "Payment status must be one of the following: 'pending', 'paid', 'overdue', or 'partially paid'.",
         },
       },
     },

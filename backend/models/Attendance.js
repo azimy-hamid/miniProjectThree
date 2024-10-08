@@ -30,26 +30,26 @@ const Attendance = sequelize.define(
     },
     attendance_status: {
       type: DataTypes.ENUM(
-        "Present",
-        "Absent",
-        "Late",
-        "Excused" // You can add more statuses as needed
+        "present",
+        "pbsent",
+        "late",
+        "excused" // You can add more statuses as needed
       ),
       allowNull: false,
       validate: {
         isIn: {
-          args: [["Present", "Absent", "Late", "Excused"]],
-          msg: "Attendance status must be one of the following: 'Present', 'Absent', 'Late', or 'Excused'.",
+          args: [["present", "absent", "late", "excused"]],
+          msg: "Attendance status must be one of the following: 'present', 'absent', 'late', or 'excused'.",
         },
       },
     },
     attendance_type: {
-      type: DataTypes.ENUM("In-Person", "Online", "Hybrid"),
+      type: DataTypes.ENUM("in-person", "online", "hybrid"),
       allowNull: false,
       validate: {
         isIn: {
-          args: [["In-Person", "Online", "Hybrid"]],
-          msg: "Attendance type must be one of the following: 'In-Person', 'Online', or 'Hybrid'.",
+          args: [["in-person", "online", "hybrid"]],
+          msg: "Attendance type must be one of the following: in-person, online, hybrid.",
         },
       },
     },

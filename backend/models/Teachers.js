@@ -18,12 +18,12 @@ const Teachers = sequelize.define(
       allowNull: false,
     },
     gender: {
-      type: DataTypes.ENUM("Male", "Female", "Prefer not to say"),
+      type: DataTypes.ENUM("male", "female", "prefer not to say"),
       allowNull: false,
       validate: {
         isIn: {
-          args: [["Male", "Female", "Prefer not to say"]],
-          msg: "Gender must be one of the following: Male, Female, or Prefer not to say.",
+          args: [["male", "female", "prefer not to say"]],
+          msg: "Gender must be one of the following: male, female, or prefer not to say.",
         },
       },
     },
@@ -44,35 +44,35 @@ const Teachers = sequelize.define(
     },
     working_days: {
       type: DataTypes.ENUM(
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-        "Weekdays", // Monday to Friday
-        "Weekends", // Saturday, Sunday
-        "Full Week" // All days
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+        "weekdays", // Monday to Friday
+        "weekends", // Saturday, Sunday
+        "full Week" // All days
       ),
       allowNull: false,
       validate: {
         isIn: {
           args: [
             [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-              "Weekdays",
-              "Weekends",
-              "Full Week",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+              "sunday",
+              "weekdays",
+              "weekends",
+              "full Week",
             ],
           ],
-          msg: "Working days must be one of the following: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Weekdays, Weekends, or Full Week.",
+          msg: "Working days must be one of the following: monday, tuesday, wednesday, thursday, friday, saturday, sunday, weekdays, weekends, or full week.",
         },
       },
     },

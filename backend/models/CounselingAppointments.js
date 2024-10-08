@@ -33,13 +33,13 @@ const Counseling_Appointments = sequelize.define(
       type: DataTypes.STRING,
     },
     appointment_status: {
-      type: DataTypes.ENUM("Scheduled", "Completed", "Canceled", "No Show"),
+      type: DataTypes.ENUM("scheduled", "completed", "canceled", "no show"),
       allowNull: false,
       defaultValue: "Scheduled", // Default value for the appointment status
       validate: {
         isIn: {
-          args: [["Scheduled", "Completed", "Canceled", "No Show"]],
-          msg: "Appointment status must be one of the following: 'Scheduled', 'Completed', 'Canceled', or 'No Show'.",
+          args: [["scheduled", "completed", "canceled", "no show"]],
+          msg: "Appointment status must be one of the following: scheduled, completed, canceled, no show.",
         },
       },
     },
