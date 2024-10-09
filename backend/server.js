@@ -31,7 +31,7 @@ setupAssociations();
 
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true }); // You can use { force: true } during development to reset the tables { alter: true } to alter
+    await sequelize.sync(); // You can use { force: true } during development to reset the tables { alter: true } to alter
     console.log("Database & tables created!");
   } catch (error) {
     console.error("Error creating database & tables:", error);
