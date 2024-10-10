@@ -8,10 +8,14 @@ import Users from "../models/Users.js";
 import User_Roles from "../models/UserRoles.js";
 import User_Role_Assignment from "../models/UserRoleAssignment.js";
 
-const generateToken = (userId) => {
-  return jwt.sign({ user_id_pk: userId }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+const generateToken = (userId, userType) => {
+  return jwt.sign(
+    { user_id_pk: userId, user_type: userType },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
 };
 
 const signup = async (req, res) => {
@@ -55,15 +59,6 @@ const signup = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
-    const newUser = await Users.create({
-      username,
-      password_hash: hashedPassword,
-      user_id_fk,
-      user_type,
-      email,
-    });
-
     const role = await User_Roles.findOne({
       where: { role_name: user_type.toLowerCase() },
     });
@@ -72,6 +67,15 @@ const signup = async (req, res) => {
         signupUserMessage: "User role not found or is deleted.",
       });
     }
+
+    // Create new user
+    const newUser = await Users.create({
+      username,
+      password_hash: hashedPassword,
+      user_id_fk,
+      user_type,
+      email,
+    });
 
     try {
       // Assign the role to the user
@@ -84,7 +88,7 @@ const signup = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = generateToken(newUser.user_id_pk);
+    const token = generateToken(newUser.user_id_pk, newUser.user_type);
 
     return res.status(200).json({ token });
   } catch (error) {
@@ -126,7 +130,7 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token with user_id_pk in the payload
-    const token = generateToken(user.user_id_pk);
+    const token = generateToken(user.user_id_pk, user.user_type);
 
     // Respond with the token and user ID
     return res.status(200).json({ token });
@@ -146,7 +150,7 @@ const updateUser = async (req, res) => {
 
     let decoded;
     try {
-      // Decode token to extract the user ID
+      // Decode token to extract user information
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
       if (error.name === "TokenExpiredError") {
@@ -156,8 +160,32 @@ const updateUser = async (req, res) => {
     }
 
     const userId = decoded.user_id_pk; // Extract user ID from token payload
+    const userType = decoded.user_type; // Extract user type (admin/user) from token payload
+    const { username, email, password, targetUserId } = req.body;
 
-    const { username, email, password } = req.body;
+    // Check if the user is an admin
+    let targetId;
+    if (userType === "admin" && targetUserId) {
+      // Admin can specify a different user to update
+      targetId = targetUserId;
+    } else {
+      // Non-admins (or if no targetUserId provided) can only update their own details
+      targetId = userId;
+    }
+
+    // Find the target user by ID
+    const user = await Users.findByPk(targetId);
+
+    if (!user) {
+      return res.status(404).json({ updateUserMessage: "User not found!" });
+    }
+
+    // Admin cannot update deleted users (is_deleted check)
+    if (user.is_deleted) {
+      return res.status(400).json({
+        updateUserMessage: "User is deleted! Recover their account first!",
+      });
+    }
 
     // Check if at least one field is being updated
     if (!username && !email && !password) {
@@ -178,20 +206,6 @@ const updateUser = async (req, res) => {
       return res.status(400).json({
         updateUserMessage:
           "Password not strong enough! Must be at least 8 characters long, contain uppercase and lowercase letters, and a special character.",
-      });
-    }
-
-    // Find the user by ID
-    const user = await Users.findByPk(userId);
-
-    if (!user) {
-      return res.status(404).json({ updateUserMessage: "User not found!" });
-    }
-
-    // Check if the user is marked as deleted (is_deleted)
-    if (user.is_deleted) {
-      return res.status(400).json({
-        updateUserMessage: "User deleted! Recover your account first!",
       });
     }
 
@@ -267,6 +281,12 @@ const recoverUser = async (req, res) => {
       return res.status(400).json({
         recoverAccountMessage: "Email, username, and password are required.",
       });
+    }
+
+    // Compare hashed password with the one provided by the user
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ loginUserMessage: "Invalid credentials." });
     }
 
     // Find the user by email and username
