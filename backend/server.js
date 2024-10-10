@@ -6,6 +6,7 @@ import Students from "./models/Students.js";
 import Users from "./models/Users.js";
 import Events from "./models/Events.js";
 
+import Admins from "./models/Admins.js";
 import Attendance from "./models/Attendance.js";
 import Classrooms from "./models/Classrooms.js";
 import Classroom_Student from "./models/ClassroomStudent.js";
