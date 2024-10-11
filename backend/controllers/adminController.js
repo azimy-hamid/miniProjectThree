@@ -5,19 +5,32 @@ import jwt from "jsonwebtoken";
 
 // Create a new admin
 const createAdmin = async (req, res) => {
-  const { username, password, email_address, full_name, role } = req.body;
+  const { username, password, email, first_name, last_name, role } = req.body;
 
-  // Input validation
-  if (!username || !password || !email_address || !full_name) {
+  // Validate input
+  if (!username || !password || !email || !first_name || !last_name) {
     return res
       .status(400)
-      .json({ createAdminMessage: "All fields are required" });
+      .json({ createAdminMessage: "All fields marked are required." });
   }
 
-  if (!validator.isEmail(email_address)) {
+  if (!validator.isEmail(email)) {
     return res
       .status(400)
       .json({ createAdminMessage: "Invalid email address" });
+  }
+
+  if (!validator.isLength(username, { min: 3 })) {
+    return res.status(400).json({
+      createAdminMessage: "Username must be at least 3 characters long.",
+    });
+  }
+
+  if (!validator.isStrongPassword(password)) {
+    return res.status(400).json({
+      createAdminMessage:
+        "Password not strong enough! Must be at least 8 characters long, contain uppercase and lowercase letters, and a special character.",
+    });
   }
 
   try {
@@ -25,8 +38,9 @@ const createAdmin = async (req, res) => {
     const admin = await Admins.create({
       username,
       password_hash: hashedPassword, // Store the hashed password
-      email_address,
-      full_name,
+      email_address: email,
+      admin_first_name: first_name,
+      admin_last_name: last_name,
       role,
     });
     res
@@ -78,7 +92,7 @@ const updateAdmin = async (req, res) => {
   if (!username || !password || !email || !first_name || last_name) {
     return res
       .status(400)
-      .json({ signupUserMessage: "All fields marked are required." });
+      .json({ updateAdminMessage: "All fields marked are required." });
   }
 
   // Extract token from headers
@@ -109,18 +123,18 @@ const updateAdmin = async (req, res) => {
   if (!validator.isEmail(email)) {
     return res
       .status(400)
-      .json({ signupUserMessage: "Enter a valid email, Please." });
+      .json({ updateAdminMessage: "Enter a valid email, Please." });
   }
 
   if (!validator.isLength(username, { min: 3 })) {
     return res.status(400).json({
-      signupUserMessage: "Username must be at least 3 characters long.",
+      updateAdminMessage: "Username must be at least 3 characters long.",
     });
   }
 
   if (!validator.isStrongPassword(password)) {
     return res.status(400).json({
-      signupUserMessage:
+      updateAdminMessage:
         "Password not strong enough! Must be at least 8 characters long, contain uppercase and lowercase letters, and a special character.",
     });
   }
