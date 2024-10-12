@@ -47,7 +47,10 @@ const createAdmin = async (req, res) => {
       .status(201)
       .json({ createAdminMessage: "Admin created successfully", admin });
   } catch (error) {
-    res.status(500).json({ createAdminMessage: "Internal Server Error" });
+    res.status(500).json({
+      createAdminMessage: "Internal Server Error",
+      createAdminCatchBlkErr: error,
+    });
   }
 };
 
@@ -59,7 +62,10 @@ const getAllAdmins = async (req, res) => {
       .status(200)
       .json({ getAdminsMessage: "Admins retrieved successfully", admins });
   } catch (error) {
-    res.status(500).json({ getAdminsMessage: "Internal Server Error" });
+    res.status(500).json({
+      getAdminsMessage: "Internal Server Error",
+      getAllAdminsCatchBlkErr: error,
+    });
   }
 };
 
@@ -80,7 +86,10 @@ const getAdminById = async (req, res) => {
       .status(200)
       .json({ getAdminByIdMessage: "Admin retrieved successfully", admin });
   } catch (error) {
-    res.status(500).json({ getAdminByIdMessage: "Internal Server Error" });
+    res.status(500).json({
+      getAdminByIdMessage: "Internal Server Error",
+      getAdminByIDCatchBlkErr: error,
+    });
   }
 };
 
@@ -170,7 +179,10 @@ const updateAdmin = async (req, res) => {
       updateAdminMessage: "Admin updated successfully",
     });
   } catch (error) {
-    res.status(500).json({ updateAdminMessage: "Internal Server Error" });
+    res.status(500).json({
+      updateAdminMessage: "Internal Server Error",
+      updateAdminCatchBlkErr: error,
+    });
   }
 };
 
@@ -210,7 +222,10 @@ const deleteAdmin = async (req, res) => {
     }
     return res.status(404).json({ deleteAdminMessage: "Admin not found" });
   } catch (error) {
-    res.status(500).json({ deleteAdminMessage: "Internal Server Error" });
+    res.status(500).json({
+      deleteAdminMessage: "Internal Server Error",
+      deleteAdminCatchBlkErr: error,
+    });
   }
 };
 
