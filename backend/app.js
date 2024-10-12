@@ -2,6 +2,8 @@ import express, { response } from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes/adminRoutes.js";
+import studentRoutes from "./routes/studentRoutes/studentRoutes.js";
+import authenticate from "./middlewares/authenticate.js";
 
 const app = express();
 
@@ -9,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get("/", async (req, res) => {
+app.get("/", authenticate(["admin"]), async (req, res) => {
   try {
     res.status(200).json({
       response: "This is the root end point for 3rd mini project app",
@@ -21,5 +23,6 @@ app.get("/", async (req, res) => {
 
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/student", studentRoutes);
 
 export default app;
