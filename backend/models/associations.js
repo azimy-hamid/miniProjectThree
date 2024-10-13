@@ -18,9 +18,11 @@ import User_Role_Assignment from "./UserRoleAssignment.js";
 import User_Roles from "./UserRoles.js";
 import Student_Subjects from "./StudentSubjects.js";
 import Teacher_Subjects from "./TeacherSubjects.js";
+import Semester_Subject from "./SemesterSubject.js";
+import Semesters from "./Semesters.js";
 
 const setupAssociations = () => {
-  // attendace and students
+  // attendace and students and semester_subject
 
   Students.hasMany(Attendance, {
     foreignKey: "student_id_fk",
@@ -31,13 +33,39 @@ const setupAssociations = () => {
     as: "student",
   });
 
-  Subjects.hasMany(Attendance, {
-    foreignKey: "subject_id_fk",
+  Semester_Subject.hasMany(Attendance, {
+    foreignKey: "semester_subject_id_fk", // Corrected foreign key name
     as: "attendance",
   });
-  Attendance.belongsTo(Subjects, {
+
+  Attendance.belongsTo(Semester_Subject, {
+    foreignKey: "semester_subject_id_fk", // Corrected foreign key name
+    as: "semester_subject",
+  });
+
+  // subjects and semester_subjects - semesters and semester_subjects
+  // Semester_Subject belongs to a Semester
+  Semester_Subject.belongsTo(Semesters, {
+    foreignKey: "semester_id_fk",
+    targetKey: "semester_id_pk",
+  });
+
+  // Semester_Subject belongs to a Subject
+  Semester_Subject.belongsTo(Subjects, {
     foreignKey: "subject_id_fk",
-    as: "subject",
+    targetKey: "subject_id_pk",
+  });
+
+  // Semesters has many Semester_Subjects
+  Semesters.hasMany(Semester_Subject, {
+    foreignKey: "semester_id_fk",
+    sourceKey: "semester_id_pk",
+  });
+
+  // Subjects has many Semester_Subjects
+  Subjects.hasMany(Semester_Subject, {
+    foreignKey: "subject_id_fk",
+    sourceKey: "subject_id_pk",
   });
 
   // classrooms and students

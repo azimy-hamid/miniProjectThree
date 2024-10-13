@@ -6,6 +6,8 @@ import studentRoutes from "./routes/studentRoutes/studentRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes/teacherRoutes.js";
 import classroomRoutes from "./routes/classroomRoutes/classroomRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes/feedbackRoutes.js";
+import marksRoutes from "./routes/marksRoutes/marksRoutes.js";
+import classScheduleRoutes from "./routes/classScheduleRoutes/classScheduleRoutes.js";
 
 import authenticate from "./middlewares/authenticate.js";
 
@@ -31,5 +33,7 @@ app.use("/student", studentRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/classroom", classroomRoutes);
 app.use("/feedback", feedbackRoutes);
+app.use("/mark", marksRoutes);
+app.use("/class-schedule", classScheduleRoutes);
 
 export default app;

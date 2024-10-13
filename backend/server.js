@@ -23,6 +23,8 @@ import User_Role_Assignment from "./models/UserRoleAssignment.js";
 import User_Roles from "./models/UserRoles.js";
 import Student_Subjects from "./models/StudentSubjects.js";
 import Teacher_Subjects from "./models/TeacherSubjects.js";
+import Semesters from "./models/Semesters.js";
+import Semester_Subject from "./models/SemesterSubject.js";
 
 import { setupAssociations } from "./models/associations.js";
 
@@ -32,7 +34,7 @@ setupAssociations();
 
 const syncDatabase = async () => {
   try {
-    await sequelize.sync(); // You can use { force: true } during development to reset the tables { alter: true } to alter
+    await sequelize.sync({ force: true }); // You can use { force: true } during development to reset the tables { alter: true } to alter
     console.log("Database & tables created!");
   } catch (error) {
     console.error("Error creating database & tables:", error);
