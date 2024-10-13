@@ -2,10 +2,10 @@ import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Students from "./Students.js";
 
-const Complaints = sequelize.define(
-  "Complaints",
+const Feedbacks = sequelize.define(
+  "Feedbacks",
   {
-    complaint_id_pk: {
+    feedback_id_pk: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
@@ -18,7 +18,7 @@ const Complaints = sequelize.define(
         key: "student_id_pk", // Key in the Students table
       },
     },
-    complaint_message: {
+    feedback_message: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
@@ -49,9 +49,9 @@ const Complaints = sequelize.define(
     },
   },
   {
-    tableName: "complaints", // Name of the table in the database
+    tableName: "feedbacks", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
   }
 );
 
-export default Complaints;
+export default Feedbacks;
