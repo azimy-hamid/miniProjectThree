@@ -6,18 +6,19 @@ import Attendance from "./Attendance.js";
 import Classrooms from "./Classrooms.js";
 import Classroom_Student from "./ClassroomStudent.js";
 import ClassSchedule from "./ClassSchedule.js";
-import Complaints from "./Complaints.js";
+import Feedbacks from "./Feedbacks.js";
 import Counseling_Appointments from "./CounselingAppointments.js";
 import Event_Registration from "./EventRegistration.js";
 import Fees from "./Fees.js";
 import Marks from "./Marks.js";
 import Notifications from "./Notifications.js";
-import StudentDocuments from "./StudentDocument.js";
 import StudentGrades from "./studentGrades.js";
 import Subjects from "./Subjects.js";
 import Teachers from "./Teachers.js";
 import User_Role_Assignment from "./UserRoleAssignment.js";
 import User_Roles from "./UserRoles.js";
+import Student_Subjects from "./StudentSubjects.js";
+import Teacher_Subjects from "./TeacherSubjects.js";
 
 const setupAssociations = () => {
   // attendace and students
@@ -73,12 +74,7 @@ const setupAssociations = () => {
   });
   // students - complaints
 
-  Students.hasMany(StudentDocuments, {
-    foreignKey: "student_id_fk",
-    as: "documents",
-  });
-
-  Complaints.belongsTo(Students, {
+  Feedbacks.belongsTo(Students, {
     foreignKey: "student_id_fk", // Foreign key in Complaints
     targetKey: "student_id_pk", // Target key in Students
     as: "student", // Alias for accessing the related student
@@ -133,12 +129,6 @@ const setupAssociations = () => {
   Subjects.hasMany(Marks, { foreignKey: "subject_id_fk", as: "marks" });
   Marks.belongsTo(Subjects, { foreignKey: "subject_id_fk", as: "subject" });
 
-  // Students - StudentDocuments
-  StudentDocuments.belongsTo(Students, {
-    foreignKey: "student_id_fk",
-    as: "student",
-  });
-
   // Students - StudentGrades
 
   Students.hasMany(StudentGrades, {
@@ -154,12 +144,6 @@ const setupAssociations = () => {
   });
 
   // Students - Subjects - Teachers - Classrooms
-  Students.hasMany(Subjects, { foreignKey: "student_id_fk", as: "subjects" });
-  Subjects.belongsTo(Students, { foreignKey: "student_id_fk", as: "student" });
-
-  Teachers.hasMany(Subjects, { foreignKey: "teacher_id_fk", as: "subjects" });
-  Subjects.belongsTo(Teachers, { foreignKey: "teacher_id_fk", as: "teacher" });
-
   Classrooms.hasMany(Subjects, {
     foreignKey: "classroom_id_fk",
     as: "subjects",
@@ -167,6 +151,26 @@ const setupAssociations = () => {
   Subjects.belongsTo(Classrooms, {
     foreignKey: "classroom_id_fk",
     as: "classroom",
+  });
+
+  // student - subject - throught student_subject
+  Students.belongsToMany(Subjects, {
+    through: Student_Subjects,
+    foreignKey: "student_id_fk",
+  });
+  Subjects.belongsToMany(Students, {
+    through: Student_Subjects,
+    foreignKey: "subject_id_fk",
+  });
+
+  // student - subject - throught student_subject
+  Teachers.belongsToMany(Subjects, {
+    through: Teacher_Subjects,
+    foreignKey: "teacher_id_fk",
+  });
+  Subjects.belongsToMany(Teachers, {
+    through: Teacher_Subjects,
+    foreignKey: "subject_id_fk",
   });
 
   // Users - User_Roles

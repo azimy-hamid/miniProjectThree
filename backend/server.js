@@ -11,18 +11,19 @@ import Attendance from "./models/Attendance.js";
 import Classrooms from "./models/Classrooms.js";
 import Classroom_Student from "./models/ClassroomStudent.js";
 import ClassSchedule from "./models/ClassSchedule.js";
-import Complaints from "./models/Complaints.js";
+import Feedbacks from "./models/Feedbacks.js";
 import Counseling_Appointments from "./models/CounselingAppointments.js";
 import Event_Registration from "./models/EventRegistration.js";
 import Fees from "./models/Fees.js";
 import Marks from "./models/Marks.js";
 import Notifications from "./models/Notifications.js";
-import StudentDocuments from "./models/StudentDocument.js";
 import StudentGrades from "./models/studentGrades.js";
 import Subjects from "./models/Subjects.js";
 import Teachers from "./models/Teachers.js";
 import User_Role_Assignment from "./models/UserRoleAssignment.js";
 import User_Roles from "./models/UserRoles.js";
+import Student_Subjects from "./models/StudentSubjects.js";
+import Teacher_Subjects from "./models/TeacherSubjects.js";
 
 import { setupAssociations } from "./models/associations.js";
 

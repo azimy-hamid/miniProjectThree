@@ -18,7 +18,7 @@ studentRoutes.delete(
   studentControllers.deleteStudent
 );
 studentRoutes.put(
-  "/recover-student/:studentId",
+  "/recover-student-by-id/:studentId",
   studentControllers.recoverStudent
 );
 
