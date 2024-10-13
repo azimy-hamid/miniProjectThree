@@ -17,20 +17,6 @@ const Subjects = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    student_id_fk: {
-      type: DataTypes.UUID,
-      references: {
-        model: Students,
-        key: "student_id_pk",
-      },
-    },
-    teacher_id_fk: {
-      type: DataTypes.UUID,
-      references: {
-        model: Teachers,
-        key: "teacher_id_pk",
-      },
-    },
     classroom_id_fk: {
       type: DataTypes.UUID,
       references: {
