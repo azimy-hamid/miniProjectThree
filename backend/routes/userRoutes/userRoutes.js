@@ -1,6 +1,6 @@
 import express from "express";
 import * as userController from "../../controllers/usersController.js";
-import * as userRoleController from "../../controllers/userRolesController.js";
+import * as userRoleController from "../../controllers/userRolesControllers.js";
 
 const userRoutes = express.Router();
 

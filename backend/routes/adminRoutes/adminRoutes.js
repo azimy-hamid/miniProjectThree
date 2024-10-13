@@ -1,5 +1,5 @@
 import express from "express";
-import * as adminControllers from "../../controllers/adminController.js";
+import * as adminControllers from "../../controllers/adminControllers.js";
 import authenticate from "../../middlewares/authenticate.js";
 
 const adminRoutes = express.Router();
