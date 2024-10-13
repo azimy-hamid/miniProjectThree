@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Students from "./Students.js";
-import Subjects from "./Subjects.js";
+import Semester_Subject from "./SemesterSubject.js";
 
 const Attendance = sequelize.define(
   "Attendance",
@@ -18,11 +18,11 @@ const Attendance = sequelize.define(
         key: "student_id_pk",
       },
     },
-    subject_id_fk: {
+    semester_subject_id_fk: {
       type: DataTypes.UUID,
       references: {
-        model: Subjects,
-        key: "subject_id_pk",
+        model: Semester_Subject,
+        key: "semester_subject_id_pk",
       },
     },
     attendance_date: {
