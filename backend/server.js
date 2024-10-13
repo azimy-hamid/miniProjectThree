@@ -12,7 +12,6 @@ import Classrooms from "./models/Classrooms.js";
 import Classroom_Student from "./models/ClassroomStudent.js";
 import ClassSchedule from "./models/ClassSchedule.js";
 import Feedbacks from "./models/Feedbacks.js";
-import Counseling_Appointments from "./models/CounselingAppointments.js";
 import Event_Registration from "./models/EventRegistration.js";
 import Fees from "./models/Fees.js";
 import Marks from "./models/Marks.js";
