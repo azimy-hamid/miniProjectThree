@@ -7,7 +7,6 @@ import Classrooms from "./Classrooms.js";
 import Classroom_Student from "./ClassroomStudent.js";
 import ClassSchedule from "./ClassSchedule.js";
 import Feedbacks from "./Feedbacks.js";
-import Counseling_Appointments from "./CounselingAppointments.js";
 import Event_Registration from "./EventRegistration.js";
 import Fees from "./Fees.js";
 import Marks from "./Marks.js";
@@ -78,25 +77,6 @@ const setupAssociations = () => {
     foreignKey: "student_id_fk", // Foreign key in Complaints
     targetKey: "student_id_pk", // Target key in Students
     as: "student", // Alias for accessing the related student
-  });
-
-  // students - Counseling_Appointments - Teachers
-  Students.hasMany(Counseling_Appointments, {
-    foreignKey: "student_id_fk",
-    as: "counseling_appointments",
-  });
-  Counseling_Appointments.belongsTo(Students, {
-    foreignKey: "student_id_fk",
-    as: "student",
-  });
-
-  Teachers.hasMany(Counseling_Appointments, {
-    foreignKey: "teacher_id_fk",
-    as: "counseling_sessions",
-  });
-  Counseling_Appointments.belongsTo(Teachers, {
-    foreignKey: "teacher_id_fk",
-    as: "counselor",
   });
 
   // Events - Event_Registration - Students
