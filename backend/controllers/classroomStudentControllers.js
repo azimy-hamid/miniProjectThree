@@ -14,6 +14,42 @@ const createClassroomStudent = async (req, res) => {
     });
   }
 
+  const student = await Students.findOne({
+    where: { student_id_pk: student_id_fk },
+    paranoid: false, // Include soft-deleted records in the query
+  });
+
+  if (!student) {
+    return res.status(404).json({
+      createClassroomStudentMessage: "Student not found.",
+    });
+  }
+
+  // Check if the student is deleted
+  if (student.is_deleted) {
+    return res.status(400).json({
+      createClassroomStudentMessage: "Student has been deleted.",
+    });
+  }
+
+  const classroom = await Classrooms.findOne({
+    where: { classroom_id_pk: classroom_id_fk },
+    paranoid: false, // Include soft-deleted records in the query
+  });
+
+  if (!classroom) {
+    return res.status(404).json({
+      createClassroomStudentMessage: "Classroom not found.",
+    });
+  }
+
+  // Check if the student is deleted
+  if (classroom.is_deleted) {
+    return res.status(400).json({
+      createClassroomStudentMessage: "Classroom has been deleted.",
+    });
+  }
+
   try {
     const newClassroomStudent = await Classroom_Student.create({
       classroom_id_fk,
@@ -124,6 +160,42 @@ const updateClassroomStudent = async (req, res) => {
       return res.status(404).json({
         updateClassroomStudentMessage:
           "Classroom-Student relationship not found or deleted.",
+      });
+    }
+
+    const student = await Students.findOne({
+      where: { student_id_pk: student_id_fk },
+      paranoid: false, // Include soft-deleted records in the query
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        createClassroomStudentMessage: "Student not found.",
+      });
+    }
+
+    // Check if the student is deleted
+    if (student.is_deleted) {
+      return res.status(400).json({
+        createClassroomStudentMessage: "Student has been deleted.",
+      });
+    }
+
+    const classroom = await Classrooms.findOne({
+      where: { classroom_id_pk: classroom_id_fk },
+      paranoid: false, // Include soft-deleted records in the query
+    });
+
+    if (!classroom) {
+      return res.status(404).json({
+        createClassroomStudentMessage: "Classroom not found.",
+      });
+    }
+
+    // Check if the student is deleted
+    if (classroom.is_deleted) {
+      return res.status(400).json({
+        createClassroomStudentMessage: "Classroom has been deleted.",
       });
     }
 

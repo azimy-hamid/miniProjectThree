@@ -8,10 +8,55 @@ const createClassSchedule = async (req, res) => {
     req.body;
 
   // Validate required input
-  if (!subject_id_fk || !classroom_id_fk || !day_of_week) {
+  if (
+    !subject_id_fk ||
+    !classroom_id_fk ||
+    !day_of_week ||
+    !start_time ||
+    !end_time
+  ) {
     return res.status(400).json({
       createClassScheduleMessage:
-        "Subject ID, Classroom ID, and Day of Week are required.",
+        "Subject ID, Classroom ID, and Day of Week, start-time and end-time are required.",
+    });
+  }
+
+  // --- validate classroom
+
+  const classroom = await Classrooms.findOne({
+    where: { classroom_id_pk: classroom_id_fk },
+    paranoid: false, // Include soft-deleted records in the query
+  });
+
+  if (!classroom) {
+    return res.status(404).json({
+      createClassroomStudentMessage: "Classroom not found.",
+    });
+  }
+
+  // Check if the student is deleted
+  if (classroom.is_deleted) {
+    return res.status(400).json({
+      createClassroomStudentMessage: "Classroom has been deleted.",
+    });
+  }
+
+  // --- validate subject
+  const subject = await Classrooms.findOne({
+    where: { subject_id_pk: subject_id_fk },
+    paranoid: false, // Include soft-deleted records in the query
+  });
+
+  if (!subject) {
+    return res.status(404).json({
+      createClassroomStudentMessage: "Subject not found.",
+    });
+  }
+
+  // Check if the student is deleted
+  if (subject.is_deleted) {
+    return res.status(400).json({
+      createClassroomStudentMessage: "Subject has been deleted.",
     });
   }
 
