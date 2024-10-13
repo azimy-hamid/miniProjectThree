@@ -3,6 +3,10 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes/adminRoutes.js";
 import studentRoutes from "./routes/studentRoutes/studentRoutes.js";
+import teacherRoutes from "./routes/teacherRoutes/teacherRoutes.js";
+import classroomRoutes from "./routes/classroomRoutes/classroomRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes/feedbackRoutes.js";
+
 import authenticate from "./middlewares/authenticate.js";
 
 const app = express();
@@ -24,5 +28,8 @@ app.get("/", authenticate(["admin"]), async (req, res) => {
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/student", studentRoutes);
+app.use("/teacher", teacherRoutes);
+app.use("/classroom", classroomRoutes);
+app.use("/feedback", feedbackRoutes);
 
 export default app;
