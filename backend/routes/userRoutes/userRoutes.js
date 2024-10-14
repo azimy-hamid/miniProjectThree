@@ -13,5 +13,9 @@ userRoutes.put("/recover-user", userController.recoverUser);
 userRoutes.get("/get-all-roles", userRoleController.getAllRoles);
 
 userRoutes.post("/create-role", userRoleController.createRole);
+userRoutes.get(
+  "/get-all-user-role-assignment",
+  userController.getAllUserRoleAssignment
+);
 
 export default userRoutes;

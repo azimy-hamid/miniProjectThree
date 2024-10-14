@@ -326,4 +326,35 @@ const recoverUser = async (req, res) => {
   }
 };
 
-export { signup, login, updateUser, deleteUser, recoverUser };
+const getAllUserRoleAssignment = async (req, res) => {
+  try {
+    const userRoleAssignment = await User_Role_Assignment.findAll({
+      where: { is_deleted: false },
+      include: [
+        { model: Users, where: { is_deleted: false } },
+        { model: User_Roles, where: { is_deleted: false } },
+      ],
+    });
+
+    return res.status(200).json({
+      getAllStudentSubjectsMessage:
+        "userRoleAssignment associations retrieved successfully!",
+      userRoleAssignment,
+    });
+  } catch (error) {
+    console.error("Error retrieving userRoleAssignment associations:", error);
+    return res.status(500).json({
+      getAllUserRoleAssignmentsMessage: "Server error. Please try again later.",
+      getAllUserRoleAssignmentsCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
+export {
+  signup,
+  login,
+  updateUser,
+  deleteUser,
+  recoverUser,
+  getAllUserRoleAssignment,
+};
