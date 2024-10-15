@@ -15,7 +15,7 @@ const Student_Subjects = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "Students", // References the Students table
+        model: Students,
         key: "student_id_pk",
       },
       onDelete: "CASCADE", // Deletes associated records if a student is deleted
@@ -24,7 +24,7 @@ const Student_Subjects = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "Subjects", // References the Subjects table
+        model: Subjects, // References the Subjects table
         key: "subject_id_pk",
       },
       onDelete: "CASCADE", // Deletes associated records if a subject is deleted
