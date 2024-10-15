@@ -14,6 +14,9 @@ import subjectRoutes from "./routes/subjectRoutes/subjectRoutes.js";
 import semesterRoutes from "./routes/semesterRoutes/semesterRoutes.js";
 import studentSubjectRoutes from "./routes/studentSubjectRoutes/studentSubjectRoutes.js";
 import teacherSubjectRoutes from "./routes/teacherSubjectRoutes/teacherSubjectRoutes.js";
+import semesterSubjectRoutes from "./routes/semesterSubjectRoutes/semesterSubjectRoutes.js";
+import eventRoutes from "./routes/eventRoutes/eventRoutes.js";
+import eventRegistrationRoutes from "./routes/eventRegistrationRoutes/eventRegistrationRoutes.js";
 
 import authenticate from "./middlewares/authenticate.js";
 
@@ -47,5 +50,8 @@ app.use("/subject", subjectRoutes);
 app.use("/semester", semesterRoutes);
 app.use("/student-subject", studentSubjectRoutes);
 app.use("/teacher-subject", teacherSubjectRoutes);
+app.use("/semester-subject", semesterSubjectRoutes);
+app.use("/event", eventRoutes);
+app.use("/event-registration", eventRegistrationRoutes);
 
 export default app;
