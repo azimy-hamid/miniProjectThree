@@ -8,6 +8,11 @@ import classroomRoutes from "./routes/classroomRoutes/classroomRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes/feedbackRoutes.js";
 import marksRoutes from "./routes/marksRoutes/marksRoutes.js";
 import classScheduleRoutes from "./routes/classScheduleRoutes/classScheduleRoutes.js";
+import feeRoutes from "./routes/feeRoutes/feeRoutes.js";
+import studentGradeRoutes from "./routes/studentGradeRoutes/studentGradeRoutes.js";
+import subjectRoutes from "./routes/subjectRoutes/subjectRoutes.js";
+import semesterRoutes from "./routes/semesterRoutes/semesterRoutes.js";
+import studentSubjectRoutes from "./routes/studentSubjectRoutes/studentSubjectRoutes.js";
 
 import authenticate from "./middlewares/authenticate.js";
 
@@ -35,5 +40,10 @@ app.use("/classroom", classroomRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/mark", marksRoutes);
 app.use("/class-schedule", classScheduleRoutes);
+app.use("/fees", feeRoutes);
+app.use("/student-grade", studentGradeRoutes);
+app.use("/subject", subjectRoutes);
+app.use("/semester", semesterRoutes);
+app.use("/student-subject", studentSubjectRoutes);
 
 export default app;

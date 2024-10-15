@@ -16,7 +16,7 @@ import Event_Registration from "./models/EventRegistration.js";
 import Fees from "./models/Fees.js";
 import Marks from "./models/Marks.js";
 import Notifications from "./models/Notifications.js";
-import StudentGrades from "./models/studentGrades.js";
+import StudentGrades from "./models/StudentGrades.js";
 import Subjects from "./models/Subjects.js";
 import Teachers from "./models/Teachers.js";
 import User_Role_Assignment from "./models/UserRoleAssignment.js";
