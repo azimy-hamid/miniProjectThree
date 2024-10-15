@@ -13,6 +13,7 @@ import studentGradeRoutes from "./routes/studentGradeRoutes/studentGradeRoutes.j
 import subjectRoutes from "./routes/subjectRoutes/subjectRoutes.js";
 import semesterRoutes from "./routes/semesterRoutes/semesterRoutes.js";
 import studentSubjectRoutes from "./routes/studentSubjectRoutes/studentSubjectRoutes.js";
+import teacherSubjectRoutes from "./routes/teacherSubjectRoutes/teacherSubjectRoutes.js";
 
 import authenticate from "./middlewares/authenticate.js";
 
@@ -45,5 +46,6 @@ app.use("/student-grade", studentGradeRoutes);
 app.use("/subject", subjectRoutes);
 app.use("/semester", semesterRoutes);
 app.use("/student-subject", studentSubjectRoutes);
+app.use("/teacher-subject", teacherSubjectRoutes);
 
 export default app;
