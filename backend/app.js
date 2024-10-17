@@ -17,8 +17,10 @@ import teacherSubjectRoutes from "./routes/teacherSubjectRoutes/teacherSubjectRo
 import semesterSubjectRoutes from "./routes/semesterSubjectRoutes/semesterSubjectRoutes.js";
 import eventRoutes from "./routes/eventRoutes/eventRoutes.js";
 import eventRegistrationRoutes from "./routes/eventRegistrationRoutes/eventRegistrationRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes/attendanceRoutes.js";
 
 import authenticate from "./middlewares/authenticate.js";
+import Students from "./models/Students.js";
 
 const app = express();
 
@@ -53,5 +55,6 @@ app.use("/teacher-subject", teacherSubjectRoutes);
 app.use("/semester-subject", semesterSubjectRoutes);
 app.use("/event", eventRoutes);
 app.use("/event-registration", eventRegistrationRoutes);
+app.use("/attendance", attendanceRoutes);
 
 export default app;

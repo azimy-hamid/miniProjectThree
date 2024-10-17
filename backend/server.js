@@ -44,6 +44,8 @@ const syncDatabase = async () => {
 const startServer = async () => {
   await syncDatabase();
 
+  console.log(Students.associations);
+
   app.listen(process.env.PORT_NUMBER, () => {
     console.log(
       `Mini Project Three Backend Server running on port: ${process.env.PORT_NUMBER}`
