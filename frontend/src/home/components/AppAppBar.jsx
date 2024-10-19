@@ -14,6 +14,9 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Sitemark from "./SitemarkIcon";
 import ColorModeIconDropdown from "../../theme/ColorModeIconDropdown.jsx";
 
+// Import Link from react-router-dom
+import { Link } from "react-router-dom";
+
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -52,16 +55,42 @@ export default function AppAppBar() {
           >
             <Sitemark />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <Button variant="text" color="info" size="small">
+              {/* Wrap Buttons with Link for navigation */}
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                component={Link}
+                to="/features"
+              >
                 Features
               </Button>
-              <Button variant="text" color="info" size="small">
+
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                component={Link}
+                to="/testimonials"
+              >
                 Testimonials
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                component={Link}
+                to="/highlights"
+              >
                 Highlights
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                component={Link}
+                to="/pricing"
+              >
                 Pricing
               </Button>
               <Button
@@ -69,6 +98,8 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 sx={{ minWidth: 0 }}
+                component={Link}
+                to="/faq"
               >
                 FAQ
               </Button>
@@ -77,6 +108,8 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 sx={{ minWidth: 0 }}
+                component={Link}
+                to="/blog"
               >
                 Blog
               </Button>
@@ -89,10 +122,22 @@ export default function AppAppBar() {
               alignItems: "center",
             }}
           >
-            <Button color="primary" variant="text" size="small">
+            <Button
+              color="primary"
+              variant="text"
+              size="small"
+              component={Link}
+              to="/signin"
+            >
               Sign in
             </Button>
-            <Button color="primary" variant="contained" size="small">
+            <Button
+              color="primary"
+              variant="contained"
+              size="small"
+              component={Link}
+              to="/signup"
+            >
               Sign up
             </Button>
             <ColorModeIconDropdown />
@@ -115,19 +160,68 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
                 <Divider sx={{ my: 3 }} />
-                <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
-                <MenuItem>Highlights</MenuItem>
-                <MenuItem>Pricing</MenuItem>
-                <MenuItem>FAQ</MenuItem>
-                <MenuItem>Blog</MenuItem>
+                {/* Drawer links */}
+                <MenuItem
+                  component={Link}
+                  to="/features"
+                  onClick={toggleDrawer(false)}
+                >
+                  Features
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/testimonials"
+                  onClick={toggleDrawer(false)}
+                >
+                  Testimonials
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/highlights"
+                  onClick={toggleDrawer(false)}
+                >
+                  Highlights
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/pricing"
+                  onClick={toggleDrawer(false)}
+                >
+                  Pricing
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/faq"
+                  onClick={toggleDrawer(false)}
+                >
+                  FAQ
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/blog"
+                  onClick={toggleDrawer(false)}
+                >
+                  Blog
+                </MenuItem>
                 <MenuItem>
-                  <Button color="primary" variant="contained" fullWidth>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    component={Link}
+                    to="/signup"
+                  >
                     Sign up
                   </Button>
                 </MenuItem>
                 <MenuItem>
-                  <Button color="primary" variant="outlined" fullWidth>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    fullWidth
+                    component={Link}
+                    to="/signin"
+                  >
                     Sign in
                   </Button>
                 </MenuItem>
