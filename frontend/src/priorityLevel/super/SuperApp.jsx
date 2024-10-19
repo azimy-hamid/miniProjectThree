@@ -1,12 +1,7 @@
 import React from "react";
-import SignIn from "./reuseableComponents/signIn/SignInComponent.jsx";
 
 const SuperApp = () => {
-  return (
-    <>
-      <SignIn />
-    </>
-  );
+  return <>{/* <SignIn /> */}</>;
 };
 
 export default SuperApp;
