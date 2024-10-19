@@ -59,6 +59,7 @@ const signup = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Fetch the role
     const role = await User_Roles.findOne({
       where: { role_name: user_type.toLowerCase() },
     });
@@ -77,20 +78,17 @@ const signup = async (req, res) => {
       email,
     });
 
-    try {
-      // Assign the role to the user
-      await User_Role_Assignment.create({
-        user_id_fk: newUser.user_id_pk,
-        role_id_fk: role.role_id_pk,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    // Assign the role to the user
+    await User_Role_Assignment.create({
+      user_id_fk: newUser.user_id_pk,
+      role_id_fk: role.role_id_pk,
+    });
 
     // Generate JWT token
     const token = generateToken(newUser.user_id_pk, newUser.user_type);
 
-    return res.status(200).json({ token });
+    // Respond with the token and role
+    return res.status(200).json({ token, role: role.role_name });
   } catch (error) {
     console.error(error);
     return res
@@ -111,7 +109,7 @@ const login = async (req, res) => {
   }
 
   try {
-    // Find user by username
+    // Find user by email
     const user = await Users.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ loginUserMessage: "Invalid credentials." });
@@ -129,11 +127,29 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate JWT token with user_id_pk in the payload
+    // Fetch the role assignment for the user
+    const userInAssignment = await User_Role_Assignment.findOne({
+      where: { user_id_fk: user.user_id_pk },
+    });
+
+    if (!userInAssignment) {
+      return res.status(403).json({ error: "User does not have a role." });
+    }
+
+    // Fetch the role name from User_Roles
+    const role = await User_Roles.findOne({
+      where: { role_id_pk: userInAssignment.role_id_fk },
+    });
+
+    if (!role) {
+      return res.status(403).json({ error: "Role not found." });
+    }
+
+    // Generate JWT token with user_id_pk and role in the payload
     const token = generateToken(user.user_id_pk, user.user_type);
 
-    // Respond with the token and user ID
-    return res.status(200).json({ token });
+    // Respond with the token, user ID, and user role
+    return res.status(200).json({ token, role: role.role_name });
   } catch (error) {
     console.error(error);
     return res
@@ -141,6 +157,8 @@ const login = async (req, res) => {
       .json({ loginUserMessage: "Server error. Please try again later." });
   }
 };
+
+export default login;
 
 // Update User Controller
 const updateUser = async (req, res) => {

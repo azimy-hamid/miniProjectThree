@@ -22,6 +22,8 @@ import attendanceRoutes from "./routes/attendanceRoutes/attendanceRoutes.js";
 import authenticate from "./middlewares/authenticate.js";
 import Students from "./models/Students.js";
 
+import { verifyToken } from "./utils/verifyToken.js";
+
 const app = express();
 
 app.use(express.json());
@@ -37,6 +39,8 @@ app.get("/", authenticate(["admin"]), async (req, res) => {
     res.status(500).json({ rootEndpointError: error });
   }
 });
+
+app.post("/authanticate/verifyToken", verifyToken);
 
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);

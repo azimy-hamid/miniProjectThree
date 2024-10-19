@@ -28,6 +28,8 @@ import Semester_Subject from "./models/SemesterSubject.js";
 
 import { setupAssociations } from "./models/associations.js";
 
+import seedSuper from "./seedData/seedSuper.js";
+
 dotenv.config();
 
 setupAssociations();
@@ -44,7 +46,7 @@ const syncDatabase = async () => {
 const startServer = async () => {
   await syncDatabase();
 
-  console.log(Students.associations);
+  await seedSuper();
 
   app.listen(process.env.PORT_NUMBER, () => {
     console.log(
