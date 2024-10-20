@@ -1,15 +1,33 @@
 import "./App.css";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import React, { useEffect, useState } from "react";
 import { CssBaseline } from "@mui/material";
 import { Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
-import SuperApp from "./priorityLevel/super/SuperApp.jsx";
 import AppTheme from "./theme/AppTheme.jsx";
 import HomeApp from "./home/HomeApp.jsx";
-import SignIn from "./home/components/signIn/SignInComponent.jsx";
 import homeRoutes from "./home/homeRoutes.jsx";
+import superRoutes from "./priorityLevel/super/routes/superRoutes.jsx";
+import NotFound from "./utils/NotFound.jsx";
+import LoadingSpinner from "./utils/LoadingSpinner.jsx";
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/verifyToken`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/authanticate/verifyToken`;
+
+function getDashboardRedirectPath(role) {
+  switch (role) {
+    case "admin":
+      return "/admin/dashboard";
+    case "teacher":
+      return "/teacher/dashboard";
+    case "student":
+      return "/student/dashboard";
+    case "super":
+      return "/super/dashboard";
+    default:
+      <NotFound />;
+  }
+}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Change initial state to null
@@ -17,24 +35,28 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const API_URL = `${process.env.REACT_APP_API_BASE_URL}/verifyToken`; // Make sure your API_URL is set correctly
+    const storedRole = localStorage.getItem("role"); // Assuming you have stored the role in local storage
 
     const verifyToken = async () => {
+      // Introduce a delay of 2 seconds (2000 milliseconds)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (token) {
         try {
-          // Get the role from local storage or define it
-          const storedRole = localStorage.getItem("role"); // Assuming you have stored the role in local storage
-
-          const response = await axios.get(API_URL, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Role: storedRole, // Send the role in the headers for verification
-            },
-          });
+          // Send the role in the request body
+          const response = await axios.post(
+            API_URL,
+            { role: storedRole },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           if (response.data.success) {
             setIsAuthenticated(true);
-            setUserRole(response.data.user.role); // Assuming the backend returns the user object with role
+            setUserRole(response.data.roles[0]); // Assuming the backend returns an array of role names
           } else {
             setIsAuthenticated(false);
             setUserRole(null);
@@ -54,7 +76,7 @@ function App() {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -63,11 +85,24 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomeApp />}
+          element={
+            isAuthenticated ? (
+              <Navigate to={getDashboardRedirectPath(userRole)} />
+            ) : (
+              <HomeApp />
+            )
+          }
         />
+
         {homeRoutes({ isAuthenticated, userRole }).map((route, index) => (
           <React.Fragment key={index}>{route}</React.Fragment>
         ))}
+
+        {superRoutes({ isAuthenticated, userRole }).map((route, index) => (
+          <React.Fragment key={index}>{route}</React.Fragment>
+        ))}
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AppTheme>
   );

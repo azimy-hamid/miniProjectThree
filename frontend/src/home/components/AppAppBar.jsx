@@ -53,7 +53,9 @@ export default function AppAppBar() {
           <Box
             sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}
           >
-            <Sitemark />
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <Sitemark />
+            </Link>{" "}
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               {/* Wrap Buttons with Link for navigation */}
               <Button

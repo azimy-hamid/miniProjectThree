@@ -66,6 +66,7 @@ export default function SignIn(props) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [apiError, setApiError] = React.useState(""); // For API error messages
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -89,15 +90,39 @@ export default function SignIn(props) {
 
     try {
       const data = await loginUser(userData); // Call loginUser with user data
-      if (data.token) {
-        window.location.href = "/dashboard"; // Redirect to dashboard
+      console.log(data);
+
+      if (data.token && data.role) {
+        // Store the token and role in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+
+        // Navigate based on the user's role
+        switch (data.role) {
+          case "admin":
+            window.location.href = "/admin/dashboard";
+            break;
+          case "teacher":
+            window.location.href = "/teacher/dashboard";
+            break;
+          case "student":
+            window.location.href = "/student/dashboard";
+            break;
+          case "super":
+            window.location.href = "/super/dashboard";
+            break;
+          default:
+            console.error("Unknown role:", data.role);
+            break;
+        }
       }
     } catch (error) {
       // Extract error message from the response or set a generic message
       const errorMsg =
-        error.response?.data?.loginUserError ||
+        error.response?.data?.loginUserMessage ||
         "Login failed. Please try again.";
       console.error("Login failed:", errorMsg);
+      setApiError(errorMsg); // Set the API error message
     }
   };
 
@@ -208,8 +233,8 @@ export default function SignIn(props) {
               </Link>
             </Box>
             <TextField
-              error={passwordError}
-              helperText={passwordErrorMessage}
+              error={passwordError || Boolean(apiError)} // Show error if API error exists
+              helperText={passwordError ? passwordErrorMessage : apiError} // Show password error or API error message
               name="password"
               placeholder="••••••"
               type="password"
@@ -218,7 +243,7 @@ export default function SignIn(props) {
               required
               fullWidth
               variant="outlined"
-              color={passwordError ? "error" : "primary"}
+              color={passwordError || Boolean(apiError) ? "error" : "primary"}
             />
           </FormControl>
           <ForgotPassword open={open} handleClose={handleClose} />
@@ -229,13 +254,27 @@ export default function SignIn(props) {
             Don&apos;t have an account?{" "}
             <span>
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                href="/material-ui/signup"
                 variant="body2"
-                sx={{ alignSelf: "center" }}
+                sx={{ textDecoration: "underline" }}
               >
-                Sign up
+                Sign Up
               </Link>
             </span>
+          </Typography>
+          <Divider />
+          <Typography
+            variant="body2"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <span>or</span>
+            <GoogleIcon />
+            <FacebookIcon />
           </Typography>
         </Box>
       </Card>

@@ -3,8 +3,8 @@ import { Routes } from "react-router-dom";
 
 import nonprotectedRoutes from "./routes/nonprotectedRoutes.jsx";
 
-function homeRoutes({ isAuthenticated }) {
-  return [...nonprotectedRoutes((isAuthenticated = { isAuthenticated }))];
+function homeRoutes({ isAuthenticated, userRole }) {
+  return [...nonprotectedRoutes({ isAuthenticated, userRole })];
 }
 
 export default homeRoutes;
