@@ -191,11 +191,13 @@ const setupAssociations = () => {
     Users.belongsToMany(User_Roles, {
       through: User_Role_Assignment,
       foreignKey: "user_id_fk",
+      as: "roles", // This allows you to access user roles via users.getRoles() in Sequelize
     });
 
     User_Roles.belongsToMany(Users, {
       through: User_Role_Assignment,
       foreignKey: "role_id_fk",
+      as: "users", // This allows you to access users via roles.getUsers() in Sequelize
     });
   } catch (error) {
     console.log("Error setting up associations:", error);

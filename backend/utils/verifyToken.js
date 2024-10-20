@@ -1,5 +1,3 @@
-// controllers/authController.js
-
 import jwt from "jsonwebtoken";
 import Users from "../models/Users.js"; // Path to your User model
 import User_Role_Assignment from "../models/UserRoleAssignment.js"; // Path to your UserRoleAssignment model
@@ -20,10 +18,19 @@ export const verifyToken = async (req, res) => {
     console.log("Decoded token:", decoded);
 
     // Fetch the user based on the user_id_pk from the decoded token
-    const user = await Users.findByPk(decoded.user_id_pk);
+    const user = await Users.findOne({
+      where: { user_id_pk: decoded.user_id_pk }, // Use user_id_pk from decoded token
+      include: [
+        {
+          model: User_Roles,
+          as: "roles", // Use the alias specified in your association
+          through: { model: User_Role_Assignment, as: "User_Role_Assignment" }, // Include through model if necessary
+          required: false, // Optional join
+        },
+      ],
+    });
 
     if (!user || user.is_deleted) {
-      // Check if user exists and is not deleted
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
@@ -37,30 +44,31 @@ export const verifyToken = async (req, res) => {
         .json({ success: false, message: "Role is required." });
     }
 
-    // Check if the user has a role assignment
-    const roleAssignment = await Users.findOne({
-      where: { user_id_fk: user.user_id_pk },
-      include: [{ model: User_Roles, required: true }], // Include the UserRoles model
-    });
+    // Check if the user has any roles assigned
+    const userRoles = user.roles; // Access the associated roles using the correct alias
 
-    if (!roleAssignment || roleAssignment.is_deleted) {
+    // If no roles are found
+    if (!userRoles || userRoles.length === 0) {
       return res
         .status(403)
-        .json({ success: false, message: "Role assignment not found." });
+        .json({ success: false, message: "No role assignments found." });
     }
 
-    // Access the role
-    const userRole = roleAssignment.User_Role;
+    // Check if the user has the requested role
+    const hasRole = userRoles.some(
+      (userRole) => userRole.role_name === roleFromBody
+    );
 
-    // Compare the role from the request body with the user's role
-    if (userRole.role_name !== roleFromBody) {
+    if (!hasRole) {
       return res
         .status(403)
         .json({ success: false, message: "Insufficient permissions." });
     }
 
     // Successfully verified token and permissions
-    return res.status(200).json({ success: true, role: userRole.role_name });
+    return res
+      .status(200)
+      .json({ success: true, roles: userRoles.map((role) => role.role_name) });
   } catch (error) {
     console.error("Token verification error:", error);
     return res.status(401).json({ success: false, message: "Invalid token." });
