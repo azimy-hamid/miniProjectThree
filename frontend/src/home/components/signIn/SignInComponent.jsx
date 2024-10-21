@@ -90,7 +90,6 @@ export default function SignIn(props) {
 
     try {
       const data = await loginUser(userData); // Call loginUser with user data
-      console.log(data);
 
       if (data.token && data.role) {
         // Store the token and role in localStorage
