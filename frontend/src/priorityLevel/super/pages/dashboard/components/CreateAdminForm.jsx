@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import { createAdmin } from "../../../../../services/adminServices/adminEndpoint.js"; // Ensure the path is correct
+import { createAdmin } from "../../../../../services/adminEndpoints.js"; // Ensure the path is correct
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",

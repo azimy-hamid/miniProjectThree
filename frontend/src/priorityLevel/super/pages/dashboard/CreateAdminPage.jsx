@@ -6,6 +6,8 @@ import Stack from "@mui/material/Stack";
 import Header from "./components/Header";
 import { alpha } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import CreateTeacherForm from "./components/CreateTeacherForm.jsx";
+import Grid from "@mui/material/Grid"; // Import Grid v2
 
 const CreateAdminPage = () => {
   return (
@@ -32,7 +34,18 @@ const CreateAdminPage = () => {
             }}
           >
             <Header />
-            <CreateAdmin />
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                {" "}
+                {/* Takes full width on small screens and half on medium and up */}
+                <CreateAdmin />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                {" "}
+                {/* Takes full width on small screens and half on medium and up */}
+                <CreateTeacherForm />
+              </Grid>
+            </Grid>
           </Stack>
         </Box>
       </Box>
