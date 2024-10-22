@@ -38,8 +38,7 @@ function App() {
     const storedRole = localStorage.getItem("role"); // Assuming you have stored the role in local storage
 
     const verifyToken = async () => {
-      // Introduce a delay of 2 seconds (2000 milliseconds)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (token) {
         try {

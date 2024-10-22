@@ -1,19 +1,19 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Divider from "@mui/material/Divider";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
+import Snackbar from "@mui/material/Snackbar"; // Import Snackbar
 import { styled } from "@mui/material/styles";
 import { createAdmin } from "../../../../../services/adminEndpoints.js"; // Ensure the path is correct
+import {
+  signupUser,
+  checkUserExists,
+} from "../../../../../services/userAuth.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -28,33 +28,12 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
   boxShadow:
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  ...theme.applyStyles("dark", {
-    boxShadow:
-      "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
   padding: theme.spacing(2),
   marginTop: theme.spacing(18),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
-      backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-  },
 }));
 
 export default function CreateAdmin(props) {
@@ -68,17 +47,9 @@ export default function CreateAdmin(props) {
   const [firstNameErrorMessage, setFirstNameErrorMessage] = React.useState("");
   const [lastNameError, setLastNameError] = React.useState(false);
   const [lastNameErrorMessage, setLastNameErrorMessage] = React.useState("");
-  const [roleError, setRoleError] = React.useState(false);
-  const [roleErrorMessage, setRoleErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [generalError, setGeneralError] = React.useState("");
+  const [successMessage, setSuccessMessage] = React.useState(""); // Success message state
+  const [openSnackbar, setOpenSnackbar] = React.useState(false); // Snackbar open state
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
@@ -90,32 +61,61 @@ export default function CreateAdmin(props) {
     const password = document.getElementById("password").value;
     const first_name = document.getElementById("first_name").value;
     const last_name = document.getElementById("last_name").value;
-    const role = document.getElementById("role").value;
-
-    const adminData = {
-      username,
-      email,
-      password,
-      first_name,
-      last_name,
-      role,
-    }; // Prepare data for admin creation
 
     try {
-      const data = await createAdmin(adminData); // Call createAdmin with admin data
-      console.log(data);
+      // Check if the user exists
+      const userCheckResponse = await checkUserExists(username, email);
 
-      if (data.admin) {
-        // Handle successful admin creation
-        console.log("Admin created successfully:", data.admin);
-        // Redirect or show success message if needed
+      if (userCheckResponse.userExists) {
+        setGeneralError(userCheckResponse.checkUserExistsMessage);
+        return; // Stop execution if user exists
+      }
+
+      const adminData = {
+        username,
+        email,
+        password,
+        first_name,
+        last_name,
+      }; // Prepare data for admin creation
+
+      const adminUserData = {
+        username,
+        email,
+        password,
+      };
+
+      const createdAdminData = await createAdmin(adminData); // Call createAdmin with admin data
+
+      if (createdAdminData.admin) {
+        const createdAdminDetails = createdAdminData.admin;
+        const admin_id_pk = createdAdminDetails.admin_id_pk;
+        adminUserData.user_id_fk = admin_id_pk;
+        adminUserData.user_type = "admin";
+
+        await signupUser(adminUserData);
+        // Set success message and open Snackbar
+        setSuccessMessage("Admin created successfully!");
+        setOpenSnackbar(true);
       }
     } catch (error) {
-      // Extract error message from the response or set a generic message
-      const errorMsg =
-        error.response?.data?.createAdminMessage ||
-        "Admin creation failed. Please try again.";
-      console.error("Admin creation failed:", errorMsg);
+      let errorMsg;
+
+      if (error.response?.data?.createAdminCatchBlkErr) {
+        errorMsg = error.response.data.createAdminCatchBlkErr;
+        console.log(error.response.data.createAdminCatchBlkErr);
+      } else if (error.response?.data?.signupUserCatchBlkErr) {
+        errorMsg = error.response.data.signupUserCatchBlkErr;
+      } else if (error.response?.data?.signupUserMessage) {
+        errorMsg = error.response.data.signupUserMessage;
+      } else if (error.response?.data?.createAdminMessage) {
+        errorMsg = error.response.data.createAdminMessage;
+      } else {
+        errorMsg = "Admin creation failed. Please try again.";
+      }
+      console.log(error);
+
+      setGeneralError(errorMsg); // Set general error message
     }
   };
 
@@ -125,9 +125,11 @@ export default function CreateAdmin(props) {
     const password = document.getElementById("password");
     const first_name = document.getElementById("first_name");
     const last_name = document.getElementById("last_name");
-    const role = document.getElementById("role");
 
     let isValid = true;
+
+    // Reset general error message
+    setGeneralError("");
 
     // Validate Username
     if (!username.value) {
@@ -177,16 +179,6 @@ export default function CreateAdmin(props) {
     } else {
       setLastNameError(false);
       setLastNameErrorMessage("");
-    }
-
-    // Validate Role
-    if (!role.value) {
-      setRoleError(true);
-      setRoleErrorMessage("Role is required.");
-      isValid = false;
-    } else {
-      setRoleError(false);
-      setRoleErrorMessage("");
     }
 
     return isValid;
@@ -275,21 +267,6 @@ export default function CreateAdmin(props) {
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="role">Role</FormLabel>
-            <TextField
-              error={roleError}
-              helperText={roleErrorMessage}
-              id="role"
-              type="text"
-              name="role"
-              placeholder="admin/user"
-              required
-              fullWidth
-              variant="outlined"
-              color={roleError ? "error" : "primary"}
-            />
-          </FormControl>
-          <FormControl>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
               error={passwordError}
@@ -303,14 +280,24 @@ export default function CreateAdmin(props) {
               color={passwordError ? "error" : "primary"}
             />
           </FormControl>
-
-          <Stack direction="column" spacing={1}>
-            <Button type="submit" variant="contained">
-              Create Admin
-            </Button>
-          </Stack>
+          <Button variant="contained" type="submit" fullWidth>
+            Create Admin
+          </Button>
         </Box>
+        {successMessage && (
+          <Typography color="success.main">{successMessage}</Typography>
+        )}{" "}
+        {/* Inline message */}
+        {generalError && (
+          <Typography color="error.main">{generalError}</Typography>
+        )}
       </Card>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        message={successMessage}
+      />
     </SignInContainer>
   );
 }

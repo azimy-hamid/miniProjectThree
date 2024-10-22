@@ -19,9 +19,6 @@ const navigateBasedOnRole = (role) => {
 };
 
 const nonprotectedRoutes = ({ isAuthenticated, userRole }) => {
-  console.log("isAuthenticated:", isAuthenticated);
-  console.log("userRole:", userRole);
-
   return [
     <Route
       path="/signin"

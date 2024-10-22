@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
 
-import Dashboard from "../pages/dashboard/Dashboard";
+import SuperDashboard from "../pages/dashboard/SuperDashboard";
 import SignInPage from "../../../home/components/signIn/signInPage";
 import CreateAdminPage from "../pages/dashboard/CreateAdminPage";
 
@@ -14,7 +14,7 @@ const navigateBasedOnRole = (role) => {
     case "student":
       return <Navigate to="/student/dashboard" />;
     case "super":
-      return <Dashboard />;
+      return <SuperDashboard />;
     default:
       return <Navigate to="/" />; // Default fallback
   }
