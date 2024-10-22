@@ -1,6 +1,7 @@
 import express, { response } from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes/userRoutes.js";
+import roleRoutes from "./routes/userRoleRoutes/userRoleRoutes.js";
 import adminRoutes from "./routes/adminRoutes/adminRoutes.js";
 import studentRoutes from "./routes/studentRoutes/studentRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes/teacherRoutes.js";
@@ -43,6 +44,7 @@ app.get("/", authenticate(["admin"]), async (req, res) => {
 app.post("/authanticate/verifyToken", verifyToken);
 
 app.use("/user", userRoutes);
+app.use("/role", roleRoutes);
 app.use("/admin", adminRoutes);
 app.use("/student", studentRoutes);
 app.use("/teacher", teacherRoutes);

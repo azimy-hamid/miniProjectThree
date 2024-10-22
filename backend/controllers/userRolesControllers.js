@@ -61,10 +61,10 @@ const getAllRoles = async (req, res) => {
 
 // READ a single user role by ID
 const getRoleById = async (req, res) => {
-  const { id } = req.params;
+  const { roleId } = req.params;
 
   try {
-    const role = await User_Roles.findByPk(id);
+    const role = await User_Roles.findByPk(roleId);
 
     if (!role || role.is_deleted) {
       return res.status(404).json({ getRoleByIdMessage: "Role not found." });
@@ -85,7 +85,11 @@ const getRoleByName = async (req, res) => {
   const { name } = req.params;
 
   try {
-    const role = await User_Roles.findByPk(name);
+    const role = await User_Roles.findOne({
+      where: {
+        role_name: name,
+      },
+    });
 
     if (!role || role.is_deleted) {
       return res.status(404).json({ getRoleByNameMessage: "Role not found." });
@@ -103,11 +107,11 @@ const getRoleByName = async (req, res) => {
 
 // UPDATE a user role by ID
 const updateRole = async (req, res) => {
-  const { id } = req.params;
+  const { roleId } = req.params;
   const { role_name, role_description } = req.body;
 
   try {
-    const role = await User_Roles.findByPk(id);
+    const role = await User_Roles.findByPk(roleId);
 
     if (!role || role.is_deleted) {
       return res.status(404).json({ updateRoleMessage: "Role not found." });
@@ -133,10 +137,10 @@ const updateRole = async (req, res) => {
 
 // DELETE a user role by ID (soft delete)
 const deleteRole = async (req, res) => {
-  const { id } = req.params;
+  const { roleId } = req.params;
 
   try {
-    const role = await User_Roles.findByPk(id);
+    const role = await User_Roles.findByPk(roleId);
 
     if (!role || role.is_deleted) {
       return res.status(404).json({ deleteRoleMessage: "Role not found." });

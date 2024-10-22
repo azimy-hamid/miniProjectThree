@@ -91,9 +91,10 @@ const signup = async (req, res) => {
     return res.status(200).json({ token, role: role.role_name });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ signupUserMessage: "Server error. Please try again later." });
+    return res.status(500).json({
+      signupUserMessage: "Server error. Please try again later.",
+      signupUserCatchBlkErr: error,
+    });
   }
 };
 
@@ -157,8 +158,6 @@ const login = async (req, res) => {
       .json({ loginUserMessage: "Server error. Please try again later." });
   }
 };
-
-export default login;
 
 // Update User Controller
 const updateUser = async (req, res) => {
@@ -368,6 +367,76 @@ const getAllUserRoleAssignment = async (req, res) => {
   }
 };
 
+// Check User Existence Controller
+const checkUserExists = async (req, res) => {
+  const { email, username } = req.params;
+
+  // Validate input
+  if (!email && !username) {
+    return res.status(400).json({
+      userExists: false,
+      message: "At least one of email or username is required.",
+    });
+  }
+
+  try {
+    // Initialize flags for existence
+    let emailExists = false;
+    let usernameExists = false;
+
+    // Check for email existence
+    if (email) {
+      const emailCheck = await Users.findOne({
+        where: {
+          email,
+          is_deleted: false, // Ensure we are checking only active users
+        },
+      });
+      if (emailCheck) {
+        emailExists = true;
+      }
+    }
+
+    // Check for username existence
+    if (username) {
+      const usernameCheck = await Users.findOne({
+        where: {
+          username,
+          is_deleted: false, // Ensure we are checking only active users
+        },
+      });
+      if (usernameCheck) {
+        usernameExists = true;
+      }
+    }
+
+    // Construct response based on the existence of email and username
+    if (emailExists && usernameExists) {
+      return res.status(200).json({
+        userExists: true,
+        checkUserExistsMessage: "Both email and username exist.",
+      });
+    } else if (emailExists || usernameExists) {
+      return res.status(200).json({
+        userExists: true,
+        checkUserExistsMessage: "Either email or username exists.",
+      });
+    } else {
+      return res.status(404).json({
+        userExists: false,
+        checkUserExistsMessage: "User does not exist.",
+      });
+    }
+  } catch (error) {
+    console.error("Error checking user existence:", error);
+    return res.status(500).json({
+      userExists: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
 export {
   signup,
   login,
@@ -375,4 +444,5 @@ export {
   deleteUser,
   recoverUser,
   getAllUserRoleAssignment,
+  checkUserExists,
 };

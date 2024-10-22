@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 // Create a new admin
 const createAdmin = async (req, res) => {
-  const { username, password, email, first_name, last_name, role } = req.body;
+  const { username, password, email, first_name, last_name } = req.body;
 
   // Validate input
   if (!username || !password || !email || !first_name || !last_name) {
@@ -41,7 +41,6 @@ const createAdmin = async (req, res) => {
       email_address: email,
       admin_first_name: first_name,
       admin_last_name: last_name,
-      role,
     });
     res
       .status(201)

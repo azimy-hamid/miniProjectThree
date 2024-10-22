@@ -1,6 +1,5 @@
 import express from "express";
 import * as userController from "../../controllers/usersController.js";
-import * as userRoleController from "../../controllers/userRolesControllers.js";
 
 const userRoutes = express.Router();
 
@@ -9,13 +8,9 @@ userRoutes.post("/login-user", userController.login);
 userRoutes.put("/update-user", userController.updateUser);
 userRoutes.delete("/delete-user", userController.deleteUser);
 userRoutes.put("/recover-user", userController.recoverUser);
-
-userRoutes.get("/get-all-roles", userRoleController.getAllRoles);
-
-userRoutes.post("/create-role", userRoleController.createRole);
 userRoutes.get(
-  "/get-all-user-role-assignment",
-  userController.getAllUserRoleAssignment
+  "/check-user-exists/:email/:username",
+  userController.checkUserExists
 );
 
 export default userRoutes;
