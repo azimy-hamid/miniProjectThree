@@ -1,12 +1,12 @@
 import React from "react";
 import SideMenu from "./components/SideMenu";
-import CreateAdmin from "./components/CreateAdminForm";
+import CreateTeacherForm from "./components/CreateTeacherForm";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "./components/Header";
 import { alpha } from "@mui/material/styles";
 
-const CreateAdminPage = () => {
+const CreateTeacherPage = () => {
   return (
     <>
       <Box sx={{ display: "flex", height: "100vh" }}>
@@ -32,7 +32,7 @@ const CreateAdminPage = () => {
           >
             <Header />
             <Box>
-              <CreateAdmin />
+              <CreateTeacherForm />
             </Box>
           </Stack>
         </Box>
@@ -41,4 +41,4 @@ const CreateAdminPage = () => {
   );
 };
 
-export default CreateAdminPage;
+export default CreateTeacherPage;

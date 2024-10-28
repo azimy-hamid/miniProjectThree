@@ -37,7 +37,6 @@ export default function SideMenu() {
       }}
     >
       <MenuContent />
-      <CardAlert />
       <Stack
         direction="row"
         sx={{

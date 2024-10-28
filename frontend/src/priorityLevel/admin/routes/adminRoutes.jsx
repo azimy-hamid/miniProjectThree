@@ -2,47 +2,73 @@ import React from "react";
 import { Route, Navigate } from "react-router-dom";
 
 import AdminDashboard from "../pages/dashboard/AdminDashboard";
-import CreateAdminPage from "../pages/dashboard/CreateAdminPage";
+import CreateTeacherPage from "../pages/dashboard/CreateTeacherPage";
+import TeacherOverviewPage from "../pages/dashboard/TeacherOverviewPage";
+import TeacherDetailsPage from "../pages/dashboard/TeacherDetailsPage";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
-    case "admin":
+    case "super":
       return <Navigate to="/admin/dashboard" />;
     case "teacher":
       return <Navigate to="/teacher/dashboard" />;
     case "student":
       return <Navigate to="/student/dashboard" />;
-    case "super":
-      return <SuperDashboard />;
+    case "admin":
+      return <AdminDashboard />;
     default:
       return <Navigate to="/" />; // Default fallback
   }
 };
 
-const roleAllowed = "super";
+const roleAllowed = "admin";
 
-const superRoutes = ({ isAuthenticated, userRole }) => {
+const adminRoutes = ({ isAuthenticated, userRole }) => {
   return [
     <Route
-      path="/super/dashboard"
+      path="/admin/dashboard"
       element={
         isAuthenticated ? navigateBasedOnRole(userRole) : <Navigate to="/" />
       }
-      key="super-dashboard"
+      key="admin-dashboard"
     />,
 
     <Route
-      path="/super/create-admin"
+      path="/admin/create-teacher"
       element={
         isAuthenticated && userRole === roleAllowed ? (
-          <CreateAdminPage />
+          <CreateTeacherPage />
         ) : (
           <Navigate to="/" />
         )
       }
-      key="super-dashboard"
+      key="admin-create-teacher-form"
+    />,
+
+    <Route
+      path="/admin/teacher-overview"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <TeacherOverviewPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-teacher-form"
+    />,
+
+    <Route
+      path="/admin/teacher-details"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <TeacherDetailsPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-teacher-form"
     />,
   ];
 };
 
-export default superRoutes;
+export default adminRoutes;

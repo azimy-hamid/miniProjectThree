@@ -422,7 +422,7 @@ const checkUserExists = async (req, res) => {
         checkUserExistsMessage: "Either email or username exists.",
       });
     } else {
-      return res.status(404).json({
+      return res.status(200).json({
         userExists: false,
         checkUserExistsMessage: "User does not exist.",
       });

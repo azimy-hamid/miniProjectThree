@@ -1,12 +1,15 @@
 import React from "react";
 import SideMenu from "./components/SideMenu";
-import CreateAdmin from "./components/CreateAdminForm";
+import CreateTeacherForm from "./components/CreateTeacherForm";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "./components/Header";
 import { alpha } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 
-const CreateAdminPage = () => {
+import AllTeachersTable from "./components/AllTeachersTable.jsx";
+
+const TeacherOverviewPage = () => {
   return (
     <>
       <Box sx={{ display: "flex", height: "100vh" }}>
@@ -23,7 +26,6 @@ const CreateAdminPage = () => {
           })}
         >
           <Stack
-            spacing={-10}
             sx={{
               alignItems: "stretch",
               mx: 3,
@@ -31,9 +33,7 @@ const CreateAdminPage = () => {
             }}
           >
             <Header />
-            <Box>
-              <CreateAdmin />
-            </Box>
+            <AllTeachersTable />
           </Stack>
         </Box>
       </Box>
@@ -41,4 +41,4 @@ const CreateAdminPage = () => {
   );
 };
 
-export default CreateAdminPage;
+export default TeacherOverviewPage;

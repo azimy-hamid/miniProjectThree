@@ -65,7 +65,6 @@ const getRoleByName = async (name) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Get Role by Name Error:", error);
     throw error.response?.data || error.message;
   }
 };

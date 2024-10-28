@@ -1,70 +1,129 @@
 import * as React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Stack from "@mui/material/Stack";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
-import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import Box from "@mui/material/Box";
+import { RichTreeView } from "@mui/x-tree-view/RichTreeView";
+import { useNavigate } from "react-router-dom";
 
-const mainListItems = [
-  { text: "Home", icon: <HomeRoundedIcon />, link: "/super/dashboard" },
+const SIDEBAR_ITEMS = [
   {
-    text: "Create Admin",
-    icon: <AddCircleIcon />,
-    link: "/super/create-admin",
+    id: "dashboard",
+    label: "Dashboard",
+    children: [
+      { id: "overview", label: "Overview", link: "/admin/dashboard" },
+      { id: "analytics", label: "Analytics", link: "/admin/analytics" },
+    ],
   },
   {
-    text: "Create Teacher",
-    icon: <AddCircleIcon />,
-    link: "/super/create-teacher",
+    id: "teacher-management",
+    label: "Teacher Management",
+    children: [
+      {
+        id: "teacher-overview",
+        label: "Teacher Overview",
+        link: "/admin/teacher-overview",
+      },
+      {
+        id: "create-teacher",
+        label: "Create Teacher",
+        link: "/admin/create-teacher",
+      },
+      {
+        id: "teacher-list",
+        label: "Teacher List",
+        link: "/admin/teacher-list",
+      },
+    ],
   },
   {
-    text: "Create Admin",
-    icon: <AddCircleIcon />,
-    link: "/super/create-student",
+    id: "student-management",
+    label: "Student Management",
+    children: [
+      {
+        id: "create-student",
+        label: "Create Student",
+        link: "/admin/create-student",
+      },
+      {
+        id: "student-list",
+        label: "Student List",
+        link: "/admin/student-list",
+      },
+    ],
   },
-];
-
-const secondaryListItems = [
-  { text: "Settings", icon: <SettingsRoundedIcon />, link: "/settings" },
-  { text: "About", icon: <InfoRoundedIcon />, link: "/about" },
-  { text: "Feedback", icon: <HelpRoundedIcon />, link: "/feedback" },
+  {
+    id: "class-management",
+    label: "Class Management",
+    children: [
+      {
+        id: "class-schedule",
+        label: "Class Schedule",
+        link: "/admin/class-schedule",
+      },
+      {
+        id: "manage-classes",
+        label: "Manage Classes",
+        link: "/admin/manage-classes",
+      },
+    ],
+  },
+  {
+    id: "fees-management",
+    label: "Fees Management",
+    children: [
+      { id: "view-fees", label: "View Fees", link: "/admin/view-fees" },
+      { id: "manage-fees", label: "Manage Fees", link: "/admin/manage-fees" },
+    ],
+  },
+  {
+    id: "subject-management",
+    label: "Subject Management",
+    children: [
+      {
+        id: "view-subject",
+        label: "View Subject",
+        link: "/admin/view-subject",
+      },
+      {
+        id: "manage-subject",
+        label: "Manage Subject",
+        link: "/admin/manage-subject",
+      },
+    ],
+  },
 ];
 
 export default function MenuContent() {
-  return (
-    <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
-      <List dense>
-        {mainListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              component={Link}
-              to={item.link}
-              selected={index === 0}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+  const navigate = useNavigate();
 
-      <List dense>
-        {secondaryListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton component={Link} to={item.link}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Stack>
+  const findLinkById = (id, items) => {
+    for (const item of items) {
+      if (item.id === id) {
+        return item.link; // Return the link if the id matches
+      }
+      if (item.children) {
+        const link = findLinkById(id, item.children); // Recursively search in children
+        if (link) {
+          return link; // Return the found link from children
+        }
+      }
+    }
+    return null; // Return null if no link found
+  };
+
+  const handleItemClick = (event, itemId) => {
+    const link = findLinkById(itemId, SIDEBAR_ITEMS); // Find the link by id
+    if (link) {
+      navigate(link); // Navigate to the found link
+    }
+  };
+
+  return (
+    <Box sx={{ minHeight: 352, minWidth: 250, padding: 2 }}>
+      <RichTreeView
+        items={SIDEBAR_ITEMS}
+        onItemClick={handleItemClick} // Use the modified click handler
+        getItemLabel={(item) => item.label} // Ensure the label is displayed correctly
+        getItemId={(item) => item.id} // Ensure each item has a unique ID
+      />
+    </Box>
   );
 }

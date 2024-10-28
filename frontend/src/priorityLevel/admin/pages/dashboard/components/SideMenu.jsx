@@ -15,10 +15,13 @@ const Drawer = styled(MuiDrawer)({
   width: drawerWidth,
   flexShrink: 0,
   boxSizing: "border-box",
-  mt: 10,
   [`& .${drawerClasses.paper}`]: {
     width: drawerWidth,
     boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "100vh",
   },
 });
 
@@ -33,8 +36,12 @@ export default function SideMenu() {
         },
       }}
     >
-      <MenuContent />
-      <CardAlert />
+      {/* Top Section */}
+      <Box>
+        <MenuContent />
+      </Box>
+
+      {/* Bottom Section */}
       <Stack
         direction="row"
         sx={{

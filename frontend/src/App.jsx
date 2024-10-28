@@ -7,10 +7,12 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import AppTheme from "./theme/AppTheme.jsx";
 import HomeApp from "./home/HomeApp.jsx";
-import homeRoutes from "./home/homeRoutes.jsx";
-import superRoutes from "./priorityLevel/super/routes/superRoutes.jsx";
 import NotFound from "./utils/NotFound.jsx";
 import LoadingSpinner from "./utils/LoadingSpinner.jsx";
+
+import homeRoutes from "./home/homeRoutes.jsx";
+import superRoutes from "./priorityLevel/super/routes/superRoutes.jsx";
+import adminRoutes from "./priorityLevel/admin/routes/adminRoutes.jsx";
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL}/authanticate/verifyToken`;
 
@@ -98,6 +100,10 @@ function App() {
         ))}
 
         {superRoutes({ isAuthenticated, userRole }).map((route, index) => (
+          <React.Fragment key={index}>{route}</React.Fragment>
+        ))}
+
+        {adminRoutes({ isAuthenticated, userRole }).map((route, index) => (
           <React.Fragment key={index}>{route}</React.Fragment>
         ))}
 

@@ -14,9 +14,6 @@ const signupUser = async (userData) => {
       headers: { "Content-Type": "application/json" },
     });
     const data = response.data;
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-    }
     return data;
   } catch (error) {
     console.error("Signup Error:", error);

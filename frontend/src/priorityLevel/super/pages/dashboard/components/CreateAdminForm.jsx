@@ -14,6 +14,7 @@ import {
   signupUser,
   checkUserExists,
 } from "../../../../../services/userAuth.js";
+import { getRoleByName } from "../../../../../services/roleEndpoints.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -37,6 +38,14 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function CreateAdmin(props) {
+  // Input states
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+
+  // Error states
   const [usernameError, setUsernameError] = React.useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
@@ -56,12 +65,6 @@ export default function CreateAdmin(props) {
     const isValid = validateInputs(); // Validate inputs
     if (!isValid) return; // Stop if inputs are invalid
 
-    const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const first_name = document.getElementById("first_name").value;
-    const last_name = document.getElementById("last_name").value;
-
     try {
       // Check if the user exists
       const userCheckResponse = await checkUserExists(username, email);
@@ -71,12 +74,20 @@ export default function CreateAdmin(props) {
         return; // Stop execution if user exists
       }
 
+      const roleCheckResponse = await getRoleByName("admin");
+      console.log(roleCheckResponse.getRoleByNameMessage);
+
+      if (roleCheckResponse.getRoleByNameMessage) {
+        setGeneralError(roleCheckResponse.getRoleByNameMessage);
+        return; // Stop execution if role doesn't exists
+      }
+
       const adminData = {
         username,
         email,
         password,
-        first_name,
-        last_name,
+        first_name: firstName,
+        last_name: lastName,
       }; // Prepare data for admin creation
 
       const adminUserData = {
@@ -101,15 +112,12 @@ export default function CreateAdmin(props) {
     } catch (error) {
       let errorMsg;
 
-      if (error.response?.data?.createAdminCatchBlkErr) {
-        errorMsg = error.response.data.createAdminCatchBlkErr;
-        console.log(error.response.data.createAdminCatchBlkErr);
-      } else if (error.response?.data?.signupUserCatchBlkErr) {
-        errorMsg = error.response.data.signupUserCatchBlkErr;
-      } else if (error.response?.data?.signupUserMessage) {
+      if (error.response?.data?.signupUserMessage) {
         errorMsg = error.response.data.signupUserMessage;
       } else if (error.response?.data?.createAdminMessage) {
         errorMsg = error.response.data.createAdminMessage;
+      } else if (error.response?.data?.getRoleByNameMessage) {
+        errorMsg = error.response.data.getRoleByNameMessage;
       } else {
         errorMsg = "Admin creation failed. Please try again.";
       }
@@ -120,19 +128,13 @@ export default function CreateAdmin(props) {
   };
 
   const validateInputs = () => {
-    const username = document.getElementById("username");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const first_name = document.getElementById("first_name");
-    const last_name = document.getElementById("last_name");
-
     let isValid = true;
 
     // Reset general error message
     setGeneralError("");
 
     // Validate Username
-    if (!username.value) {
+    if (!username) {
       setUsernameError(true);
       setUsernameErrorMessage("Username is required.");
       isValid = false;
@@ -142,7 +144,7 @@ export default function CreateAdmin(props) {
     }
 
     // Validate Email
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -152,7 +154,7 @@ export default function CreateAdmin(props) {
     }
 
     // Validate Password
-    if (!password.value || password.value.length < 8) {
+    if (!password || password.length < 8) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 8 characters long.");
       isValid = false;
@@ -162,7 +164,7 @@ export default function CreateAdmin(props) {
     }
 
     // Validate First Name
-    if (!first_name.value) {
+    if (!firstName) {
       setFirstNameError(true);
       setFirstNameErrorMessage("First name is required.");
       isValid = false;
@@ -172,7 +174,7 @@ export default function CreateAdmin(props) {
     }
 
     // Validate Last Name
-    if (!last_name.value) {
+    if (!lastName) {
       setLastNameError(true);
       setLastNameErrorMessage("Last name is required.");
       isValid = false;
@@ -206,11 +208,11 @@ export default function CreateAdmin(props) {
           }}
         >
           <FormControl>
-            <FormLabel htmlFor="username">Username</FormLabel>
+            <FormLabel htmlFor="admin-username">Username</FormLabel>
             <TextField
               error={usernameError}
               helperText={usernameErrorMessage}
-              id="username"
+              id="admin-username"
               type="text"
               name="username"
               placeholder="your_username"
@@ -218,14 +220,16 @@ export default function CreateAdmin(props) {
               fullWidth
               variant="outlined"
               color={usernameError ? "error" : "primary"}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)} // Update state
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="admin-email">Email</FormLabel>
             <TextField
               error={emailError}
               helperText={emailErrorMessage}
-              id="email"
+              id="admin-email"
               type="email"
               name="email"
               placeholder="your@email.com"
@@ -234,14 +238,16 @@ export default function CreateAdmin(props) {
               fullWidth
               variant="outlined"
               color={emailError ? "error" : "primary"}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)} // Update state
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="first_name">First Name</FormLabel>
+            <FormLabel htmlFor="admin-first_name">First Name</FormLabel>
             <TextField
               error={firstNameError}
               helperText={firstNameErrorMessage}
-              id="first_name"
+              id="admin-first_name"
               type="text"
               name="first_name"
               placeholder="John"
@@ -249,14 +255,16 @@ export default function CreateAdmin(props) {
               fullWidth
               variant="outlined"
               color={firstNameError ? "error" : "primary"}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)} // Update state
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="last_name">Last Name</FormLabel>
+            <FormLabel htmlFor="admin-last_name">Last Name</FormLabel>
             <TextField
               error={lastNameError}
               helperText={lastNameErrorMessage}
-              id="last_name"
+              id="admin-last_name"
               type="text"
               name="last_name"
               placeholder="Doe"
@@ -264,39 +272,49 @@ export default function CreateAdmin(props) {
               fullWidth
               variant="outlined"
               color={lastNameError ? "error" : "primary"}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)} // Update state
             />
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
+            <FormLabel htmlFor="admin-password">Password</FormLabel>
             <TextField
               error={passwordError}
               helperText={passwordErrorMessage}
-              id="password"
+              id="admin-password"
               type="password"
               name="password"
+              placeholder="********"
+              autoComplete="new-password"
               required
               fullWidth
               variant="outlined"
               color={passwordError ? "error" : "primary"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} // Update state
             />
           </FormControl>
-          <Button variant="contained" type="submit" fullWidth>
+
+          {generalError && (
+            <Typography
+              color="error"
+              variant="body2"
+              sx={{ fontSize: "0.9rem" }}
+            >
+              {generalError}
+            </Typography>
+          )}
+          <Button type="submit" variant="contained" color="primary" fullWidth>
             Create Admin
           </Button>
         </Box>
-        {successMessage && (
-          <Typography color="success.main">{successMessage}</Typography>
-        )}{" "}
-        {/* Inline message */}
-        {generalError && (
-          <Typography color="error.main">{generalError}</Typography>
-        )}
       </Card>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        message={successMessage}
+        message={successMessage} // Show success message
       />
     </SignInContainer>
   );

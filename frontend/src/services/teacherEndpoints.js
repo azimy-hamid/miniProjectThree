@@ -4,17 +4,14 @@ const API_URL = `${import.meta.env.VITE_API_BASE_URL}/teacher`;
 
 const createTeacher = async (userData) => {
   try {
+    const token = localStorage.getItem("token");
+
     const response = await axios.post(`${API_URL}/create-teacher`, userData, {
       headers: { "Content-Type": "application/json" },
+      Authorization: `Bearer ${token}`,
     });
 
     const data = response.data;
-    if (data.token) {
-      localStorage.setItem("token", data.token); // Save token to localStorage
-    }
-    if (data.role) {
-      localStorage.setItem("role", data.role); // Save role to localStorage
-    }
 
     return data;
   } catch (error) {
@@ -23,4 +20,22 @@ const createTeacher = async (userData) => {
   }
 };
 
-export { createTeacher };
+const getAllTeachers = async (userData) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(`${API_URL}/get-all-teachers`, {
+      headers: { "Content-Type": "application/json" },
+      Authorization: `Bearer ${token}`,
+    });
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting all teachers:", error);
+    throw error;
+  }
+};
+
+export { createTeacher, getAllTeachers };

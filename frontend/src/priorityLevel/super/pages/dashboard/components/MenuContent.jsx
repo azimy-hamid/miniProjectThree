@@ -31,12 +31,6 @@ const mainListItems = [
   },
 ];
 
-const secondaryListItems = [
-  { text: "Settings", icon: <SettingsRoundedIcon />, link: "/settings" },
-  { text: "About", icon: <InfoRoundedIcon />, link: "/about" },
-  { text: "Feedback", icon: <HelpRoundedIcon />, link: "/feedback" },
-];
-
 export default function MenuContent() {
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
@@ -48,17 +42,6 @@ export default function MenuContent() {
               to={item.link}
               selected={index === 0}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-
-      <List dense>
-        {secondaryListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton component={Link} to={item.link}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>

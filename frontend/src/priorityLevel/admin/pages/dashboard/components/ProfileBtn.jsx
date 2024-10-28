@@ -13,7 +13,7 @@ import {
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { logout } from "../../../../../services/userAuth.js";
+import { logoutUser } from "../../../../../services/userAuth.js";
 
 const ProfileMenu = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const ProfileMenu = () => {
   };
 
   const handleConfirmLogout = () => {
-    logout();
+    logoutUser();
     window.location.href = "/";
     closeLogoutDialog();
   };

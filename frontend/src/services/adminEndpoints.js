@@ -12,13 +12,6 @@ const createAdmin = async (userData) => {
     });
 
     const data = response.data;
-    if (data.token) {
-      localStorage.setItem("token", data.token); // Save token to localStorage
-    }
-    if (data.role) {
-      localStorage.setItem("role", data.role); // Save role to localStorage
-    }
-
     return data;
   } catch (error) {
     console.error("Error logging in:", error);
