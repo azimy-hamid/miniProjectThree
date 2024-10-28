@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { text } from "express";
 
 const User_Roles = sequelize.define(
   "User_Roles",
@@ -11,7 +10,7 @@ const User_Roles = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
     },
     role_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("student", "teacher", "admin", "super"),
       allowNull: false,
       unique: true,
     },
@@ -26,6 +25,29 @@ const User_Roles = sequelize.define(
   {
     tableName: "user_roles", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
+    hooks: {
+      afterSync: async () => {
+        const defaultRoles = [
+          { role_name: "student", role_description: "Regular student role" },
+          { role_name: "teacher", role_description: "Regular teacher role" },
+          {
+            role_name: "admin",
+            role_description: "Administrator with full access",
+          },
+          {
+            role_name: "super",
+            role_description: "Super user with elevated permissions",
+          },
+        ];
+
+        for (const role of defaultRoles) {
+          await User_Roles.findOrCreate({
+            where: { role_name: role.role_name },
+            defaults: role,
+          });
+        }
+      },
+    },
   }
 );
 

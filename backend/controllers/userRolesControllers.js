@@ -22,7 +22,7 @@ const createRole = async (req, res) => {
 
     // Create a new role
     const newRole = await User_Roles.create({
-      role_name,
+      role_name: role_name.toLowerCase(),
       role_description,
     });
 

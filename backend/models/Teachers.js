@@ -53,7 +53,7 @@ const Teachers = sequelize.define(
         "sunday",
         "weekdays", // Monday to Friday
         "weekends", // Saturday, Sunday
-        "full Week" // All days
+        "full week" // All days
       ),
       allowNull: false,
       validate: {
