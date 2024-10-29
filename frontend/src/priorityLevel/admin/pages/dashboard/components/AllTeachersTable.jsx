@@ -30,7 +30,13 @@ export default function AllTeachersTable() {
       field: "dob",
       headerName: "Date of Birth",
       flex: 1,
-      valueGetter: (params) => new Date(params.value).toLocaleDateString(),
+      valueGetter: (dob) => {
+        if (!dob) return ""; // Return an empty string if dob is undefined
+        const date = new Date(dob);
+        return date.toLocaleDateString("en-AU", {
+          timeZone: "Australia/Perth",
+        });
+      },
     },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "phone", headerName: "Phone", flex: 1 },
@@ -38,7 +44,13 @@ export default function AllTeachersTable() {
       field: "join_date",
       headerName: "Join Date",
       flex: 1,
-      valueGetter: (params) => new Date(params.value).toLocaleDateString(),
+      valueGetter: (joinDate) => {
+        if (!joinDate) return ""; // Return an empty string if join_date is undefined
+        const date = new Date(joinDate);
+        return date.toLocaleDateString("en-AU", {
+          timeZone: "Australia/Perth",
+        });
+      },
     },
     { field: "working_days", headerName: "Working Days", flex: 1 },
     {

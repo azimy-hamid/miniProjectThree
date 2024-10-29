@@ -8,14 +8,24 @@ import {
   Typography,
   Stack,
   Card as MuiCard,
-  MenuItem,
-  Select,
   Grid,
   Snackbar,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  Tooltip,
 } from "@mui/material";
+
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import { styled } from "@mui/material/styles";
 import { createTeacher } from "../../../../../services/teacherEndpoints.js";
-import { signupUser } from "../../../../../services/userAuth.js";
+import {
+  signupUser,
+  checkUserExists,
+} from "../../../../../services/userAuth.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -30,7 +40,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const CreateTeacherFormContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
   padding: theme.spacing(2),
   marginTop: theme.spacing(18),
@@ -45,7 +55,7 @@ export default function CreateTeacherForm() {
     email: "",
     phone: "",
     join_date: "",
-    working_days: "",
+    working_days: [], // Change to array
     password: "",
     username: "",
   });
@@ -63,6 +73,16 @@ export default function CreateTeacherForm() {
     }));
   };
 
+  const handleCheckboxChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => {
+      const workingDays = prevData.working_days.includes(value)
+        ? prevData.working_days.filter((day) => day !== value)
+        : [...prevData.working_days, value];
+      return { ...prevData, working_days: workingDays };
+    });
+  };
+
   const validateInputs = () => {
     const newErrors = {};
     const requiredFields = [
@@ -71,7 +91,6 @@ export default function CreateTeacherForm() {
       "gender",
       "dob",
       "email",
-      "working_days",
       "password",
       "username",
     ];
@@ -91,6 +110,10 @@ export default function CreateTeacherForm() {
         "Password must be at least 8 characters long, contain uppercase and lowercase letters, and a special character.";
     }
 
+    if (formData.working_days.length === 0) {
+      newErrors.working_days = "At least one working day must be selected.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -98,6 +121,16 @@ export default function CreateTeacherForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateInputs()) return;
+
+    const userCheckResponse = await checkUserExists(
+      formData.username,
+      formData.email
+    );
+
+    if (userCheckResponse.userExists) {
+      setGeneralError(userCheckResponse.checkUserExistsMessage);
+      return; // Stop execution if user exists
+    }
 
     try {
       const teacherResponse = await createTeacher({
@@ -108,7 +141,7 @@ export default function CreateTeacherForm() {
         email: formData.email,
         phone: formData.phone || null,
         join_date: formData.join_date || null,
-        working_days: formData.working_days,
+        working_days: formData.working_days.join(","),
       });
 
       if (teacherResponse?.newTeacher) {
@@ -133,7 +166,7 @@ export default function CreateTeacherForm() {
             email: "",
             phone: "",
             join_date: "",
-            working_days: "",
+            working_days: [], // Reset the array
             password: "",
             username: "",
           });
@@ -151,7 +184,10 @@ export default function CreateTeacherForm() {
   };
 
   return (
-    <SignInContainer direction="column" justifyContent="space-between">
+    <CreateTeacherFormContainer
+      direction="column"
+      justifyContent="space-between"
+    >
       <Card variant="outlined">
         <Typography component="h1" variant="h4">
           Create Teacher
@@ -180,7 +216,25 @@ export default function CreateTeacherForm() {
             ].map((key) => (
               <Grid item xs={12} sm={6} key={key}>
                 <FormControl fullWidth>
-                  <FormLabel htmlFor={key}>{key.replace(/_/g, " ")}</FormLabel>
+                  <FormLabel htmlFor={key}>
+                    {key.replace(/_/g, " ")}
+                    {key === "password" && (
+                      <Tooltip
+                        title="Password must contain at least one capital letter, one number, and one special character."
+                        arrow
+                      >
+                        <span style={{ marginLeft: 4 }}>
+                          <InfoOutlinedIcon
+                            style={{
+                              verticalAlign: "middle",
+                              fontSize: "1rem",
+                            }}
+                          />{" "}
+                          {/* Use Info icon */}
+                        </span>
+                      </Tooltip>
+                    )}
+                  </FormLabel>
                   <TextField
                     error={!!errors[key]}
                     helperText={errors[key]}
@@ -203,7 +257,7 @@ export default function CreateTeacherForm() {
               </Grid>
             ))}
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="gender">Gender</FormLabel>
                 <Select
@@ -227,18 +281,10 @@ export default function CreateTeacherForm() {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
-                <FormLabel htmlFor="working_days">Working Days</FormLabel>
-                <Select
-                  id="working_days"
-                  name="working_days"
-                  value={formData.working_days}
-                  onChange={handleChange}
-                  error={!!errors.working_days}
-                  displayEmpty
-                >
-                  <MenuItem value="">Select working days</MenuItem>
+                <FormLabel>Working Days</FormLabel>
+                <Grid container spacing={2}>
                   {[
                     "monday",
                     "tuesday",
@@ -247,18 +293,26 @@ export default function CreateTeacherForm() {
                     "friday",
                     "saturday",
                     "sunday",
-                    "weekdays",
-                    "weekends",
-                    "full week",
                   ].map((day) => (
-                    <MenuItem key={day} value={day}>
-                      {day.charAt(0).toUpperCase() + day.slice(1)}
-                    </MenuItem>
+                    <Grid item xs={4} key={day}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={formData.working_days.includes(day)}
+                            onChange={handleCheckboxChange}
+                            value={day}
+                          />
+                        }
+                        label={day.charAt(0).toUpperCase() + day.slice(1)}
+                      />
+                    </Grid>
                   ))}
-                </Select>
-                <Typography variant="caption" color="error">
-                  {errors.working_days}
-                </Typography>
+                </Grid>
+                {errors.working_days && (
+                  <Typography variant="caption" color="error">
+                    {errors.working_days}
+                  </Typography>
+                )}
               </FormControl>
             </Grid>
           </Grid>
@@ -282,6 +336,6 @@ export default function CreateTeacherForm() {
         onClose={() => setOpenSnackbar(false)}
         message={successMessage} // Show success message
       />
-    </SignInContainer>
+    </CreateTeacherFormContainer>
   );
 }
