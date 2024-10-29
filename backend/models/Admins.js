@@ -10,13 +10,17 @@ const Admins = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
+    admin_code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
     password_hash: {
-      // Indicating that this is a hashed password
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -44,8 +48,27 @@ const Admins = sequelize.define(
     },
   },
   {
-    tableName: "admins", // Ensures the table name is in snake_case
-    timestamps: true, // Automatically adds created_at and updated_at fields
+    tableName: "admins",
+    timestamps: true,
+    hooks: {
+      beforeValidate: async (admin) => {
+        // Find the latest admin_code in the database
+        const latestAdmin = await Admins.findOne({
+          order: [
+            [
+              sequelize.literal("CAST(SUBSTRING(admin_code, 5) AS UNSIGNED)"),
+              "DESC",
+            ],
+          ],
+        });
+
+        // Extract the numeric part and increment it
+        const lastNumber = latestAdmin
+          ? parseInt(latestAdmin.admin_code.split("-")[1], 10)
+          : 0;
+        admin.admin_code = `ADM-${lastNumber + 1}`;
+      },
+    },
   }
 );
 

@@ -9,6 +9,11 @@ const Students = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    student_code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
     student_first_name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -39,9 +44,6 @@ const Students = sequelize.define(
     phone: {
       type: DataTypes.STRING,
     },
-    section: {
-      type: DataTypes.STRING,
-    },
     join_date: {
       type: DataTypes.DATE,
     },
@@ -53,6 +55,25 @@ const Students = sequelize.define(
   {
     tableName: "students", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
+    hooks: {
+      beforeValidate: async (student) => {
+        // Find the latest student_code in the database
+        const latestStudent = await Students.findOne({
+          order: [
+            [
+              sequelize.literal("CAST(SUBSTRING(student_code, 5) AS UNSIGNED)"),
+              "DESC",
+            ],
+          ],
+        });
+
+        // Extract the numeric part and increment it
+        const lastNumber = latestStudent
+          ? parseInt(latestStudent.student_code.split("-")[1], 10)
+          : 0;
+        student.student_code = `STU-${lastNumber + 1}`;
+      },
+    },
   }
 );
 

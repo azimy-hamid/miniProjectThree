@@ -9,11 +9,24 @@ const Classrooms = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    classroom_code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
     capacity: {
       type: DataTypes.INTEGER,
     },
     room_type: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "lecture hall",
+        "laboratory",
+        "computer lab",
+        "library",
+        "art room",
+        "music room",
+        "study hall"
+      ),
     },
     description: {
       type: DataTypes.TEXT,
@@ -26,6 +39,27 @@ const Classrooms = sequelize.define(
   {
     tableName: "classrooms", // Name of the table in the database
     timestamps: true, // Automatically manage createdAt and updatedAt
+    hooks: {
+      beforeValidate: async (classroom) => {
+        // Find the latest classroom_code in the database
+        const latestClassroom = await Classrooms.findOne({
+          order: [
+            [
+              sequelize.literal(
+                "CAST(SUBSTRING(classroom_code, 5) AS UNSIGNED)"
+              ),
+              "DESC",
+            ],
+          ],
+        });
+
+        // Extract the numeric part and increment it
+        const lastNumber = latestClassroom
+          ? parseInt(latestClassroom.classroom_code.split("-")[1], 10)
+          : 0;
+        classroom.classroom_code = `CLS-${lastNumber + 1}`;
+      },
+    },
   }
 );
 

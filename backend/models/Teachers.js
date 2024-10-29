@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 
 const Teachers = sequelize.define(
@@ -8,6 +8,11 @@ const Teachers = sequelize.define(
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
+    },
+    teacher_code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
     },
     teacher_first_name: {
       type: DataTypes.STRING,
@@ -43,47 +48,61 @@ const Teachers = sequelize.define(
       type: DataTypes.DATE,
     },
     working_days: {
-      type: DataTypes.ENUM(
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-        "weekdays", // Monday to Friday
-        "weekends", // Saturday, Sunday
-        "full week" // All days
-      ),
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: {
-          args: [
-            [
-              "monday",
-              "tuesday",
-              "wednesday",
-              "thursday",
-              "friday",
-              "saturday",
-              "sunday",
-              "weekdays",
-              "weekends",
-              "full Week",
-            ],
-          ],
-          msg: "Working days must be one of the following: monday, tuesday, wednesday, thursday, friday, saturday, sunday, weekdays, weekends, or full week.",
+        isValidDays(value) {
+          const validDays = [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+          ];
+          const daysArray = value.split(",").map((day) => day.trim());
+
+          daysArray.forEach((day) => {
+            if (!validDays.includes(day)) {
+              throw new Error(
+                `Invalid day: ${day}. Valid options are: ${validDays.join(
+                  ", "
+                )}.`
+              );
+            }
+          });
         },
       },
     },
+
     is_deleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
   },
   {
-    tableName: "teachers", // Name of the table in the database
-    timestamps: true, // Automatically manage createdAt and updatedAt
+    tableName: "teachers",
+    timestamps: true,
+    hooks: {
+      beforeValidate: async (teacher) => {
+        // Find the latest teacher_code in the database
+        const latestTeacher = await Teachers.findOne({
+          order: [
+            [
+              sequelize.literal("CAST(SUBSTRING(teacher_code, 5) AS UNSIGNED)"),
+              "DESC",
+            ],
+          ],
+        });
+
+        // Extract the numeric part and increment it
+        const lastNumber = latestTeacher
+          ? parseInt(latestTeacher.teacher_code.split("-")[1], 10)
+          : 0;
+        teacher.teacher_code = `TEA-${lastNumber + 1}`;
+      },
+    },
   }
 );
 

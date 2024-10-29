@@ -1,8 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { v4 as uuidv4 } from "uuid";
-import Students from "./Students.js";
-import Teachers from "./Teachers.js";
 import Classrooms from "./Classrooms.js";
 
 const Subjects = sequelize.define(
@@ -13,9 +10,15 @@ const Subjects = sequelize.define(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    subject_code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
     subject_name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     classroom_id_fk: {
       type: DataTypes.UUID,
@@ -33,8 +36,27 @@ const Subjects = sequelize.define(
     },
   },
   {
-    tableName: "subjects", // Name of the table in the database
-    timestamps: true, // Automatically manage createdAt and updatedAt
+    tableName: "subjects",
+    timestamps: true,
+    hooks: {
+      beforeValidate: async (subject) => {
+        // Find the latest subject_code in the database
+        const latestSubject = await Subjects.findOne({
+          order: [
+            [
+              sequelize.literal("CAST(SUBSTRING(subject_code, 5) AS UNSIGNED)"),
+              "DESC",
+            ],
+          ],
+        });
+
+        // Extract the numeric part and increment it
+        const lastNumber = latestSubject
+          ? parseInt(latestSubject.subject_code.split("-")[1], 10)
+          : 0;
+        subject.subject_code = `SUB-${lastNumber + 1}`;
+      },
+    },
   }
 );
 
