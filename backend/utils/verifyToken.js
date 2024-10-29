@@ -70,6 +70,12 @@ export const verifyToken = async (req, res) => {
       .status(200)
       .json({ success: true, roles: userRoles.map((role) => role.role_name) });
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json({ success: "expired", message: "Token has expired." });
+    }
+
     console.error("Token verification error:", error);
     return res.status(401).json({ success: false, message: "Invalid token." });
   }

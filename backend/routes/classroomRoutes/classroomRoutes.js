@@ -25,4 +25,9 @@ classroomRoutes.put(
   classroomControllers.recoverClassroom
 );
 
+classroomRoutes.get(
+  "/get-all-classroom-codes",
+  classroomControllers.getAllClassroomCodes
+);
+
 export default classroomRoutes;

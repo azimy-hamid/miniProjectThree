@@ -3,10 +3,10 @@ import Classrooms from "../models/Classrooms.js"; // Include related model if ne
 
 // Create a new subject
 const createSubject = async (req, res) => {
-  const { subject_name, classroom_id_fk, section } = req.body;
+  const { subject_name, classroom_code, section } = req.body;
 
   // Validate required fields
-  if (!subject_name || !classroom_id_fk) {
+  if (!subject_name || !classroom_code) {
     return res.status(400).json({
       createSubjectMessage: "Subject Name and Classroom ID are required.",
     });
@@ -14,7 +14,7 @@ const createSubject = async (req, res) => {
 
   // Validate that the classroom exists
   const classroom = await Classrooms.findOne({
-    where: { classroom_id_pk: classroom_id_fk },
+    where: { classroom_code: classroom_code },
     paranoid: false, // Include soft-deleted records if necessary
   });
 
@@ -27,7 +27,7 @@ const createSubject = async (req, res) => {
   try {
     const newSubject = await Subjects.create({
       subject_name,
-      classroom_id_fk,
+      classroom_id_fk: classroom.classroom_id_pk,
       section,
     });
 

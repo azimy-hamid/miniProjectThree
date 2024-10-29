@@ -230,6 +230,36 @@ const recoverTeacher = async (req, res) => {
   }
 };
 
+// Get Single Teacher by ID Controller with Subjects
+const getSubjectsForATeacher = async (req, res) => {
+  const { teacherId } = req.params;
+
+  try {
+    const teacher = await Teachers.findOne({
+      where: { teacher_id_pk: teacherId, is_deleted: false },
+      include: [
+        {
+          model: Subjects,
+          through: { attributes: [] }, // Exclude join table data from response
+        },
+      ],
+    });
+
+    if (!teacher) {
+      return res.status(404).json({ getTeacherMessage: "Teacher not found!" });
+    }
+
+    return res.status(200).json(teacher);
+  } catch (error) {
+    console.error("Error fetching teacher:", error);
+    return res.status(500).json({
+      getTeacherMessage: "Server error. Please try again later.",
+      getAllTeacherCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
 export {
   createTeacher,
   getAllTeachers,
@@ -237,4 +267,5 @@ export {
   updateTeacher,
   deleteTeacher,
   recoverTeacher,
+  getSubjectsForATeacher,
 };

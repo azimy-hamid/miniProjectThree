@@ -183,6 +183,31 @@ const recoverClassroom = async (req, res) => {
   }
 };
 
+// Get All Classroom Codes
+const getAllClassroomCodes = async (req, res) => {
+  try {
+    // Fetch all classroom codes
+    const classrooms = await Classrooms.findAll({
+      attributes: ["classroom_code"], // Specify to retrieve only classroom_code
+      where: { is_deleted: false }, // Filter to include only non-deleted classrooms
+    });
+
+    // Extract classroom codes from the retrieved classrooms
+    const classroomCodes = classrooms.map(
+      (classroom) => classroom.classroom_code
+    );
+
+    return res.status(200).json(classroomCodes);
+  } catch (error) {
+    console.error("Error fetching classroom codes:", error);
+    return res.status(500).json({
+      getClassroomCodesMessage: "Server error. Please try again later.",
+      getAllClassroomCodesCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
 // Exporting all controllers
 export {
   createClassroom,
@@ -191,4 +216,5 @@ export {
   updateClassroom,
   deleteClassroom,
   recoverClassroom,
+  getAllClassroomCodes,
 };

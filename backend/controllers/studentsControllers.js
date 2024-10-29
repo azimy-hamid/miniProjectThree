@@ -10,7 +10,6 @@ const createStudent = async (req, res) => {
     dob,
     email,
     phone,
-    section,
     join_date,
   } = req.body;
 
@@ -44,7 +43,6 @@ const createStudent = async (req, res) => {
       dob,
       email,
       phone: phone || null, // Optional field
-      section: section || null, // Optional field
       join_date: join_date || null, // Optional field
     });
 
