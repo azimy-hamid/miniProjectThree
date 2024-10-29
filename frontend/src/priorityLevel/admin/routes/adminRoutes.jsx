@@ -5,6 +5,9 @@ import AdminDashboard from "../pages/dashboard/AdminDashboard";
 import CreateTeacherPage from "../pages/dashboard/CreateTeacherPage";
 import TeacherOverviewPage from "../pages/dashboard/TeacherOverviewPage";
 import TeacherDetailsPage from "../pages/dashboard/TeacherDetailsPage";
+import CreateStudentPage from "../pages/dashboard/CreateStudentPage";
+import CreateClassroomPage from "../pages/dashboard/CreateClassroomPage";
+import CreateSubjectPage from "../pages/dashboard/CreateSubjectPage";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
@@ -25,6 +28,7 @@ const roleAllowed = "admin";
 
 const adminRoutes = ({ isAuthenticated, userRole }) => {
   return [
+    // admin dashboard routes
     <Route
       path="/admin/dashboard"
       element={
@@ -32,7 +36,7 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
       }
       key="admin-dashboard"
     />,
-
+    // teacher routes
     <Route
       path="/admin/create-teacher"
       element={
@@ -62,6 +66,47 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
       element={
         isAuthenticated && userRole === roleAllowed ? (
           <TeacherDetailsPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-teacher-form"
+    />,
+
+    // student routes
+
+    <Route
+      path="/admin/create-student"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <CreateStudentPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-teacher-form"
+    />,
+
+    // classroom routes
+
+    <Route
+      path="/admin/create-classroom"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <CreateClassroomPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-teacher-form"
+    />,
+
+    // subject routes
+    <Route
+      path="/admin/create-subject"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <CreateSubjectPage />
         ) : (
           <Navigate to="/" />
         )

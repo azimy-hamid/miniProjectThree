@@ -2,7 +2,7 @@ import "./App.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import React, { useEffect, useState } from "react";
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, Snackbar, Alert } from "@mui/material"; // Import Snackbar and Alert
 import { Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import AppTheme from "./theme/AppTheme.jsx";
@@ -27,21 +27,21 @@ function getDashboardRedirectPath(role) {
     case "super":
       return "/super/dashboard";
     default:
-      <NotFound />;
+      return "/not-found"; // Return a valid path or use a NotFound component
   }
 }
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Change initial state to null
   const [userRole, setUserRole] = useState(null); // Track user role
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar visibility
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedRole = localStorage.getItem("role"); // Assuming you have stored the role in local storage
 
     const verifyToken = async () => {
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
       if (token) {
         try {
           // Send the role in the request body
@@ -58,6 +58,14 @@ function App() {
           if (response.data.success) {
             setIsAuthenticated(true);
             setUserRole(response.data.roles[0]); // Assuming the backend returns an array of role names
+          } else if (response.data.message === "Token has expired.") {
+            // Handle expired token
+            setSnackbarMessage(
+              "You've been logged out because your session has expired."
+            );
+            setSnackbarOpen(true);
+            setIsAuthenticated(false);
+            setUserRole(null);
           } else {
             setIsAuthenticated(false);
             setUserRole(null);
@@ -75,6 +83,10 @@ function App() {
 
     verifyToken();
   }, []);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   if (isAuthenticated === null) {
     return <LoadingSpinner />;
@@ -109,6 +121,18 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Adjust as needed
+      >
+        <Alert onClose={handleCloseSnackbar} severity="warning">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </AppTheme>
   );
 }

@@ -20,7 +20,7 @@ const createTeacher = async (userData) => {
   }
 };
 
-const getAllTeachers = async (userData) => {
+const getAllTeachers = async () => {
   try {
     const token = localStorage.getItem("token");
 

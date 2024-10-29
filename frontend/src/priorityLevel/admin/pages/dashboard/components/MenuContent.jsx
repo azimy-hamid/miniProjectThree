@@ -54,6 +54,11 @@ const SIDEBAR_ITEMS = [
     label: "Class Management",
     children: [
       {
+        id: "create-classroom",
+        label: "Create Classroom",
+        link: "/admin/create-classroom",
+      },
+      {
         id: "class-schedule",
         label: "Class Schedule",
         link: "/admin/class-schedule",
@@ -77,6 +82,11 @@ const SIDEBAR_ITEMS = [
     id: "subject-management",
     label: "Subject Management",
     children: [
+      {
+        id: "create-subject",
+        label: "Create Subject",
+        link: "/admin/create-subject",
+      },
       {
         id: "view-subject",
         label: "View Subject",
