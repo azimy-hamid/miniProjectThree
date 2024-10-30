@@ -24,7 +24,6 @@ import User_Roles from "./models/UserRoles.js";
 import Student_Subjects from "./models/StudentSubjects.js";
 import Teacher_Subjects from "./models/TeacherSubjects.js";
 import Semesters from "./models/Semesters.js";
-import Semester_Subject from "./models/SemesterSubject.js";
 
 import { setupAssociations } from "./models/associations.js";
 

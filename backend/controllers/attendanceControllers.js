@@ -1,12 +1,10 @@
 import Attendance from "../models/Attendance.js";
 import Students from "../models/Students.js";
-import Semester_Subject from "../models/SemesterSubject.js";
 
 // Create a new attendance record
 const createAttendance = async (req, res) => {
   const {
     student_id_fk,
-    semester_subject_id_fk,
     attendance_date,
     attendance_status,
     attendance_type,
@@ -14,12 +12,7 @@ const createAttendance = async (req, res) => {
   } = req.body;
 
   // Validate required input
-  if (
-    !student_id_fk ||
-    !semester_subject_id_fk ||
-    !attendance_status ||
-    !attendance_type
-  ) {
+  if (!student_id_fk || !attendance_status || !attendance_type) {
     return res.status(400).json({
       createAttendanceMessage: "Missing required fields.",
     });
@@ -37,22 +30,10 @@ const createAttendance = async (req, res) => {
     }
 
     // Validate if the semester subject exists
-    const semesterSubjectExists = await Semester_Subject.findOne({
-      where: {
-        semester_subject_id_pk: semester_subject_id_fk,
-        is_deleted: false,
-      },
-    });
-    if (!semesterSubjectExists) {
-      return res.status(404).json({
-        createAttendanceMessage: "Semester subject not found!",
-      });
-    }
 
     // Create a new attendance record
     const newAttendance = await Attendance.create({
       student_id_fk,
-      semester_subject_id_fk,
       attendance_date,
       attendance_status,
       attendance_type,
@@ -84,11 +65,6 @@ const getAllAttendance = async (req, res) => {
           as: "student", // Use the alias defined in the association
           attributes: ["student_id_pk"],
         },
-        {
-          model: Semester_Subject,
-          as: "semester_subject", // Ensure the correct alias for Semester_Subject
-          attributes: ["semester_subject_id_pk"],
-        },
       ],
     });
 
@@ -116,11 +92,6 @@ const getAttendanceById = async (req, res) => {
           as: "student", // Use the alias defined in the association
           attributes: ["student_id_pk"],
         },
-        {
-          model: Semester_Subject,
-          as: "semester_subject", // Ensure the correct alias for Semester_Subject
-          attributes: ["semester_subject_id_pk"],
-        },
       ],
     });
 
@@ -146,7 +117,6 @@ const updateAttendance = async (req, res) => {
   const { attendanceId } = req.params;
   const {
     student_id_fk,
-    semester_subject_id_fk,
     attendance_date,
     attendance_status,
     attendance_type,
@@ -176,22 +146,6 @@ const updateAttendance = async (req, res) => {
         });
       }
       attendance.student_id_fk = student_id_fk;
-    }
-
-    // Validate if semester subject exists if provided
-    if (semester_subject_id_fk) {
-      const semesterSubjectExists = await Semester_Subject.findOne({
-        where: {
-          semester_subject_id_pk: semester_subject_id_fk,
-          is_deleted: false,
-        },
-      });
-      if (!semesterSubjectExists) {
-        return res.status(404).json({
-          updateAttendanceMessage: "Semester subject not found!",
-        });
-      }
-      attendance.semester_subject_id_fk = semester_subject_id_fk;
     }
 
     // Update other fields
