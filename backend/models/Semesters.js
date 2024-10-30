@@ -11,12 +11,12 @@ const Semesters = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
     },
     semester_number: {
-      type: DataTypes.ENUM("1", "2", "3", "4"), // Specify valid semester values as ENUM
+      type: DataTypes.ENUM("1", "2"), // Specify valid semester values as ENUM
       allowNull: false,
       validate: {
         isIn: {
-          args: [["1", "2", "3", "4"]], // Optional, since ENUM already restricts values
-          msg: "Semester must be one of the following values: '1', '2', '3', or '4'.",
+          args: [["1", "2"]], // Optional, since ENUM already restricts values
+          msg: "Semester must be one of the following values: '1' or '2'",
         },
       },
     },

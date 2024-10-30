@@ -55,12 +55,12 @@ const Fees = sequelize.define(
       type: DataTypes.STRING(50), // Specifies max length for payment mode
     },
     semester: {
-      type: DataTypes.ENUM("1", "2", "3", "4"), // Specify valid semester values as ENUM
+      type: DataTypes.ENUM("1", "2"), // Specify valid semester values as ENUM
       allowNull: false,
       validate: {
         isIn: {
-          args: [["1", "2", "3", "4"]], // Optional, since ENUM already restricts values
-          msg: "Fee Semester must be one of the following values: '1', '2', '3', or '4'.",
+          args: [["1", "2"]], // Optional, since ENUM already restricts values
+          msg: "Fee Semester must be one of the following values: '1' or '2'.",
         },
       },
     },

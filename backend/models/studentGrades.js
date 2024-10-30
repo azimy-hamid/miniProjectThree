@@ -27,12 +27,12 @@ const StudentGrades = sequelize.define(
       allowNull: false,
     },
     semester: {
-      type: DataTypes.ENUM("1", "2", "3", "4"), // Specify valid semester values as ENUM
+      type: DataTypes.ENUM("1", "2"), // Specify valid semester values as ENUM
       allowNull: false,
       validate: {
         isIn: {
-          args: [["1", "2", "3", "4"]], // Optional, since ENUM already restricts values
-          msg: "Student Grade Semester must be one of the following values: '1', '2', '3', or '4'.",
+          args: [["1", "2"]], // Optional, since ENUM already restricts values
+          msg: "Student Grade Semester must be one of the following values: '1' or '2'",
         },
       },
     },

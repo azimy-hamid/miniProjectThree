@@ -137,7 +137,7 @@ const CreateSubjectForm = () => {
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <FormLabel htmlFor="classroom_code">Classroom ID</FormLabel>
+                <FormLabel htmlFor="classroom_code">Classroom Code</FormLabel>
                 <Autocomplete
                   id="classroom_code"
                   options={classroomCodes}
