@@ -21,5 +21,14 @@ teacherRoutes.put(
   "/recover-teacher-by-id/:teacherId",
   teacherControllers.recoverTeacher
 );
+teacherRoutes.get(
+  "/get-all-teacher-codes",
+  teacherControllers.getAllTeacherCodes
+);
+
+teacherRoutes.get(
+  "/get-assigned-subjects/:teacherId",
+  teacherControllers.getAssignedSubjects
+);
 
 export default teacherRoutes;

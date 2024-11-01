@@ -21,5 +21,9 @@ semesterRoutes.put(
   "/recover-semester-by-id/:semesterId",
   semesterControllers.recoverSemester
 );
+semesterRoutes.get(
+  "/get-all-semester-numbers",
+  semesterControllers.getAllSemesterNumbers
+);
 
 export default semesterRoutes;

@@ -21,5 +21,9 @@ subjectRoutes.put(
   "/recover-subject-by-id/:subjectId",
   subjectControllers.recoverSubject
 );
+subjectRoutes.get(
+  "/get-all-subject-codes",
+  subjectControllers.getAllSubjectCodes
+);
 
 export default subjectRoutes;
