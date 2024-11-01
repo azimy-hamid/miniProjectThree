@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
+import Semesters from "./Semesters.js"; // Import the Semesters model
+import Grades from "./Grades.js"; // Import the Grades model
 
 const Students = sequelize.define(
   "Students",
@@ -51,13 +53,32 @@ const Students = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    semester_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Semesters,
+        key: "semester_id_pk",
+      },
+      allowNull: true,
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    },
+    grade_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Grades,
+        key: "grade_id_pk",
+      },
+      allowNull: true,
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    },
   },
   {
-    tableName: "students", // Name of the table in the database
-    timestamps: true, // Automatically manage createdAt and updatedAt
+    tableName: "students",
+    timestamps: true,
     hooks: {
       beforeValidate: async (student) => {
-        // Find the latest student_code in the database
         const latestStudent = await Students.findOne({
           order: [
             [
@@ -67,7 +88,6 @@ const Students = sequelize.define(
           ],
         });
 
-        // Extract the numeric part and increment it
         const lastNumber = latestStudent
           ? parseInt(latestStudent.student_code.split("-")[1], 10)
           : 0;

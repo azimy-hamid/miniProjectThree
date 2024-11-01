@@ -1,6 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Classrooms from "./Classrooms.js";
+import Semesters from "./Semesters.js"; // Import the Semesters model
+import Grades from "./Grades.js";
 
 const Subjects = sequelize.define(
   "Subjects",
@@ -27,6 +29,29 @@ const Subjects = sequelize.define(
         key: "classroom_id_pk",
       },
     },
+    semester_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Semesters, // Name of the referenced model
+        key: "semester_id_pk", // Primary key in the Semesters model
+      },
+      allowNull: true, // Allow null if the subject might not have a semester assigned
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+      onDelete: "CASCADE",
+    },
+    grade_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Grades, // Name of the referenced model
+        key: "grade_id_pk", // Primary key in the Semesters model
+      },
+      allowNull: true, // Allow null if the subject might not have a semester assigned
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+      onDelete: "CASCADE",
+    },
+
     section: {
       type: DataTypes.STRING,
     },
@@ -40,7 +65,6 @@ const Subjects = sequelize.define(
     timestamps: true,
     hooks: {
       beforeValidate: async (subject) => {
-        // Find the latest subject_code in the database
         const latestSubject = await Subjects.findOne({
           order: [
             [
@@ -50,7 +74,6 @@ const Subjects = sequelize.define(
           ],
         });
 
-        // Extract the numeric part and increment it
         const lastNumber = latestSubject
           ? parseInt(latestSubject.subject_code.split("-")[1], 10)
           : 0;

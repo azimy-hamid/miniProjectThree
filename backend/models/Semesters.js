@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
-import { v4 as uuidv4 } from "uuid";
 
 const Semesters = sequelize.define(
   "Semesters",
@@ -20,10 +19,6 @@ const Semesters = sequelize.define(
         },
       },
     },
-    year: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     is_deleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -32,6 +27,21 @@ const Semesters = sequelize.define(
   {
     tableName: "semesters",
     timestamps: true, // Manages createdAt and updatedAt
+    hooks: {
+      afterSync: async () => {
+        const defaultSemesters = [
+          { semester_number: "1" },
+          { semester_number: "2" },
+        ];
+
+        for (const semester of defaultSemesters) {
+          await Semesters.findOrCreate({
+            where: { semester_number: semester.semester_number },
+            defaults: semester,
+          });
+        }
+      },
+    },
   }
 );
 
