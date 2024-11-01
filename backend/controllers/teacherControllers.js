@@ -1,5 +1,10 @@
 import Teachers from "../models/Teachers.js";
 import validator from "validator";
+import ClassSchedule from "../models/ClassSchedule.js";
+import Teacher_Subjects from "../models/TeacherSubjects.js";
+import Subjects from "../models/Subjects.js";
+import Classrooms from "../models/Classrooms.js";
+import Grades from "../models/Grades.js";
 
 // Create Teacher Controller
 const createTeacher = async (req, res) => {
@@ -260,6 +265,89 @@ const getSubjectsForATeacher = async (req, res) => {
   }
 };
 
+// Get All Teacher Codes Controller
+const getAllTeacherCodes = async (req, res) => {
+  try {
+    // Fetch all teacher records from the Teachers table
+    const allTeachers = await Teachers.findAll({
+      where: { is_deleted: false }, // Ensure only non-deleted teachers are fetched
+    });
+
+    // Check if there are any teachers found
+    if (allTeachers.length === 0) {
+      return res.status(404).json({
+        message: "No teacher codes found.",
+      });
+    }
+
+    // Extract only the teacher codes from the retrieved records
+    const teacherCodes = allTeachers.map((teacher) => teacher.teacher_code); // Adjust 'teacher_code' to your actual field name
+
+    // Return the array of teacher codes
+    return res.status(200).json({
+      message: "Teacher codes retrieved successfully.",
+      teacherCodes, // Send only the array of teacher codes
+    });
+  } catch (error) {
+    console.error("Error fetching teacher codes:", error);
+    return res.status(500).json({
+      message: "Server error. Please try again later.",
+      error: error.message || "Unknown error",
+    });
+  }
+};
+
+const getAssignedSubjects = async (req, res) => {
+  const { teacherId } = req.params; // Assuming teacher_id_pk is passed as a route parameter
+
+  try {
+    // Find the teacher by their primary key
+    const teacher = await Teachers.findOne({
+      where: { teacher_id_pk: teacherId },
+      include: [
+        {
+          model: Subjects,
+          through: { attributes: [] }, // Hide through table attributes
+          include: [
+            {
+              model: ClassSchedule,
+              as: "schedules",
+              attributes: ["day_of_week", "start_time", "end_time"],
+            },
+            {
+              model: Classrooms,
+              as: "classroom",
+              attributes: ["classroom_code"],
+            },
+            {
+              model: Grades,
+              attributes: ["grade_level"], // Assuming the grade table has a grade_name field
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!teacher) {
+      return res.status(404).json({
+        getSubjectsMessage: "Teacher not found.",
+      });
+    }
+
+    // Return the teacher's assigned subjects with schedule, classroom, and grade details
+    return res.status(200).json({
+      getSubjectsMessage: "Subjects fetched successfully.",
+      subjects: teacher.Subjects,
+    });
+  } catch (error) {
+    console.error("Error fetching subjects:", error);
+    return res.status(500).json({
+      getSubjectsMessage: "Server error. Please try again later.",
+      getSubjectsCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createTeacher,
   getAllTeachers,
@@ -268,4 +356,6 @@ export {
   deleteTeacher,
   recoverTeacher,
   getSubjectsForATeacher,
+  getAllTeacherCodes,
+  getAssignedSubjects,
 };

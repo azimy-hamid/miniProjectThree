@@ -2,19 +2,30 @@ import Semesters from "../models/Semesters.js";
 
 // Create a new semester
 const createSemester = async (req, res) => {
-  const { semester_number, year } = req.body;
+  const { semester_number } = req.body;
 
   // Validate required fields
-  if (!semester_number || !year) {
+  if (!semester_number) {
     return res.status(400).json({
-      createSemesterMessage: "Semester number and year are required.",
+      createSemesterMessage: "Semester number is required.",
     });
   }
 
   try {
+    // Check if the semester number already exists
+    const existingSemester = await Semesters.findOne({
+      where: { semester_number, is_deleted: false }, // Ensure it's not a deleted record
+    });
+
+    if (existingSemester) {
+      return res.status(400).json({
+        createSemesterMessage: "Semester number already exists.",
+      });
+    }
+
+    // Create the new semester
     const newSemester = await Semesters.create({
       semester_number,
-      year,
     });
 
     return res.status(201).json({
@@ -81,7 +92,7 @@ const getSemesterById = async (req, res) => {
 // Update a semester
 const updateSemester = async (req, res) => {
   const { semesterId } = req.params;
-  const { semester_number, year } = req.body;
+  const { semester_number } = req.body;
 
   try {
     const semester = await Semesters.findOne({
@@ -96,7 +107,6 @@ const updateSemester = async (req, res) => {
 
     // Update fields
     if (semester_number) semester.semester_number = semester_number;
-    if (year) semester.year = year;
 
     await semester.save();
 
@@ -176,6 +186,32 @@ const recoverSemester = async (req, res) => {
   }
 };
 
+// Get all semester numbers
+const getAllSemesterNumbers = async (req, res) => {
+  try {
+    const semesters = await Semesters.findAll({
+      where: { is_deleted: false },
+      attributes: ["semester_number"], // Only select the semester_number field
+    });
+
+    // Map the results to an array of semester numbers
+    const semesterNumbers = semesters.map(
+      (semester) => semester.semester_number
+    );
+
+    return res.status(200).json({
+      getAllSemesterNumbersMessage: "Semester numbers retrieved successfully!",
+      semesterNumbers,
+    });
+  } catch (error) {
+    console.error("Error retrieving semester numbers:", error);
+    return res.status(500).json({
+      getAllSemesterNumbersMessage: "Server error. Please try again later.",
+      getAllSemesterNumbersCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createSemester,
   getAllSemesters,
@@ -183,4 +219,5 @@ export {
   updateSemester,
   deleteSemester,
   recoverSemester,
+  getAllSemesterNumbers,
 };

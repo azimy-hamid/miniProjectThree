@@ -1,38 +1,147 @@
 import Subjects from "../models/Subjects.js";
-import Classrooms from "../models/Classrooms.js"; // Include related model if necessary
+import Classrooms from "../models/Classrooms.js";
+import Grades from "../models/Grades.js"; // Assuming this is the grade model
+import Semesters from "../models/Semesters.js"; // Assuming this is the semester model
+import ClassSchedule from "../models/ClassSchedule.js";
+import Teacher_Subjects from "../models/TeacherSubjects.js";
+import Teachers from "../models/Teachers.js";
 
 // Create a new subject
 const createSubject = async (req, res) => {
-  const { subject_name, classroom_code, section } = req.body;
+  const {
+    subject_name,
+    classroom_code,
+    section,
+    grade_code,
+    semester_number,
+    teacher_code,
+    day_of_week, // Comma-separated string of days
+    start_time,
+    end_time,
+  } = req.body;
 
   // Validate required fields
-  if (!subject_name || !classroom_code) {
+  if (
+    !subject_name ||
+    !classroom_code ||
+    !grade_code ||
+    !semester_number ||
+    !teacher_code ||
+    !day_of_week ||
+    !start_time ||
+    !end_time
+  ) {
     return res.status(400).json({
-      createSubjectMessage: "Subject Name and Classroom ID are required.",
-    });
-  }
-
-  // Validate that the classroom exists
-  const classroom = await Classrooms.findOne({
-    where: { classroom_code: classroom_code },
-    paranoid: false, // Include soft-deleted records if necessary
-  });
-
-  if (!classroom) {
-    return res.status(404).json({
-      createSubjectMessage: "Classroom not found.",
+      createSubjectMessage: "All fields are required.",
     });
   }
 
   try {
+    // Validate that the classroom exists
+    const classroom = await Classrooms.findOne({
+      where: { classroom_code: classroom_code },
+      paranoid: false, // Include soft-deleted records if necessary
+    });
+    if (!classroom) {
+      return res.status(404).json({
+        createSubjectMessage: "Classroom not found.",
+      });
+    }
+
+    // Validate that the grade exists
+    const grade = await Grades.findOne({
+      where: { grade_code: grade_code },
+    });
+    if (!grade) {
+      return res.status(404).json({
+        createSubjectMessage: "Grade not found.",
+      });
+    }
+
+    // Validate that the semester exists
+    const semester = await Semesters.findOne({
+      where: { semester_number: semester_number },
+    });
+    if (!semester) {
+      return res.status(404).json({
+        createSubjectMessage: "Semester not found.",
+      });
+    }
+
+    // Validate that the teacher exists
+    const teacher = await Teachers.findOne({
+      where: { teacher_code: teacher_code },
+    });
+    if (!teacher) {
+      return res.status(404).json({
+        createSubjectMessage: "Teacher not found.",
+      });
+    }
+
+    // Split the days into an array
+    const daysArray = day_of_week
+      .split(",")
+      .map((day) => day.trim().toLowerCase());
+
+    // Check for existing class schedule conflicts and create class schedules
+    for (const day of daysArray) {
+      const existingSchedule = await ClassSchedule.findOne({
+        where: {
+          classroom_id_fk: classroom.classroom_id_pk,
+          day_of_week: day,
+          start_time,
+          end_time,
+          is_deleted: false, // Exclude deleted schedules
+        },
+      });
+      if (existingSchedule) {
+        return res.status(400).json({
+          createSubjectMessage: `A class schedule already exists for ${day}.`,
+        });
+      }
+    }
+
+    // Check for existing subject conflict
+    const existingSubject = await Subjects.findOne({
+      where: {
+        subject_name,
+      },
+    });
+    if (existingSubject) {
+      return res.status(400).json({
+        createSubjectMessage: "This subject already exists!.",
+      });
+    }
+
+    // Create the new subject
     const newSubject = await Subjects.create({
       subject_name,
       classroom_id_fk: classroom.classroom_id_pk,
+      grade_id_fk: grade.grade_id_pk,
+      semester_id_fk: semester.semester_id_pk,
       section,
     });
 
+    // Create the teacher-subject association
+    await Teacher_Subjects.create({
+      teacher_id_fk: teacher.teacher_id_pk,
+      subject_id_fk: newSubject.subject_id_pk,
+    });
+
+    // Create the class schedules for each day
+    for (const day of daysArray) {
+      await ClassSchedule.create({
+        subject_id_fk: newSubject.subject_id_pk,
+        classroom_id_fk: classroom.classroom_id_pk,
+        day_of_week: day,
+        start_time,
+        end_time,
+      });
+    }
+
     return res.status(201).json({
-      createSubjectMessage: "Subject created successfully!",
+      createSubjectMessage:
+        "Subject, teacher assignment, and class schedules created successfully!",
       newSubject,
     });
   } catch (error) {
@@ -52,7 +161,15 @@ const getAllSubjects = async (req, res) => {
       include: [
         {
           model: Classrooms,
-          as: "classroom", // Adjust if you set an alias in your model
+          as: "classroom",
+        },
+        {
+          model: Grades,
+          as: "grade",
+        },
+        {
+          model: Semesters,
+          as: "semester",
         },
       ],
     });
@@ -80,7 +197,15 @@ const getSubjectById = async (req, res) => {
       include: [
         {
           model: Classrooms,
-          as: "classroom", // Adjust if you set an alias in your model
+          as: "classroom",
+        },
+        {
+          model: Grades,
+          as: "grade",
+        },
+        {
+          model: Semesters,
+          as: "semester",
         },
       ],
     });
@@ -107,9 +232,20 @@ const getSubjectById = async (req, res) => {
 // Update a subject
 const updateSubject = async (req, res) => {
   const { subjectId } = req.params;
-  const { subject_name, classroom_id_fk, section } = req.body;
+  const {
+    subject_name,
+    classroom_code,
+    section,
+    grade_code,
+    semester_number,
+    teacher_code,
+    day_of_week,
+    start_time,
+    end_time,
+  } = req.body;
 
   try {
+    // Find the subject to update
     const subject = await Subjects.findOne({
       where: { subject_id_pk: subjectId, is_deleted: false },
     });
@@ -120,11 +256,80 @@ const updateSubject = async (req, res) => {
       });
     }
 
-    // Update fields
+    // Validate classroom, grade, semester, and teacher if provided in the request
+    if (classroom_code) {
+      const classroom = await Classrooms.findOne({
+        where: { classroom_code: classroom_code },
+        paranoid: false,
+      });
+      if (!classroom) {
+        return res.status(404).json({
+          updateSubjectMessage: "Classroom not found.",
+        });
+      }
+      subject.classroom_id_fk = classroom.classroom_id_pk;
+    }
+
+    if (grade_code) {
+      const grade = await Grades.findOne({
+        where: { grade_code: grade_code },
+      });
+      if (!grade) {
+        return res.status(404).json({
+          updateSubjectMessage: "Grade not found.",
+        });
+      }
+      subject.grade_id_fk = grade.grade_id_pk;
+    }
+
+    if (semester_number) {
+      const semester = await Semesters.findOne({
+        where: { semester_number: semester_number },
+      });
+      if (!semester) {
+        return res.status(404).json({
+          updateSubjectMessage: "Semester not found.",
+        });
+      }
+      subject.semester_id_fk = semester.semester_id_pk;
+    }
+
+    if (teacher_code) {
+      const teacher = await Teachers.findOne({
+        where: { teacher_code: teacher_code },
+      });
+      if (!teacher) {
+        return res.status(404).json({
+          updateSubjectMessage: "Teacher not found.",
+        });
+      }
+      // Optionally, update teacher-subject association here if needed
+    }
+
+    // Update subject fields
     if (subject_name) subject.subject_name = subject_name;
-    if (classroom_id_fk) subject.classroom_id_fk = classroom_id_fk;
     if (section) subject.section = section;
 
+    // Check for schedule conflicts if day and time are provided
+    if (day_of_week && start_time && end_time) {
+      const existingSchedule = await ClassSchedule.findOne({
+        where: {
+          classroom_id_fk: subject.classroom_id_fk,
+          day_of_week,
+          start_time,
+          end_time,
+          is_deleted: false, // Exclude deleted schedules
+        },
+      });
+      if (existingSchedule) {
+        return res.status(400).json({
+          updateSubjectMessage:
+            "A class schedule already exists for this time.",
+        });
+      }
+    }
+
+    // Save the updated subject
     await subject.save();
 
     return res.status(200).json({
@@ -155,7 +360,6 @@ const deleteSubject = async (req, res) => {
       });
     }
 
-    // Soft delete the subject record
     subject.is_deleted = true;
     await subject.save();
 
@@ -186,7 +390,6 @@ const recoverSubject = async (req, res) => {
       });
     }
 
-    // Restore the subject record
     subject.is_deleted = false;
     await subject.save();
 
@@ -203,6 +406,29 @@ const recoverSubject = async (req, res) => {
   }
 };
 
+const getAllSubjectCodes = async (req, res) => {
+  try {
+    const subjects = await Subjects.findAll({
+      where: { is_deleted: false },
+      attributes: ["subject_code"], // Adjust this if you have a different field name
+    });
+
+    // Extract subject codes from the retrieved subjects
+    const subjectCodes = subjects.map((subject) => subject.subject_code);
+
+    return res.status(200).json({
+      getAllSubjectCodesMessage: "Subject codes retrieved successfully!",
+      subjectCodes,
+    });
+  } catch (error) {
+    console.error("Error retrieving subject codes:", error);
+    return res.status(500).json({
+      getAllSubjectCodesMessage: "Server error. Please try again later.",
+      getAllSubjectCodesCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createSubject,
   getAllSubjects,
@@ -210,4 +436,5 @@ export {
   updateSubject,
   deleteSubject,
   recoverSubject,
+  getAllSubjectCodes,
 };

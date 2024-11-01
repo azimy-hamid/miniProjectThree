@@ -1,5 +1,7 @@
 import Students from "../models/Students.js";
 import validator from "validator";
+import Semesters from "../models/Semesters.js";
+import Grades from "../models/Grades.js";
 
 // Create Student Controller
 const createStudent = async (req, res) => {
@@ -11,6 +13,8 @@ const createStudent = async (req, res) => {
     email,
     phone,
     join_date,
+    semester_number, // Semester number from frontend
+    grade_code, // Grade code from frontend
   } = req.body;
 
   // Validate input
@@ -35,6 +39,18 @@ const createStudent = async (req, res) => {
       });
     }
 
+    // Find the semester primary key using semester_number
+    const semester = await Semesters.findOne({
+      where: { semester_number },
+    });
+    const semester_id_fk = semester ? semester.semester_id_pk : null;
+
+    // Find the grade primary key using grade_code
+    const grade = await Grades.findOne({
+      where: { grade_code },
+    });
+    const grade_id_fk = grade ? grade.grade_id_pk : null;
+
     // Create a new student
     const newStudent = await Students.create({
       student_first_name,
@@ -44,6 +60,8 @@ const createStudent = async (req, res) => {
       email,
       phone: phone || null, // Optional field
       join_date: join_date || null, // Optional field
+      semester_id_fk,
+      grade_id_fk,
     });
 
     return res.status(201).json({
@@ -111,6 +129,8 @@ const updateStudent = async (req, res) => {
     phone,
     section,
     join_date,
+    semester_number, // Semester number from frontend
+    grade_code, // Grade code from frontend
   } = req.body;
 
   if (
@@ -121,8 +141,13 @@ const updateStudent = async (req, res) => {
     !email &&
     !phone &&
     !section &&
-    !join_date
+    !join_date &&
+    !semester_number &&
+    !grade_code
   ) {
+    return res.status(400).json({
+      updateStudentMessage: "No fields to update.",
+    });
   }
 
   try {
@@ -144,6 +169,20 @@ const updateStudent = async (req, res) => {
         .json({ updateStudentMessage: "Enter a valid email address!" });
     }
 
+    // Find the semester primary key using semester_number
+    const semester = semester_number
+      ? await Semesters.findOne({ where: { semester_number } })
+      : null;
+    const semester_id_fk = semester
+      ? semester.semester_id_pk
+      : student.semester_id_fk;
+
+    // Find the grade primary key using grade_code
+    const grade = grade_code
+      ? await Grades.findOne({ where: { grade_code } })
+      : null;
+    const grade_id_fk = grade ? grade.grade_id_pk : student.grade_id_fk;
+
     // Update student details
     await student.update({
       student_first_name: student_first_name || student.student_first_name,
@@ -154,6 +193,8 @@ const updateStudent = async (req, res) => {
       phone: phone || student.phone,
       section: section || student.section,
       join_date: join_date || student.join_date,
+      semester_id_fk,
+      grade_id_fk,
     });
 
     return res
