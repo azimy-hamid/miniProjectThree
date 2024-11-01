@@ -61,7 +61,7 @@ const SIDEBAR_ITEMS = [
       {
         id: "class-schedule",
         label: "Class Schedule",
-        link: "/admin/class-schedule",
+        link: "/admin/create-class-schedule",
       },
       {
         id: "manage-classes",

@@ -22,48 +22,43 @@ export default function AllTeachersTable() {
     navigate(`/admin/teacher-details/${teacherId}`);
   };
 
+  const handleUpdateClick = (teacherId) => {
+    navigate(`/admin/update-teacher/${teacherId}`); // Navigate to the update route
+  };
+
   const columns = [
     { field: "teacher_first_name", headerName: "First Name", flex: 1 },
     { field: "teacher_last_name", headerName: "Last Name", flex: 1 },
-    { field: "gender", headerName: "Gender", flex: 1 },
-    {
-      field: "dob",
-      headerName: "Date of Birth",
-      flex: 1,
-      valueGetter: (dob) => {
-        if (!dob) return ""; // Return an empty string if dob is undefined
-        const date = new Date(dob);
-        return date.toLocaleDateString("en-AU", {
-          timeZone: "Australia/Perth",
-        });
-      },
-    },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "phone", headerName: "Phone", flex: 1 },
-    {
-      field: "join_date",
-      headerName: "Join Date",
-      flex: 1,
-      valueGetter: (joinDate) => {
-        if (!joinDate) return ""; // Return an empty string if join_date is undefined
-        const date = new Date(joinDate);
-        return date.toLocaleDateString("en-AU", {
-          timeZone: "Australia/Perth",
-        });
-      },
-    },
     { field: "working_days", headerName: "Working Days", flex: 1 },
     {
-      field: "actions",
-      headerName: "Actions",
+      field: "details",
+      headerName: "Details",
       flex: 1,
       renderCell: (params) => (
         <Button
-          variant="contained"
+          variant="outlined"
           color="primary"
           onClick={() => handleDetailsClick(params.row.teacher_id_pk)}
         >
           Details
+        </Button>
+      ),
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: "update",
+      headerName: "Update",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => handleUpdateClick(params.row.teacher_id_pk)}
+        >
+          Update
         </Button>
       ),
       sortable: false,
@@ -91,7 +86,7 @@ export default function AllTeachersTable() {
         pageSize={10}
         rowsPerPageOptions={[5, 10, 20]}
         disableSelectionOnClick
-        autoHeight
+        autoHeight={false}
       />
     </Box>
   );

@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "./components/Header";
 import { alpha } from "@mui/material/styles";
-import { CreateSubjectForm } from "./components/CreateSubjectForm";
+import { CreateSubjectForm } from "./components/CreateSubjectForm.jsx";
 
 const CreateSubjectPage = () => {
   return (

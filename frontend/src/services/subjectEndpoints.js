@@ -41,3 +41,21 @@ export const getAllSubject = async () => {
     throw error;
   }
 };
+
+export const getAllSubjectCodes = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(`${API_URL}/get-all-subject-codes`, {
+      headers: { "Content-Type": "application/json" },
+      Authorization: `Bearer ${token}`,
+    });
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting all subject codes:", error);
+    throw error;
+  }
+};

@@ -12,10 +12,15 @@ import {
   Card as MuiCard,
   Grid,
   Autocomplete,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { createSubject } from "../../../../../services/subjectEndpoints";
 import { getAllClassroomCodes } from "../../../../../services/classroomEndpoints";
+import { getAllSemestersNumbers } from "../../../../../services/semesterEndpoints";
+import { getAllGradeCodes } from "../../../../../services/gradeEndpoints";
+import { getAllTeacherCodes } from "../../../../../services/teacherEndpoints"; // New service for teacher codes
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -26,7 +31,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   gap: theme.spacing(2),
   margin: "auto",
   [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
+    maxWidth: "600px",
   },
 }));
 
@@ -40,27 +45,71 @@ const CreateSubjectForm = () => {
   const [formData, setFormData] = useState({
     subject_name: "",
     classroom_code: "",
+    semester_number: "",
     section: "",
+    grade_code: "",
+    day_of_week: "",
+    start_time: "",
+    end_time: "",
+    teacher_code: "", // Added teacher_code
   });
+
   const [notification, setNotification] = useState({
     open: false,
     message: "",
     severity: "",
   });
-  const [classroomCodes, setClassroomCodes] = useState([]); // Holds classroom codes
 
-  // Fetch classroom codes on component mount
+  const [classroomCodes, setClassroomCodes] = useState([]);
+  const [semesterNumbers, setSemesterNumbers] = useState([]);
+  const [gradeCodes, setGradeCodes] = useState([]);
+  const [teacherCodes, setTeacherCodes] = useState([]); // State for teacher codes
+  const [selectedDays, setSelectedDays] = useState([]);
+
   useEffect(() => {
-    const fetchClassroomCodes = async () => {
+    const fetchData = async () => {
       try {
-        const classroomCodes = await getAllClassroomCodes();
-        setClassroomCodes(classroomCodes); // Update with the list of classroom codes
+        const [
+          classroomCodes,
+          { semesterNumbers },
+          { gradeCodes },
+          { teacherCodes },
+        ] = await Promise.all([
+          getAllClassroomCodes(),
+          getAllSemestersNumbers(),
+          getAllGradeCodes(),
+          getAllTeacherCodes(), // Fetch teacher codes
+        ]);
+        setClassroomCodes(classroomCodes);
+        setSemesterNumbers(semesterNumbers);
+        setGradeCodes(gradeCodes);
+        setTeacherCodes(teacherCodes); // Set teacher codes
       } catch (error) {
-        console.error("Failed to fetch classroom codes", error);
+        console.error("Failed to fetch data", error);
       }
     };
-    fetchClassroomCodes();
+    fetchData();
   }, []);
+
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  const handleDayChange = (event) => {
+    const { value } = event.target;
+    setSelectedDays(
+      (prevSelected) =>
+        prevSelected.includes(value)
+          ? prevSelected.filter((day) => day !== value) // Remove day if already selected
+          : [...prevSelected, value] // Add day if not selected
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,29 +121,67 @@ const CreateSubjectForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { subject_name, classroom_code } = formData;
+    const daysOfWeekString = selectedDays.join(", ");
 
-    if (!subject_name || !classroom_code) {
+    const {
+      subject_name,
+      classroom_code,
+      semester_number,
+      grade_code,
+      start_time,
+      end_time,
+      teacher_code, // Include teacher_code in submission
+    } = formData;
+
+    if (
+      !subject_name ||
+      !classroom_code ||
+      !semester_number ||
+      !grade_code ||
+      !selectedDays ||
+      !start_time ||
+      !end_time ||
+      !teacher_code
+    ) {
       setNotification({
         open: true,
-        message: "Subject Name and Classroom ID are required.",
+        message: "All fields are required.",
         severity: "error",
       });
       return;
     }
 
+    const formDataWithDays = {
+      ...formData,
+      day_of_week: daysOfWeekString,
+    };
+
     try {
-      const response = await createSubject(formData);
+      const response = await createSubject(formDataWithDays);
+      console.log(response);
       setNotification({
         open: true,
         message: response.createSubjectMessage,
         severity: "success",
       });
-      setFormData({ subject_name: "", classroom_code: "", section: "" }); // Clear form
+      setFormData({
+        subject_name: "",
+        classroom_code: "",
+        semester_number: "",
+        section: "",
+        grade_code: "",
+        start_time: "",
+        end_time: "",
+        teacher_code: "", // Reset teacher_code
+      });
+      setSelectedDays([]);
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.createSubjectMessage ||
+        "Failed to create subject. Please try again.";
       setNotification({
         open: true,
-        message: "Failed to create subject. Please try again.",
+        message: errorMessage,
         severity: "error",
       });
     }
@@ -122,7 +209,7 @@ const CreateSubjectForm = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="subject_name">Subject Name</FormLabel>
                 <TextField
@@ -135,18 +222,18 @@ const CreateSubjectForm = () => {
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="classroom_code">Classroom Code</FormLabel>
                 <Autocomplete
                   id="classroom_code"
                   options={classroomCodes}
-                  getOptionLabel={(option) => option} // Replace `code` with the appropriate field in the classroom codes
+                  getOptionLabel={(option) => option}
                   value={formData.classroom_code}
                   onChange={(event, newValue) => {
                     setFormData((prevData) => ({
                       ...prevData,
-                      classroom_code: newValue ? newValue : "", // Use classroom code
+                      classroom_code: newValue || "",
                     }));
                   }}
                   renderInput={(params) => (
@@ -154,16 +241,66 @@ const CreateSubjectForm = () => {
                       {...params}
                       name="classroom_code"
                       variant="outlined"
-                      placeholder="Search Classroom ID"
+                      placeholder="Search Classroom Code"
                     />
                   )}
-                  isOptionEqualToValue={
-                    (option, value) => option.code === value // Adjust field as needed
-                  }
+                  isOptionEqualToValue={(option, value) => option === value}
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="semester_number">Semester Number</FormLabel>
+                <Autocomplete
+                  id="semester_number"
+                  options={semesterNumbers}
+                  getOptionLabel={(option) => option}
+                  value={formData.semester_number}
+                  onChange={(event, newValue) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      semester_number: newValue || "",
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="semester_number"
+                      variant="outlined"
+                      placeholder="Select Semester Number"
+                    />
+                  )}
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="grade_code">Grade Code</FormLabel>
+                <Autocomplete
+                  id="grade_code"
+                  options={gradeCodes}
+                  getOptionLabel={(option) => option}
+                  value={formData.grade_code}
+                  onChange={(event, newValue) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      grade_code: newValue || "",
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="grade_code"
+                      variant="outlined"
+                      placeholder="Select Grade Code"
+                    />
+                  )}
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="section">Section</FormLabel>
                 <TextField
@@ -176,28 +313,106 @@ const CreateSubjectForm = () => {
                 />
               </FormControl>
             </Grid>
-          </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="teacher_code">Teacher Code</FormLabel>
+                <Autocomplete
+                  id="teacher_code"
+                  options={teacherCodes}
+                  getOptionLabel={(option) => option}
+                  value={formData.teacher_code}
+                  onChange={(event, newValue) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      teacher_code: newValue || "",
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="teacher_code"
+                      variant="outlined"
+                      placeholder="Select Teacher Code"
+                    />
+                  )}
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="start_time">Start Time</FormLabel>
+                <TextField
+                  id="start_time"
+                  name="start_time"
+                  type="time"
+                  value={formData.start_time}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="end_time">End Time</FormLabel>
+                <TextField
+                  id="end_time"
+                  name="end_time"
+                  type="time"
+                  value={formData.end_time}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                />
+              </FormControl>
+            </Grid>
 
-          <Stack direction="column" spacing={1} sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Create Subject
-            </Button>
-          </Stack>
-        </Box>
-        <Snackbar
-          open={notification.open}
-          autoHideDuration={6000}
-          onClose={handleCloseNotification}
-        >
-          <Alert
-            onClose={handleCloseNotification}
-            severity={notification.severity}
-            sx={{ width: "100%" }}
+            <Grid item xs={12} sm={12}>
+              <FormControl fullWidth>
+                <FormLabel>Day of the Week</FormLabel>
+                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                  {daysOfWeek.map((day) => (
+                    <FormControlLabel
+                      key={day}
+                      control={
+                        <Checkbox
+                          checked={selectedDays.includes(day)}
+                          onChange={handleDayChange}
+                          value={day}
+                          color="primary"
+                        />
+                      }
+                      label={day}
+                    />
+                  ))}
+                </Box>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
           >
-            {notification.message}
-          </Alert>
-        </Snackbar>
+            Submit
+          </Button>
+        </Box>
       </Card>
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          sx={{ width: "100%" }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </CreateSubjectFormContainer>
   );
 };

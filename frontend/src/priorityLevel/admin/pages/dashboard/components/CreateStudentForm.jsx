@@ -27,6 +27,9 @@ import {
   checkUserExists,
 } from "../../../../../services/userAuth.js";
 
+import { getAllGradeCodes } from "../../../../../services/gradeEndpoints.js";
+import { getAllSemestersNumbers } from "../../../../../services/semesterEndpoints.js";
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -57,12 +60,39 @@ export default function CreateStudentForm() {
     join_date: "",
     password: "",
     username: "",
+    grade_code: "",
+    semester_number: "", // Added field for semester number
   });
 
+  const [gradeCodes, setGradeCodes] = React.useState([]);
+  const [semesterNumbers, setSemesterNumbers] = React.useState([]); // Store fetched semester numbers
   const [errors, setErrors] = React.useState({});
   const [generalError, setGeneralError] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
   const [openSnackbar, setOpenSnackbar] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchGradeCodes = async () => {
+      try {
+        const response = await getAllGradeCodes();
+        setGradeCodes(response.gradeCodes);
+      } catch (error) {
+        console.error("Failed to fetch grade codes:", error);
+      }
+    };
+
+    const fetchSemesterNumbers = async () => {
+      try {
+        const response = await getAllSemestersNumbers();
+        setSemesterNumbers(response.semesterNumbers);
+      } catch (error) {
+        console.error("Failed to fetch semester numbers:", error);
+      }
+    };
+
+    fetchGradeCodes();
+    fetchSemesterNumbers();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,16 +100,6 @@ export default function CreateStudentForm() {
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    const { value } = e.target;
-    setFormData((prevData) => {
-      const workingDays = prevData.working_days.includes(value)
-        ? prevData.working_days.filter((day) => day !== value)
-        : [...prevData.working_days, value];
-      return { ...prevData, working_days: workingDays };
-    });
   };
 
   const validateInputs = () => {
@@ -94,6 +114,8 @@ export default function CreateStudentForm() {
       "join_date",
       "password",
       "username",
+      "grade_code",
+      "semester_number", // Ensure semester number is validated
     ];
 
     requiredFields.forEach((field) => {
@@ -126,7 +148,7 @@ export default function CreateStudentForm() {
 
     if (userCheckResponse.userExists) {
       setGeneralError(userCheckResponse.checkUserExistsMessage);
-      return; // Stop execution if user exists
+      return;
     }
 
     try {
@@ -138,6 +160,8 @@ export default function CreateStudentForm() {
         email: formData.email,
         phone: formData.phone || null,
         join_date: formData.join_date || null,
+        grade_code: formData.grade_code,
+        semester_number: formData.semester_number, // Include selected semester number
       });
 
       if (studentResponse?.newStudent) {
@@ -153,10 +177,10 @@ export default function CreateStudentForm() {
 
         if (userResponse?.token) {
           setGeneralError("");
-          setSuccessMessage("Teacher and user account created successfully!");
+          setSuccessMessage("Student and user account created successfully!");
           setFormData({
-            teacher_first_name: "",
-            teacher_last_name: "",
+            student_first_name: "",
+            student_last_name: "",
             gender: "",
             dob: "",
             email: "",
@@ -164,6 +188,8 @@ export default function CreateStudentForm() {
             join_date: "",
             password: "",
             username: "",
+            grade_code: "",
+            semester_number: "",
           });
 
           setOpenSnackbar(true);
@@ -171,9 +197,9 @@ export default function CreateStudentForm() {
       }
     } catch (error) {
       setGeneralError(
-        error.response?.createTeacherMessage ||
+        error.response?.createStudentMessage ||
           error.response?.signupUserMessage ||
-          "Failed to create teacher and user."
+          "Failed to create student and user."
       );
     }
   };
@@ -185,7 +211,7 @@ export default function CreateStudentForm() {
     >
       <Card variant="outlined">
         <Typography component="h1" variant="h4">
-          Create Teacher
+          Create Student
         </Typography>
         <Box
           component="form"
@@ -224,8 +250,7 @@ export default function CreateStudentForm() {
                               verticalAlign: "middle",
                               fontSize: "1rem",
                             }}
-                          />{" "}
-                          {/* Use Info icon */}
+                          />
                         </span>
                       </Tooltip>
                     )}
@@ -252,7 +277,7 @@ export default function CreateStudentForm() {
               </Grid>
             ))}
 
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="gender">Gender</FormLabel>
                 <Select
@@ -275,26 +300,69 @@ export default function CreateStudentForm() {
                 </Typography>
               </FormControl>
             </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="grade_code">Grade Code</FormLabel>
+                <Select
+                  id="grade_code"
+                  name="grade_code"
+                  value={formData.grade_code}
+                  onChange={handleChange}
+                  error={!!errors.grade_code}
+                  displayEmpty
+                >
+                  <MenuItem value="">Select Grade Code</MenuItem>
+                  {gradeCodes.map((code) => (
+                    <MenuItem key={code} value={code}>
+                      {code}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Typography variant="caption" color="error">
+                  {errors.grade_code}
+                </Typography>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <FormLabel htmlFor="semester_number">Semester</FormLabel>
+                <Select
+                  id="semester_number"
+                  name="semester_number"
+                  value={formData.semester_number}
+                  onChange={handleChange}
+                  error={!!errors.semester_number}
+                  displayEmpty
+                >
+                  <MenuItem value="">Select Semester</MenuItem>
+                  {semesterNumbers.map((number) => (
+                    <MenuItem key={number} value={number}>
+                      Semester {number}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Typography variant="caption" color="error">
+                  {errors.semester_number}
+                </Typography>
+              </FormControl>
+            </Grid>
           </Grid>
 
-          {generalError && (
-            <Typography color="error" variant="body2">
-              {generalError}
-            </Typography>
-          )}
-
-          <Stack direction="column" spacing={1} sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained">
-              Create Teacher
-            </Button>
-          </Stack>
+          <Button type="submit" variant="contained" fullWidth>
+            Create Student
+          </Button>
         </Box>
+        <Typography variant="body2" color="error" align="center">
+          {generalError}
+        </Typography>
       </Card>
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000}
+        autoHideDuration={4000}
         onClose={() => setOpenSnackbar(false)}
-        message={successMessage} // Show success message
+        message={successMessage}
       />
     </CreateStudentFormContainer>
   );

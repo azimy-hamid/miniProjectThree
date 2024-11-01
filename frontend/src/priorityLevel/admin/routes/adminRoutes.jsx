@@ -8,6 +8,8 @@ import TeacherDetailsPage from "../pages/dashboard/TeacherDetailsPage";
 import CreateStudentPage from "../pages/dashboard/CreateStudentPage";
 import CreateClassroomPage from "../pages/dashboard/CreateClassroomPage";
 import CreateSubjectPage from "../pages/dashboard/CreateSubjectPage";
+import CreateClassSchedulePage from "../pages/dashboard/CreateClassSchedulePage";
+import UpdateTeacherPage from "../pages/dashboard/UpdateTeacherPage";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
@@ -58,11 +60,11 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
           <Navigate to="/" />
         )
       }
-      key="admin-create-teacher-form"
+      key="admin-teacher-overview"
     />,
 
     <Route
-      path="/admin/teacher-details"
+      path="/admin/teacher-details/:teacherId"
       element={
         isAuthenticated && userRole === roleAllowed ? (
           <TeacherDetailsPage />
@@ -71,6 +73,18 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
         )
       }
       key="admin-create-teacher-form"
+    />,
+
+    <Route
+      path="/admin/update-teacher/:teacherId"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <UpdateTeacherPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-update-teacher-form"
     />,
 
     // student routes
@@ -98,7 +112,19 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
           <Navigate to="/" />
         )
       }
-      key="admin-create-teacher-form"
+      key="admin-create-classroom-page"
+    />,
+
+    <Route
+      path="/admin/create-class-schedule"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <CreateClassSchedulePage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="admin-create-class-schedule-page"
     />,
 
     // subject routes
