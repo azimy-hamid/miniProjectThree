@@ -44,7 +44,6 @@ function App() {
     const verifyToken = async () => {
       if (token) {
         try {
-          // Send the role in the request body
           const response = await axios.post(
             API_URL,
             { role: storedRole },
@@ -58,20 +57,19 @@ function App() {
           if (response.data.success) {
             setIsAuthenticated(true);
             setUserRole(response.data.roles[0]); // Assuming the backend returns an array of role names
-          } else if (response.data.message === "Token has expired.") {
-            // Handle expired token
+          } else {
+            // Set snackbar message if token is not valid
             setSnackbarMessage(
-              "You've been logged out because your session has expired."
+              "Session is invalid or has expired. Please log in again."
             );
             setSnackbarOpen(true);
-            setIsAuthenticated(false);
-            setUserRole(null);
-          } else {
             setIsAuthenticated(false);
             setUserRole(null);
           }
         } catch (error) {
           console.error("Token verification failed:", error);
+          setSnackbarMessage("Authentication failed. Please log in again.");
+          setSnackbarOpen(true);
           setIsAuthenticated(false);
           setUserRole(null);
         }
