@@ -30,4 +30,9 @@ classroomRoutes.get(
   classroomControllers.getAllClassroomCodes
 );
 
+classroomRoutes.get(
+  "/get-classroom-schedule/:classroomId",
+  classroomControllers.getClassroomSchedule
+);
+
 export default classroomRoutes;
