@@ -1,7 +1,15 @@
+import sequelize from "../config/dbConfig.js";
+
 import Students from "../models/Students.js";
 import validator from "validator";
 import Semesters from "../models/Semesters.js";
 import Grades from "../models/Grades.js";
+import Subjects from "../models/Subjects.js";
+import Student_Subjects from "../models/StudentSubjects.js";
+import Teachers from "../models/Teachers.js";
+import Teacher_Subjects from "../models/TeacherSubjects.js";
+import Classrooms from "../models/Classrooms.js";
+import ClassSchedule from "../models/ClassSchedule.js";
 
 // Create Student Controller
 const createStudent = async (req, res) => {
@@ -100,6 +108,18 @@ const getStudentById = async (req, res) => {
   try {
     const student = await Students.findOne({
       where: { student_id_pk: studentId, is_deleted: false },
+      include: [
+        {
+          model: Grades,
+          as: "Grade",
+          attributes: ["grade_code"],
+        },
+        {
+          model: Semesters,
+          as: "Semester",
+          attributes: ["semester_number"],
+        },
+      ],
     });
 
     if (!student) {
@@ -197,9 +217,10 @@ const updateStudent = async (req, res) => {
       grade_id_fk,
     });
 
-    return res
-      .status(200)
-      .json({ updateStudentMessage: "Student details updated successfully!" });
+    return res.status(200).json({
+      updateStudentMessage: "Student details updated successfully!",
+      updatedStudent: student,
+    });
   } catch (error) {
     console.error("Error updating student:", error);
     return res.status(500).json({
@@ -274,6 +295,121 @@ const recoverStudent = async (req, res) => {
   }
 };
 
+const getStudentSubjects = async (req, res) => {
+  const { studentId } = req.params;
+
+  try {
+    const studentSubjects = await Students.findOne({
+      where: { student_id_pk: studentId },
+      include: [
+        {
+          model: Subjects,
+          through: { model: Student_Subjects }, // Join table for students and subjects
+          as: "subjects",
+          attributes: ["subject_code", "subject_name"],
+          include: [
+            {
+              model: ClassSchedule,
+              as: "schedules",
+              attributes: ["day_of_week", "start_time", "end_time"],
+              include: [
+                {
+                  model: Classrooms,
+                  as: "classroom",
+                  attributes: ["classroom_code", "room_type"],
+                },
+              ],
+            },
+            {
+              model: Teachers,
+              through: { model: Teacher_Subjects }, // Join table for teachers and subjects
+              as: "Teachers",
+              attributes: ["teacher_first_name", "teacher_last_name"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!studentSubjects) {
+      return res
+        .status(404)
+        .json({ getStudentSubjectsMessage: "Student or subjects not found!" });
+    }
+
+    return res.status(200).json({ studentSubjects });
+  } catch (error) {
+    console.error("Error fetching student subjects:", error);
+    return res.status(500).json({
+      getStudentSubjectsMessage: "Server error. Please try again later.",
+      error: error.message || "Unknown error",
+    });
+  }
+};
+
+const getNumberOfStudents = async (req, res) => {
+  try {
+    // Count all students
+    const totalStudents = await Students.count({
+      where: { is_deleted: false },
+    });
+
+    // Count students per grade level by joining with the Grades model
+    const studentsPerGrade = await Students.findAll({
+      attributes: [
+        // [sequelize.col("Grade.grade_level"), "grade_level"],
+        [sequelize.col("Grade.grade_code"), "grade_code"],
+        [sequelize.fn("COUNT", sequelize.col("student_id_pk")), "count"],
+      ],
+      where: { is_deleted: false },
+      include: [
+        {
+          model: Grades,
+          attributes: [], // We only need grade_level, so no extra attributes
+        },
+      ],
+      group: ["Grade.grade_code"],
+    });
+
+    return res.status(200).json({
+      totalStudents,
+      studentsPerGrade,
+    });
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    return res.status(500).json({
+      getStudentsMessage: "Server error. Please try again later.",
+      getAllStudentCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
+// Get all Student Codes Controller
+const getAllStudentCodes = async (req, res) => {
+  try {
+    const studentCodes = await Students.findAll({
+      attributes: ["student_code"], // Adjust the attribute name if different
+      where: { is_deleted: false }, // Include only active students
+    });
+
+    // Extract student codes into an array
+    const codesArray = studentCodes.map((student) => student.student_code);
+
+    return res.status(200).json({
+      getAllStudentCodes: "All student codes successfully retrieved",
+      codesArray,
+    });
+  } catch (error) {
+    console.error("Error fetching student codes:", error);
+    return res.status(500).json({
+      getStudentCodesMessage: "Server error. Please try again later.",
+      getStudentCodesCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
 export {
   createStudent,
   getAllStudents,
@@ -281,4 +417,7 @@ export {
   updateStudent,
   deleteStudent,
   recoverStudent,
+  getStudentSubjects,
+  getNumberOfStudents,
+  getAllStudentCodes,
 };
