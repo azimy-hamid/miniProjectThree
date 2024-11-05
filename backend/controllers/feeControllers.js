@@ -4,7 +4,7 @@ import Students from "../models/Students.js";
 // Create a new fee record
 const createFee = async (req, res) => {
   const {
-    student_id_fk,
+    student_code, // Change from student_id_fk to student_code
     fee_type,
     fee_amount,
     due_date,
@@ -14,20 +14,19 @@ const createFee = async (req, res) => {
     discounts,
     payment_mode,
     semester,
-    year,
   } = req.body;
 
   // Validate required input
-  if (!student_id_fk || !fee_type || !fee_amount || !due_date || !semester) {
+  if (!student_code || !fee_type || !fee_amount || !due_date || !semester) {
     return res.status(400).json({
       createFeeMessage:
-        "Student ID, Fee Type, Fee Amount, Due Date, and Semester are required.",
+        "Student Code, Fee Type, Fee Amount, Due Date, and Semester are required.",
     });
   }
 
-  // Validate that the student exists
+  // Validate that the student exists using student_code
   const student = await Students.findOne({
-    where: { student_id_pk: student_id_fk },
+    where: { student_code }, // Find by student_code instead of student_id_pk
     paranoid: false, // Include soft-deleted records
   });
 
@@ -45,8 +44,11 @@ const createFee = async (req, res) => {
   }
 
   try {
+    // Extract year from the due_date
+    const year = new Date(due_date).getFullYear();
+
     const newFee = await Fees.create({
-      student_id_fk,
+      student_id_fk: student.student_id_pk, // Use the primary key here
       fee_type,
       fee_amount,
       due_date,
@@ -56,7 +58,7 @@ const createFee = async (req, res) => {
       discounts,
       payment_mode,
       semester,
-      year,
+      year, // Set year dynamically based on due_date
     });
 
     return res.status(201).json({
