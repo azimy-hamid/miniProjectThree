@@ -4,12 +4,12 @@ import Subjects from "../models/Subjects.js";
 
 // Create a new student-subject association
 const createStudentSubject = async (req, res) => {
-  const { student_id_fk, subject_id_fk } = req.body;
+  const { student_id_fk, subject_code } = req.body;
 
   // Validate required fields
-  if (!student_id_fk || !subject_id_fk) {
+  if (!student_id_fk || !subject_code) {
     return res.status(400).json({
-      createStudentSubjectMessage: "Student ID and Subject ID are required.",
+      createStudentSubjectMessage: "Student ID and Subject Code are required.",
     });
   }
 
@@ -24,9 +24,9 @@ const createStudentSubject = async (req, res) => {
       });
     }
 
-    // Check if the subject exists and is not deleted
+    // Check if the subject exists based on the subject_code and is not deleted
     const subject = await Subjects.findOne({
-      where: { subject_id_pk: subject_id_fk, is_deleted: false },
+      where: { subject_code: subject_code, is_deleted: false },
     });
     if (!subject) {
       return res.status(404).json({
@@ -34,10 +34,18 @@ const createStudentSubject = async (req, res) => {
       });
     }
 
-    // Create the association
+    // Check if the student's grade_code matches the subject's grade_code
+    if (student.grade_code !== subject.grade_code) {
+      return res.status(400).json({
+        createStudentSubjectMessage:
+          "You are not in the grade in which this subject is taught.",
+      });
+    }
+
+    // Create the association using subject_id_pk from the subject found
     const newStudentSubject = await Student_Subjects.create({
       student_id_fk,
-      subject_id_fk,
+      subject_id_fk: subject.subject_id_pk,
     });
 
     return res.status(201).json({
@@ -119,7 +127,7 @@ const getStudentSubjectById = async (req, res) => {
 // Update a student-subject association
 const updateStudentSubject = async (req, res) => {
   const { studentSubjectId } = req.params;
-  const { student_id_fk, subject_id_fk } = req.body;
+  const { student_id_fk, subject_code } = req.body;
 
   try {
     const studentSubject = await Student_Subjects.findOne({
@@ -133,7 +141,7 @@ const updateStudentSubject = async (req, res) => {
       });
     }
 
-    // Validate new student and subject if provided
+    // Validate new student if provided
     if (student_id_fk) {
       const student = await Students.findOne({
         where: { student_id_pk: student_id_fk, is_deleted: false },
@@ -146,16 +154,17 @@ const updateStudentSubject = async (req, res) => {
       studentSubject.student_id_fk = student_id_fk;
     }
 
-    if (subject_id_fk) {
+    // Validate and update subject using subject_code if provided
+    if (subject_code) {
       const subject = await Subjects.findOne({
-        where: { subject_id_pk: subject_id_fk, is_deleted: false },
+        where: { subject_code: subject_code, is_deleted: false },
       });
       if (!subject) {
         return res.status(404).json({
           updateStudentSubjectMessage: "Subject not found or deleted.",
         });
       }
-      studentSubject.subject_id_fk = subject_id_fk;
+      studentSubject.subject_id_fk = subject.subject_id_pk;
     }
 
     await studentSubject.save();
