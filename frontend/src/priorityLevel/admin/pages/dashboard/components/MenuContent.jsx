@@ -38,6 +38,12 @@ const SIDEBAR_ITEMS = [
     label: "Student Management",
     children: [
       {
+        id: "student-overview",
+        label: "Student Overview",
+        link: "/admin/student-overview",
+      },
+
+      {
         id: "create-student",
         label: "Create Student",
         link: "/admin/create-student",
@@ -53,6 +59,11 @@ const SIDEBAR_ITEMS = [
     id: "class-management",
     label: "Class Management",
     children: [
+      {
+        id: "classroom-overview",
+        label: "Classroom Overview",
+        link: "/admin/classroom-overview",
+      },
       {
         id: "create-classroom",
         label: "Create Classroom",
@@ -74,7 +85,6 @@ const SIDEBAR_ITEMS = [
     id: "fees-management",
     label: "Fees Management",
     children: [
-      { id: "view-fees", label: "View Fees", link: "/admin/view-fees" },
       { id: "manage-fees", label: "Manage Fees", link: "/admin/manage-fees" },
     ],
   },
@@ -82,6 +92,11 @@ const SIDEBAR_ITEMS = [
     id: "subject-management",
     label: "Subject Management",
     children: [
+      {
+        id: "subject-overview",
+        label: "Subject Overview",
+        link: "/admin/subject-overview",
+      },
       {
         id: "create-subject",
         label: "Create Subject",
