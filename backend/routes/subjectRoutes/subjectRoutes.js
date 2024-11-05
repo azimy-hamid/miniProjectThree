@@ -25,5 +25,9 @@ subjectRoutes.get(
   "/get-all-subject-codes",
   subjectControllers.getAllSubjectCodes
 );
+subjectRoutes.get(
+  "/get-only-one-subject-details/:subjectId",
+  subjectControllers.getOnlyOneSubjectDetails
+);
 
 export default subjectRoutes;
