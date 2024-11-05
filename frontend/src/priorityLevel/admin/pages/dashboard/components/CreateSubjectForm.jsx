@@ -23,22 +23,22 @@ import { getAllGradeCodes } from "../../../../../services/gradeEndpoints";
 import { getAllTeacherCodes } from "../../../../../services/teacherEndpoints"; // New service for teacher codes
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "600px",
-  },
+  // display: "flex",
+  // flexDirection: "column",
+  // alignSelf: "center",
+  // width: "100%",
+  // padding: theme.spacing(4),
+  // gap: theme.spacing(2),
+  // margin: "auto",
+  // [theme.breakpoints.up("sm")]: {
+  //   maxWidth: "600px",
+  // },
 }));
 
 const CreateSubjectFormContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  marginTop: theme.spacing(18),
+  // minHeight: "100%",
+  // padding: theme.spacing(2),
+  // marginTop: theme.spacing(18),
 }));
 
 const CreateSubjectForm = () => {

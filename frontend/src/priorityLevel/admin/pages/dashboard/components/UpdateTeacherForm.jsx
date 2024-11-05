@@ -17,73 +17,32 @@ import {
 } from "@mui/material";
 
 import { styled } from "@mui/material/styles";
-import { useParams } from "react-router-dom"; // Import useParams
-import {
-  getTeacherById,
-  updateTeacher,
-} from "../../../../../services/teacherEndpoints.js";
+import { updateTeacher } from "../../../../../services/teacherEndpoints.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   alignSelf: "center",
-  //   width: "100%",
-  //   padding: theme.spacing(4),
-  //   gap: theme.spacing(2),
-  //   margin: "auto",
-  //   [theme.breakpoints.up("sm")]: {
-  //     maxWidth: "450px",
-  //   },
+  // Customize Card styles if needed
 }));
 
 const UpdateTeacherFormContainer = styled(Stack)(({ theme }) => ({
-  //   minHeight: "100%",
-  //   padding: theme.spacing(2),
-  //   marginTop: theme.spacing(18),
+  // Customize container styles if needed
 }));
 
-export default function UpdateTeacherForm() {
-  const { teacherId } = useParams(); // Get teacherId from the route params
+export default function UpdateTeacherForm({ teacher }) {
   const [formData, setFormData] = React.useState({
-    teacher_first_name: "",
-    teacher_last_name: "",
-    gender: "",
-    dob: "",
-    email: "",
-    phone: "",
-    join_date: "",
-    working_days: [],
+    teacher_first_name: teacher?.teacher_first_name || "",
+    teacher_last_name: teacher?.teacher_last_name || "",
+    gender: teacher?.gender || "",
+    dob: teacher?.dob ? teacher.dob.split("T")[0] : "",
+    email: teacher?.email || "",
+    phone: teacher?.phone || "",
+    join_date: teacher?.join_date ? teacher.join_date.split("T")[0] : "",
+    working_days: teacher?.working_days || [],
   });
 
   const [errors, setErrors] = React.useState({});
   const [generalError, setGeneralError] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
   const [openSnackbar, setOpenSnackbar] = React.useState(false);
-
-  // Fetch teacher data on mount
-  React.useEffect(() => {
-    const fetchTeacherData = async () => {
-      try {
-        const response = await getTeacherById(teacherId);
-        setFormData({
-          teacher_first_name: response.teacher_first_name || "",
-          teacher_last_name: response.teacher_last_name || "",
-          gender: response.gender || "",
-          dob: response.dob ? response.dob.split("T")[0] : "",
-          email: response.email || "",
-          phone: response.phone || "",
-          join_date: response.join_date ? response.join_date.split("T")[0] : "",
-          working_days: response.working_days || [],
-        });
-      } catch (error) {
-        setGeneralError("Failed to load teacher data.");
-      }
-    };
-
-    if (teacherId) {
-      fetchTeacherData();
-    }
-  }, [teacherId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -132,7 +91,7 @@ export default function UpdateTeacherForm() {
     if (!validateInputs()) return;
 
     try {
-      const response = await updateTeacher(teacherId, formData);
+      const response = await updateTeacher(teacher._id, formData);
       if (response.updateTeacherMessage) {
         setGeneralError("");
         setSuccessMessage("Teacher details updated successfully!");
@@ -147,7 +106,7 @@ export default function UpdateTeacherForm() {
     <Card variant="outlined">
       <Typography variant="h4" sx={{ color: "primary.main" }}>
         Update {`${formData.teacher_first_name} ${formData.teacher_last_name}`}
-      </Typography>{" "}
+      </Typography>
       <Box
         component="form"
         onSubmit={handleSubmit}
