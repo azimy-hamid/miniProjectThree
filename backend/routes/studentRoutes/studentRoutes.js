@@ -22,4 +22,19 @@ studentRoutes.put(
   studentControllers.recoverStudent
 );
 
+studentRoutes.get(
+  "/get-student-subjects/:studentId",
+  studentControllers.getStudentSubjects
+);
+
+studentRoutes.get(
+  "/get-number-of-students",
+  studentControllers.getNumberOfStudents
+);
+
+studentRoutes.get(
+  "/get-all-student-codes",
+  studentControllers.getAllStudentCodes
+);
+
 export default studentRoutes;
