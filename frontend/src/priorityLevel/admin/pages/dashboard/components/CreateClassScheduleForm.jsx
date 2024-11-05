@@ -19,22 +19,22 @@ import { getAllClassroomCodes } from "../../../../../services/classroomEndpoints
 import { getAllSubjectCodes } from "../../../../../services/subjectEndpoints.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
+  // display: "flex",
+  // flexDirection: "column",
+  // alignSelf: "center",
+  // width: "100%",
+  // padding: theme.spacing(4),
+  // gap: theme.spacing(2),
+  // margin: "auto",
+  // [theme.breakpoints.up("sm")]: {
+  //   maxWidth: "450px",
+  // },
 }));
 
 const CreateClassScheduleFormContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  marginTop: theme.spacing(18),
+  // minHeight: "100%",
+  // padding: theme.spacing(2),
+  // marginTop: theme.spacing(18),
 }));
 
 const CreateClassScheduleForm = () => {

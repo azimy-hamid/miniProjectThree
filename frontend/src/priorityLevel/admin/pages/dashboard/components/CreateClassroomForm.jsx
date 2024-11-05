@@ -19,22 +19,22 @@ import { styled } from "@mui/material/styles";
 import { createClassroom } from "../../../../../services/classroomEndpoints";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
+  // display: "flex",
+  // flexDirection: "column",
+  // alignSelf: "center",
+  // width: "100%",
+  // padding: theme.spacing(4),
+  // gap: theme.spacing(2),
+  // margin: "auto",
+  // [theme.breakpoints.up("sm")]: {
+  //   maxWidth: "450px",
+  // },
 }));
 
 const CreateClassroomFormContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  marginTop: theme.spacing(18),
+  // minHeight: "100%",
+  // padding: theme.spacing(2),
+  // marginTop: theme.spacing(18),
 }));
 
 export default function CreateClassroomForm() {
