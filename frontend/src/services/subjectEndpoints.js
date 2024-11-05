@@ -123,3 +123,24 @@ export const getOnlyOneSubjectDetails = async (subjectId) => {
     throw error;
   }
 };
+
+export const getStudentsForSubject = async (subjectId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-students-for-subject/${subjectId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting one subject details:", error);
+    throw error;
+  }
+};
