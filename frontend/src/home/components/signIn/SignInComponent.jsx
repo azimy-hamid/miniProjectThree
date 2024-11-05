@@ -219,7 +219,7 @@ export default function SignIn(props) {
             />
           </FormControl>
           <FormControl>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <FormLabel htmlFor="password">Password</FormLabel>
               <Link
                 component="button"
@@ -230,7 +230,7 @@ export default function SignIn(props) {
               >
                 Forgot your password?
               </Link>
-            </Box>
+            </Box> */}
             <TextField
               error={passwordError || Boolean(apiError)} // Show error if API error exists
               helperText={passwordError ? passwordErrorMessage : apiError} // Show password error or API error message
@@ -249,7 +249,7 @@ export default function SignIn(props) {
           <Button type="submit" fullWidth variant="contained">
             Sign in
           </Button>
-          <Typography sx={{ textAlign: "center" }}>
+          {/* <Typography sx={{ textAlign: "center" }}>
             Don&apos;t have an account?{" "}
             <span>
               <Link
@@ -260,7 +260,7 @@ export default function SignIn(props) {
                 Sign Up
               </Link>
             </span>
-          </Typography>
+          </Typography> */}
           <Divider />
           <Typography
             variant="body2"

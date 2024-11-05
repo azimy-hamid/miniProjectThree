@@ -126,14 +126,14 @@ export default function AppAppBar() {
           >
             <Button
               color="primary"
-              variant="text"
+              variant="contained"
               size="small"
               component={Link}
               to="/signin"
             >
               Sign in
             </Button>
-            <Button
+            {/* <Button
               color="primary"
               variant="contained"
               size="small"
@@ -141,7 +141,7 @@ export default function AppAppBar() {
               to="/signup"
             >
               Sign up
-            </Button>
+            </Button> */}
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { sm: "flex", md: "none" } }}>
