@@ -31,22 +31,22 @@ import { getAllGradeCodes } from "../../../../../services/gradeEndpoints.js";
 import { getAllSemestersNumbers } from "../../../../../services/semesterEndpoints.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
+  // display: "flex",
+  // flexDirection: "column",
+  // alignSelf: "center",
+  // width: "100%",
+  // padding: theme.spacing(4),
+  // gap: theme.spacing(2),
+  // margin: "auto",
+  // [theme.breakpoints.up("sm")]: {
+  //   maxWidth: "450px",
+  // },
 }));
 
 const CreateStudentFormContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  marginTop: theme.spacing(18),
+  // minHeight: "100%",
+  // padding: theme.spacing(2),
+  // marginTop: theme.spacing(18),
 }));
 
 export default function CreateStudentForm() {
@@ -124,13 +124,28 @@ export default function CreateStudentForm() {
       }
     });
 
+    // Validate email format
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
+    // Validate password
     if (formData.password && formData.password.length < 8) {
       newErrors.password =
         "Password must be at least 8 characters long, contain uppercase and lowercase letters, and a special character.";
+    }
+
+    // Validate DOB - must not be in the future
+    if (formData.dob) {
+      const today = new Date();
+      const dobDate = new Date(formData.dob);
+      const fiveYearsAgo = new Date(today.setFullYear(today.getFullYear() - 5));
+
+      if (dobDate > today) {
+        newErrors.dob = "Date of birth cannot be in the future.";
+      } else if (dobDate > fiveYearsAgo) {
+        newErrors.dob = "Date of birth must be at least 5 years ago.";
+      }
     }
 
     setErrors(newErrors);
