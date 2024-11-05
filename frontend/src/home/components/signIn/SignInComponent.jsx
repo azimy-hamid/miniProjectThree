@@ -1,12 +1,9 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Divider from "@mui/material/Divider";
-import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -15,6 +12,8 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgetPassword.jsx";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./CustomIcons";
+import Divider from "@mui/material/Divider";
+
 import { loginUser } from "../../../services/userAuth.js"; // Ensure the path is correct
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -60,8 +59,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
@@ -82,19 +79,19 @@ export default function SignIn(props) {
     const isValid = validateInputs(); // Validate inputs
     if (!isValid) return; // Stop if inputs are invalid
 
-    const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const userData = { username, email, password }; // Prepare data for login
+    const userData = { email, password }; // Only email and password
 
     try {
       const data = await loginUser(userData); // Call loginUser with user data
 
-      if (data.token && data.role) {
-        // Store the token and role in localStorage
+      if (data.token && data.role && data.user_id_fk) {
+        // Store the token, role, and user_id_fk in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
+        localStorage.setItem("user_id_fk", data.user_id_fk);
 
         // Navigate based on the user's role
         switch (data.role) {
@@ -116,7 +113,6 @@ export default function SignIn(props) {
         }
       }
     } catch (error) {
-      // Extract error message from the response or set a generic message
       const errorMsg =
         error.response?.data?.loginUserMessage ||
         "Login failed. Please try again.";
@@ -126,21 +122,10 @@ export default function SignIn(props) {
   };
 
   const validateInputs = () => {
-    const username = document.getElementById("username");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
 
     let isValid = true;
-
-    // Validate Username
-    if (!username.value) {
-      setUsernameError(true);
-      setUsernameErrorMessage("Username is required.");
-      isValid = false;
-    } else {
-      setUsernameError(false);
-      setUsernameErrorMessage("");
-    }
 
     // Validate Email
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
@@ -168,7 +153,6 @@ export default function SignIn(props) {
   return (
     <SignInContainer direction="column" justifyContent="space-between">
       <Card variant="outlined">
-        <SitemarkIcon />
         <Typography
           component="h1"
           variant="h4"
@@ -188,21 +172,6 @@ export default function SignIn(props) {
           }}
         >
           <FormControl>
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <TextField
-              error={usernameError}
-              helperText={usernameErrorMessage}
-              id="username"
-              type="text"
-              name="username"
-              placeholder="your_username"
-              required
-              fullWidth
-              variant="outlined"
-              color={usernameError ? "error" : "primary"}
-            />
-          </FormControl>
-          <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
               error={emailError}
@@ -219,18 +188,6 @@ export default function SignIn(props) {
             />
           </FormControl>
           <FormControl>
-            {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Link
-                component="button"
-                type="button"
-                onClick={handleClickOpen}
-                variant="body2"
-                sx={{ alignSelf: "baseline" }}
-              >
-                Forgot your password?
-              </Link>
-            </Box> */}
             <TextField
               error={passwordError || Boolean(apiError)} // Show error if API error exists
               helperText={passwordError ? passwordErrorMessage : apiError} // Show password error or API error message
@@ -249,18 +206,7 @@ export default function SignIn(props) {
           <Button type="submit" fullWidth variant="contained">
             Sign in
           </Button>
-          {/* <Typography sx={{ textAlign: "center" }}>
-            Don&apos;t have an account?{" "}
-            <span>
-              <Link
-                href="/material-ui/signup"
-                variant="body2"
-                sx={{ textDecoration: "underline" }}
-              >
-                Sign Up
-              </Link>
-            </span>
-          </Typography> */}
+
           <Divider />
           <Typography
             variant="body2"

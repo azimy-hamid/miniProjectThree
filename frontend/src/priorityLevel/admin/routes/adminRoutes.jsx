@@ -21,7 +21,7 @@ import ManageFeesPage from "../pages/dashboard/ManageFeesPage";
 const navigateBasedOnRole = (role) => {
   switch (role) {
     case "super":
-      return <Navigate to="/admin/dashboard" />;
+      return <Navigate to="/super/dashboard" />;
     case "teacher":
       return <Navigate to="/teacher/dashboard" />;
     case "student":
