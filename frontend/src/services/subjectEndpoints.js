@@ -24,11 +24,33 @@ export const createSubject = async (subjectData) => {
   }
 };
 
+export const updateSubject = async (subjectData, subjectId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.put(
+      `${API_URL}/update-subject-details-by-id/${subjectId}`,
+      subjectData,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error updating Subject:", error);
+    throw error; // Propagate the error to handle it where the function is called
+  }
+};
+
 export const getAllSubject = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await axios.get(`${API_URL}/get-all-subject`, {
+    const response = await axios.get(`${API_URL}/get-all-subjects`, {
       headers: { "Content-Type": "application/json" },
       Authorization: `Bearer ${token}`,
     });
@@ -56,6 +78,48 @@ export const getAllSubjectCodes = async () => {
     return data;
   } catch (error) {
     console.error("Error getting all subject codes:", error);
+    throw error;
+  }
+};
+
+export const getSpecificSubject = async (subjectId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-specific-subject/${subjectId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting specific subject deep details:", error);
+    throw error;
+  }
+};
+
+export const getOnlyOneSubjectDetails = async (subjectId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-only-one-subject-details/${subjectId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting one subject details:", error);
     throw error;
   }
 };
