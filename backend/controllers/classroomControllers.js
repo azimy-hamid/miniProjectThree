@@ -1,4 +1,8 @@
 import Classrooms from "../models/Classrooms.js";
+import ClassSchedule from "../models/ClassSchedule.js";
+import Grades from "../models/Grades.js";
+import Subjects from "../models/Subjects.js";
+import Teachers from "../models/Teachers.js";
 
 // Create Classroom
 const createClassroom = async (req, res) => {
@@ -208,6 +212,55 @@ const getAllClassroomCodes = async (req, res) => {
   }
 };
 
+const getClassroomSchedule = async (req, res) => {
+  const { classroomId } = req.params;
+
+  try {
+    // Find schedules for the given classroom, including subject, grade, and teacher details
+    const schedules = await ClassSchedule.findAll({
+      where: { classroom_id_fk: classroomId },
+      include: [
+        {
+          model: Subjects,
+          as: "subject",
+          attributes: ["subject_code", "subject_name"], // Only necessary subject attributes
+          include: [
+            {
+              model: Grades,
+              attributes: ["grade_code", "grade_level"], // Include grade information related to subject
+            },
+            {
+              model: Teachers, // Include teachers associated with the subject
+              as: "Teachers", // Make sure this matches the alias you've defined in your associations
+              attributes: ["teacher_first_name", "teacher_last_name"], // Include necessary teacher attributes
+            },
+          ],
+        },
+        {
+          model: Classrooms,
+          as: "classroom",
+          attributes: ["classroom_code"], // Only necessary classroom attributes
+        },
+      ],
+    });
+
+    if (!schedules || schedules.length === 0) {
+      return res.status(404).json({
+        getClassroomScheduleMessage: "No schedules found for this classroom!",
+      });
+    }
+
+    return res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Error fetching classroom schedule:", error);
+    return res.status(500).json({
+      getClassroomScheduleMessage: "Server error. Please try again later.",
+      getClassroomScheduleCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
 // Exporting all controllers
 export {
   createClassroom,
@@ -217,4 +270,5 @@ export {
   deleteClassroom,
   recoverClassroom,
   getAllClassroomCodes,
+  getClassroomSchedule,
 };
