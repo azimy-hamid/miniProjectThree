@@ -165,11 +165,11 @@ const getAllSubjects = async (req, res) => {
         },
         {
           model: Grades,
-          as: "grade",
+          as: "Grade",
         },
         {
           model: Semesters,
-          as: "semester",
+          as: "Semester",
         },
       ],
     });
@@ -201,11 +201,15 @@ const getSubjectById = async (req, res) => {
         },
         {
           model: Grades,
-          as: "grade",
+          as: "Grade",
         },
         {
           model: Semesters,
-          as: "semester",
+          as: "Semester",
+        },
+        {
+          model: ClassSchedule,
+          as: "schedules", // Include the class schedules associated with the subject
         },
       ],
     });
@@ -429,6 +433,33 @@ const getAllSubjectCodes = async (req, res) => {
   }
 };
 
+const getOnlyOneSubjectDetails = async (req, res) => {
+  try {
+    const { subjectId } = req.params; // Extract subjectId from URL parameters
+
+    const subject = await Subjects.findOne({
+      where: { subject_id_pk: subjectId, is_deleted: false }, // Using subjectId in the filter
+    });
+
+    if (!subject) {
+      return res.status(404).json({
+        getSubjectMessage: "Subject not found",
+      });
+    }
+
+    return res.status(200).json({
+      getSubjectMessage: "Subject details retrieved successfully!",
+      subject,
+    });
+  } catch (error) {
+    console.error("Error retrieving subject details:", error);
+    return res.status(500).json({
+      getSubjectMessage: "Server error. Please try again later.",
+      getSubjectCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createSubject,
   getAllSubjects,
@@ -437,4 +468,5 @@ export {
   deleteSubject,
   recoverSubject,
   getAllSubjectCodes,
+  getOnlyOneSubjectDetails,
 };
