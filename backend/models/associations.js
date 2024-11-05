@@ -149,6 +149,15 @@ const setupAssociations = () => {
       as: "students", // Alias for inclusion
     });
 
+    Student_Subjects.belongsTo(Students, {
+      foreignKey: "student_id_fk", // Adjust according to your foreign key
+      as: "student", // Alias for the association
+    });
+    Student_Subjects.belongsTo(Subjects, {
+      foreignKey: "subject_id_fk", // Adjust according to your foreign key
+      as: "subject", // Alias for the association
+    });
+
     // teacher - subject - throught student_subject
     Teachers.belongsToMany(Subjects, {
       through: Teacher_Subjects,

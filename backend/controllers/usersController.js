@@ -100,18 +100,18 @@ const signup = async (req, res) => {
 
 // Login Controller
 const login = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
   // Validate input
-  if (!email || !username || !password) {
+  if (!email || !password) {
     return res
       .status(400)
-      .json({ loginUserMessage: "Username and password are required." });
+      .json({ loginUserMessage: "Email and password are required." });
   }
 
   try {
     // Find user by email
-    const user = await Users.findOne({ where: { username, email } });
+    const user = await Users.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ loginUserMessage: "Invalid credentials." });
     }
@@ -149,8 +149,12 @@ const login = async (req, res) => {
     // Generate JWT token with user_id_pk and role in the payload
     const token = generateToken(user.user_id_pk, user.user_type);
 
-    // Respond with the token, user ID, and user role
-    return res.status(200).json({ token, role: role.role_name });
+    // Respond with the token, user ID, user role, and user_id_fk
+    return res.status(200).json({
+      token,
+      role: role.role_name,
+      user_id_fk: user.user_id_fk,
+    });
   } catch (error) {
     console.error(error);
     return res

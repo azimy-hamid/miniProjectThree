@@ -5,6 +5,8 @@ import Semesters from "../models/Semesters.js"; // Assuming this is the semester
 import ClassSchedule from "../models/ClassSchedule.js";
 import Teacher_Subjects from "../models/TeacherSubjects.js";
 import Teachers from "../models/Teachers.js";
+import Students from "../models/Students.js";
+import Student_Subjects from "../models/StudentSubjects.js";
 
 // Create a new subject
 const createSubject = async (req, res) => {
@@ -460,6 +462,70 @@ const getOnlyOneSubjectDetails = async (req, res) => {
   }
 };
 
+const getStudentsForSubject = async (req, res) => {
+  const { subjectId } = req.params; // Assuming subjectId is passed as a URL parameter
+
+  // Validate that the subjectId is provided
+  if (!subjectId) {
+    return res.status(400).json({
+      message: "Subject ID is required.",
+    });
+  }
+
+  try {
+    // Check if the subject exists
+    const subject = await Subjects.findOne({
+      where: { subject_id_pk: subjectId },
+    }); // Use subject_id_pk to find the subject
+    if (!subject) {
+      return res.status(404).json({
+        message: "Subject not found.",
+      });
+    }
+
+    // Fetch all students
+    const allStudents = await Students.findAll({
+      attributes: [
+        "student_id_pk",
+        "student_code",
+        "student_first_name",
+        "student_last_name",
+      ],
+    });
+
+    // Fetch all student enrollments for the subject
+    const studentEnrollments = await Student_Subjects.findAll({
+      where: { subject_id_fk: subject.subject_id_pk }, // Use the foreign key from Subjects
+      attributes: ["student_id_fk"], // Get only the student IDs from the junction table
+    });
+
+    // Extract student IDs from the enrollments
+    const enrolledStudentIds = studentEnrollments.map(
+      (enrollment) => enrollment.student_id_fk
+    );
+
+    // Filter students based on the enrolled student IDs
+    const enrolledStudents = allStudents.filter((student) =>
+      enrolledStudentIds.includes(student.student_id_pk)
+    );
+
+    // Get the count of enrolled students
+    const studentCount = enrolledStudents.length;
+
+    // Return the count and list of students enrolled in the subject
+    res.status(200).json({
+      subjectId,
+      student_count: studentCount,
+      students: enrolledStudents, // List of enrolled students
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching the enrolled students.",
+    });
+  }
+};
+
 export {
   createSubject,
   getAllSubjects,
@@ -469,4 +535,5 @@ export {
   recoverSubject,
   getAllSubjectCodes,
   getOnlyOneSubjectDetails,
+  getStudentsForSubject,
 };
