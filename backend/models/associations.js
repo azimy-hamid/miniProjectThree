@@ -35,6 +35,15 @@ const setupAssociations = () => {
       as: "student",
     });
 
+    Subjects.hasMany(Attendance, {
+      foreignKey: "subject_id_fk",
+      as: "attendance",
+    });
+    Attendance.belongsTo(Subjects, {
+      foreignKey: "subject_id_fk",
+      as: "subject",
+    });
+
     // classrooms and students
     Classrooms.belongsToMany(Students, {
       through: Classroom_Student,

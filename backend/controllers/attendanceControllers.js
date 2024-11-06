@@ -1,48 +1,108 @@
 import Attendance from "../models/Attendance.js";
 import Students from "../models/Students.js";
+import Subjects from "../models/Subjects.js";
 
 // Create a new attendance record
 const createAttendance = async (req, res) => {
   const {
-    student_id_fk,
+    student_ids_fk, // Expecting an array of student IDs
+    subject_id_fk,
     attendance_date,
     attendance_status,
-    attendance_type,
     reason,
   } = req.body;
 
   // Validate required input
-  if (!student_id_fk || !attendance_status || !attendance_type) {
+  if (
+    !student_ids_fk ||
+    !Array.isArray(student_ids_fk) ||
+    student_ids_fk.length === 0 ||
+    !subject_id_fk ||
+    !attendance_status
+  ) {
     return res.status(400).json({
-      createAttendanceMessage: "Missing required fields.",
+      createAttendanceMessage:
+        "Missing required fields or invalid student list.",
     });
   }
 
   try {
-    // Validate if the student exists
-    const studentExists = await Students.findOne({
-      where: { student_id_pk: student_id_fk, is_deleted: false },
+    // Validate if the subject exists
+    const subjectExists = await Subjects.findOne({
+      where: { subject_id_pk: subject_id_fk },
     });
-    if (!studentExists) {
+    if (!subjectExists) {
       return res.status(404).json({
-        createAttendanceMessage: "Student not found!",
+        createAttendanceMessage: "Subject not found!",
       });
     }
 
-    // Validate if the semester subject exists
+    // Create attendance records for each student in the list
+    const attendanceRecords = [];
+    const skippedStudents = [];
 
-    // Create a new attendance record
-    const newAttendance = await Attendance.create({
-      student_id_fk,
-      attendance_date,
-      attendance_status,
-      attendance_type,
-      reason,
-    });
+    // Normalize the attendance date to ignore time (e.g., set to midnight)
+    const normalizedAttendanceDate = new Date(attendance_date).setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    for (const student_id_fk of student_ids_fk) {
+      // Validate if each student exists
+      const studentExists = await Students.findOne({
+        where: { student_id_pk: student_id_fk, is_deleted: false },
+      });
+      if (!studentExists) {
+        // If a student is not found, skip this iteration and log the missing student
+        console.warn(`Student with ID ${student_id_fk} not found, skipping.`);
+        skippedStudents.push(student_id_fk);
+        continue;
+      }
+
+      // Check if attendance already exists for this student on the same date (ignoring time)
+      const attendanceExists = await Attendance.findOne({
+        where: {
+          student_id_fk,
+          subject_id_fk,
+          attendance_date: new Date(normalizedAttendanceDate).toISOString(),
+        },
+      });
+
+      if (attendanceExists) {
+        // If attendance already exists, skip this student
+        console.warn(
+          `Attendance already marked for student ID ${student_id_fk} on ${attendance_date}`
+        );
+        skippedStudents.push(student_id_fk);
+        continue;
+      }
+
+      // Create a new attendance record for each student
+      const newAttendance = await Attendance.create({
+        student_id_fk,
+        subject_id_fk,
+        attendance_date: normalizedAttendanceDate, // Ensure correct date format
+        attendance_status,
+        reason,
+      });
+      attendanceRecords.push(newAttendance);
+    }
+
+    // Check if any records were created
+    if (attendanceRecords.length === 0) {
+      return res.status(404).json({
+        createAttendanceMessage:
+          "No valid students found to create attendance records, or students already have attendance marked.",
+        skippedStudents,
+      });
+    }
 
     return res.status(201).json({
-      createAttendanceMessage: "Attendance record created successfully!",
-      newAttendance,
+      createAttendanceMessage: "Attendance records created successfully!",
+      attendanceRecords,
+      skippedStudents, // List of students who were skipped (either not found or already had attendance marked)
     });
   } catch (error) {
     console.error("Error creating attendance:", error);

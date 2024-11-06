@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 import Students from "./Students.js";
+import Subjects from "./Subjects.js";
 
 const Attendance = sequelize.define(
   "Attendance",
@@ -15,6 +16,13 @@ const Attendance = sequelize.define(
       references: {
         model: Students,
         key: "student_id_pk",
+      },
+    },
+    subject_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Subjects,
+        key: "subject_id_pk",
       },
     },
     attendance_date: {
@@ -32,16 +40,6 @@ const Attendance = sequelize.define(
         isIn: {
           args: [["present", "absent", "late", "excused"]],
           msg: "Attendance status must be one of the following: 'present', 'absent', 'late', or 'excused'.",
-        },
-      },
-    },
-    attendance_type: {
-      type: DataTypes.ENUM("in-person", "online", "hybrid"),
-      allowNull: false,
-      validate: {
-        isIn: {
-          args: [["in-person", "online", "hybrid"]],
-          msg: "Attendance type must be one of the following: in-person, online, hybrid.",
         },
       },
     },
