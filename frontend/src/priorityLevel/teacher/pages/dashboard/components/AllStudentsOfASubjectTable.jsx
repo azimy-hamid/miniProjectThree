@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, Modal, Paper, Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Modal,
+  Paper,
+  Grid,
+  Snackbar,
+  Alert,
+  Checkbox,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useParams } from "react-router-dom";
 import { getStudentsForSubject } from "../../../../../services/subjectEndpoints";
 import { getSpecificStudent } from "../../../../../services/studentEndpoints";
+import { markAttendanceForASubject } from "../../../../../services/attendanceEndpoints";
 
 export default function AllStudentsOfASubjectTable({ subject }) {
   const { subjectId } = useParams();
@@ -11,6 +22,12 @@ export default function AllStudentsOfASubjectTable({ subject }) {
   const [studentCount, setStudentCount] = useState(0);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +48,14 @@ export default function AllStudentsOfASubjectTable({ subject }) {
     fetchData();
   }, [subjectId]);
 
+  const handleCheckboxChange = (studentId) => {
+    setSelectedStudentIds((prev) =>
+      prev.includes(studentId)
+        ? prev.filter((id) => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+
   const handleOpenModal = async (studentId) => {
     try {
       const studentDetails = await getSpecificStudent(studentId);
@@ -46,8 +71,51 @@ export default function AllStudentsOfASubjectTable({ subject }) {
     setSelectedStudent(null);
   };
 
+  const handleSubmitAttendance = async () => {
+    const attendanceData = {
+      student_ids_fk: selectedStudentIds,
+      subject_id_fk: subjectId,
+      attendance_date: new Date().toISOString().split("T")[0], // default to today
+      attendance_status: "present", // set a default status
+      reason: "", // default reason can be empty
+    };
+
+    try {
+      await markAttendanceForASubject(attendanceData);
+      setSnackbar({
+        open: true,
+        message: "Attendance marked successfully!",
+        severity: "success",
+      });
+      setSelectedStudentIds([]); // Clear selected students after submission
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message:
+          "Error marking attendance: " +
+          error.response.data.createAttendanceMessage,
+        severity: "error",
+      });
+      console.error("Error marking attendance:", error);
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const columns = [
-    { field: "student_id_pk", headerName: "Student ID", flex: 1 },
+    {
+      field: "select",
+      headerName: "Select",
+      width: 80,
+      renderCell: (params) => (
+        <Checkbox
+          checked={selectedStudentIds.includes(params.row.student_id_pk)}
+          onChange={() => handleCheckboxChange(params.row.student_id_pk)}
+        />
+      ),
+    },
     { field: "student_code", headerName: "Student Code", flex: 1 },
     { field: "student_first_name", headerName: "First Name", flex: 1 },
     { field: "student_last_name", headerName: "Last Name", flex: 1 },
@@ -89,6 +157,15 @@ export default function AllStudentsOfASubjectTable({ subject }) {
         disableSelectionOnClick
         autoHeight
       />
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ mt: 2 }}
+        onClick={handleSubmitAttendance}
+        disabled={selectedStudentIds.length === 0}
+      >
+        Mark Attendance
+      </Button>
 
       {/* Modal for displaying student details */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
@@ -118,68 +195,8 @@ export default function AllStudentsOfASubjectTable({ subject }) {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
-                  <Typography variant="body2">Gender:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.gender}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">DOB:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {new Date(selectedStudent.dob).toLocaleDateString()}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Email:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.email}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Phone:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.phone}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Join Date:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {new Date(selectedStudent.join_date).toLocaleDateString()}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Grade:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.Grade.grade_code}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Semester:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.Semester.semester_number}
-                  </Typography>
-                </Grid>
+                {/* Additional student details */}
+                {/* Render more fields as needed */}
               </Grid>
               <Button
                 onClick={handleCloseModal}
@@ -196,6 +213,21 @@ export default function AllStudentsOfASubjectTable({ subject }) {
           )}
         </Paper>
       </Modal>
+
+      {/* Snackbar for success and error messages */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
