@@ -29,20 +29,6 @@ const PayFeeFormContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function PayFeeForm({ student }) {
-  console.log(student.student_code);
-  const [formData, setFormData] = React.useState({
-    student_code: student?.student_code || "", // Initialize student_code from prop
-    fee_type: "",
-    fee_amount: "",
-    due_date: "",
-    payment_status: "",
-    payment_date: "",
-    penalty: "",
-    discounts: "",
-    payment_mode: "",
-    semester: "",
-  });
-
   const [studentCodes, setStudentCodes] = React.useState([]);
   const [semesterNumbers, setSemesterNumbers] = React.useState([]);
   const [errors, setErrors] = React.useState({});
@@ -62,6 +48,19 @@ export default function PayFeeForm({ student }) {
     };
     fetchData();
   }, []);
+
+  const [formData, setFormData] = React.useState({
+    student_code: student?.student_code || studentCodes, // Initialize student_code from prop
+    fee_type: "",
+    fee_amount: "",
+    due_date: "",
+    payment_status: "",
+    payment_date: "",
+    penalty: "",
+    discounts: "",
+    payment_mode: "",
+    semester: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -144,28 +143,35 @@ export default function PayFeeForm({ student }) {
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="student_code">Student Code</FormLabel>
-                <Select
-                  id="student_code"
-                  name="student_code"
-                  value={formData.student_code}
-                  onChange={handleChange}
-                  error={!!errors.student_code}
-                  displayEmpty
-                  disabled={!!student?.student_code} // Disable if student code is provided
-                >
-                  <MenuItem value="">
-                    {student?.student_code
-                      ? student?.student_code
-                      : "Select Student Code"}
-                  </MenuItem>
-                  {student?.student_code
-                    ? null
-                    : studentCodes.map((code) => (
-                        <MenuItem key={code} value={code}>
-                          {code}
-                        </MenuItem>
-                      ))}
-                </Select>
+                {student?.student_code ? (
+                  // Show a non-editable TextField if student_code is provided as a prop
+                  <TextField
+                    id="student_code"
+                    name="student_code"
+                    value={student.student_code}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    variant="outlined"
+                  />
+                ) : (
+                  // Show a Select dropdown if no student_code prop is provided
+                  <Select
+                    id="student_code"
+                    name="student_code"
+                    value={formData.student_code}
+                    onChange={handleChange}
+                    error={!!errors.student_code}
+                    displayEmpty
+                  >
+                    <MenuItem value="">Select Student Code</MenuItem>
+                    {studentCodes.map((code) => (
+                      <MenuItem key={code} value={code}>
+                        {code}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
                 <Typography variant="caption" color="error">
                   {errors.student_code}
                 </Typography>
