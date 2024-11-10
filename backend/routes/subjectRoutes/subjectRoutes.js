@@ -35,4 +35,9 @@ subjectRoutes.get(
   subjectControllers.getStudentsForSubject
 );
 
+subjectRoutes.get(
+  "/get-subjects-for-student/:studentId",
+  subjectControllers.getSubjectsForStudent
+);
+
 export default subjectRoutes;

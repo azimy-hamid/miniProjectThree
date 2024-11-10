@@ -526,6 +526,73 @@ const getStudentsForSubject = async (req, res) => {
   }
 };
 
+// Get subjects for a student by student ID (primary key)
+const getSubjectsForStudent = async (req, res) => {
+  const { studentId } = req.params; // Extract studentId from URL parameters
+
+  try {
+    // Find the student by primary key
+    const student = await Students.findOne({
+      where: { student_id_pk: studentId, is_deleted: false }, // Ensure the student exists and is not deleted
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        getSubjectsMessage: "Student not found or deleted.",
+      });
+    }
+
+    // Get all subjects associated with the student using the join table
+    const studentSubjects = await Student_Subjects.findAll({
+      where: { student_id_fk: studentId }, // Filter by student ID
+      include: [
+        {
+          model: Subjects,
+          as: "subject", // Assuming a relationship with the Subjects model
+          required: true, // Ensures only subjects associated with the student are retrieved
+          include: [
+            {
+              model: Teachers,
+              as: "Teachers", // Assuming a relationship with the Teachers model
+              required: true,
+            },
+            {
+              model: Classrooms,
+              as: "classroom", // Assuming a relationship with the Classrooms model
+              required: true,
+            },
+          ],
+        },
+      ],
+    });
+
+    if (studentSubjects.length === 0) {
+      return res.status(404).json({
+        getSubjectsMessage: "No subjects found for this student.",
+      });
+    }
+
+    // Extract the subject, teacher, and classroom data
+    const subjectsWithDetails = studentSubjects.map((studentSubject) => ({
+      subject: studentSubject.subject, // Assuming 'name' is the subject's name
+      teacher: studentSubject.subject.teacher, // Assuming teacher has a 'name' field
+      classroom: studentSubject.subject.classroom, // Assuming classroom has a 'room_number' field
+    }));
+
+    return res.status(200).json({
+      getSubjectsMessage:
+        "Subjects, teachers, and classrooms retrieved successfully!",
+      subjects: subjectsWithDetails,
+    });
+  } catch (error) {
+    console.error("Error retrieving subjects for student:", error);
+    return res.status(500).json({
+      getSubjectsMessage: "Server error. Please try again later.",
+      getSubjectsCatchBlkErr: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createSubject,
   getAllSubjects,
@@ -536,4 +603,5 @@ export {
   getAllSubjectCodes,
   getOnlyOneSubjectDetails,
   getStudentsForSubject,
+  getSubjectsForStudent,
 };
