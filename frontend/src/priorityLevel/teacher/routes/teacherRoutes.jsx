@@ -28,7 +28,11 @@ const teacherRoutes = ({ isAuthenticated, userRole }) => {
     <Route
       path="/teacher/dashboard"
       element={
-        isAuthenticated ? navigateBasedOnRole(userRole) : <Navigate to="/" />
+        isAuthenticated && userRole === roleAllowed ? (
+          navigateBasedOnRole(userRole)
+        ) : (
+          <Navigate to="/" />
+        )
       }
       key="teacher-dashboard"
     />,
@@ -37,14 +41,24 @@ const teacherRoutes = ({ isAuthenticated, userRole }) => {
     <Route
       path="/teacher/subject-overview"
       element={
-        isAuthenticated ? <TeacherSubjectsOverviewPage /> : <Navigate to="/" />
+        isAuthenticated && userRole === roleAllowed ? (
+          <TeacherSubjectsOverviewPage />
+        ) : (
+          <Navigate to="/" />
+        )
       }
       key="teacher-subject-overview"
     />,
 
     <Route
       path="/teacher/subject-details/:subjectId"
-      element={isAuthenticated ? <SubjectDetailsPage /> : <Navigate to="/" />}
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <SubjectDetailsPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
       key="teacher-subject-overview"
     />,
   ];

@@ -41,7 +41,11 @@ const adminRoutes = ({ isAuthenticated, userRole }) => {
     <Route
       path="/admin/dashboard"
       element={
-        isAuthenticated ? navigateBasedOnRole(userRole) : <Navigate to="/" />
+        isAuthenticated && userRole === roleAllowed ? (
+          navigateBasedOnRole(userRole)
+        ) : (
+          <Navigate to="/" />
+        )
       }
       key="admin-dashboard"
     />,
