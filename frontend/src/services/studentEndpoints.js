@@ -141,3 +141,24 @@ export const getAllStudentCodes = async () => {
     throw error;
   }
 };
+
+export const getStudentByCode = async (studentCode) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-student-by-code/${studentCode}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting specific student:", error);
+    throw error;
+  }
+};
