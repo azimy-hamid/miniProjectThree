@@ -1,5 +1,6 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import NavbarBreadcrumbs from "./NavbarBreadcrumbs";
 import ColorModeIconDropdown from "../../../../../theme/ColorModeIconDropdown.jsx";
 
@@ -17,7 +18,11 @@ export default function Header() {
       }}
       spacing={2}
     >
-      <NavbarBreadcrumbs />
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Typography variant="h6" component="div">
+          Teacher's Portal
+        </Typography>
+      </Stack>
       <Stack direction="row" sx={{ gap: 1 }}>
         <ColorModeIconDropdown />
       </Stack>

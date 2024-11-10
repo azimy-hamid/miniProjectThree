@@ -19,18 +19,7 @@ const SIDEBAR_ITEMS = [
       {
         id: "student-overview",
         label: "Student Overview",
-        link: "/admin/student-overview",
-      },
-
-      {
-        id: "create-student",
-        label: "Create Student",
-        link: "/admin/create-student",
-      },
-      {
-        id: "student-list",
-        label: "Student List",
-        link: "/admin/student-list",
+        link: "/teacher/student-overview",
       },
     ],
   },
