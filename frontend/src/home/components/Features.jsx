@@ -9,37 +9,40 @@ import Typography from "@mui/material/Typography";
 
 import { styled } from "@mui/material/styles";
 
-import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
-import EdgesensorHighRoundedIcon from "@mui/icons-material/EdgesensorHighRounded";
-import ViewQuiltRoundedIcon from "@mui/icons-material/ViewQuiltRounded";
+import SchoolIcon from "@mui/icons-material/School";
+import EventIcon from "@mui/icons-material/Event";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 const items = [
   {
-    icon: <ViewQuiltRoundedIcon />,
-    title: "Dashboard",
+    icon: <EventIcon />,
+    title: "School Events",
     description:
-      "This item could provide a snapshot of the most important metrics or data points related to the product.",
-    imageLight: 'url("homeAssets/statics/images/featureImages/dash-light.png")',
-    imageDark: 'url("homeAssets/statics/images/featureImages/dash-dark.png")',
-  },
-  {
-    icon: <EdgesensorHighRoundedIcon />,
-    title: "Mobile integration",
-    description:
-      "This item could provide information about the mobile app version of the product.",
+      "Stay up-to-date with upcoming events, activities, and school functions.",
     imageLight:
-      'url("homeAssets/statics/images/featureImages/mobile-light.png")',
-    imageDark: 'url("homeAssets/statics/images/featureImages/mobile-dark.png")',
-  },
-  {
-    icon: <DevicesRoundedIcon />,
-    title: "Available on all platforms",
-    description:
-      "This item could let users know the product is available on all platforms, such as web, mobile, and desktop.",
-    imageLight:
-      'url("homeAssets/statics/images/featureImages/devices-light.png")',
+      'url("homeAssets/statics/images/featureImages/school-campus-light.jpg")',
     imageDark:
-      'url("homeAssets/statics/images/featureImages/devices-dark.png")',
+      'url("homeAssets/statics/images/featureImages/school-campus-light.jpg")',
+  },
+  {
+    icon: <SchoolIcon />,
+    title: "Courses",
+    description:
+      "Explore the various courses offered by our school, including the syllabus and registration details.",
+    imageLight:
+      'url("homeAssets/statics/images/featureImages/school-environment-light.jpg")',
+    imageDark:
+      'url("homeAssets/statics/images/featureImages/school-environment-light.jpg")',
+  },
+  {
+    icon: <AssignmentIcon />,
+    title: "Assignments",
+    description:
+      "Find all your assignments, due dates, and submission guidelines for different courses.",
+    imageLight:
+      'url("homeAssets/statics/images/featureImages/classroom-environment-light.jpg")',
+    imageDark:
+      'url("homeAssets/statics/images/featureImages/classroom-environment-light.jpg")',
   },
 ];
 
@@ -91,8 +94,8 @@ function MobileLayout({ selectedItemIndex, handleItemClick, selectedFeature }) {
         <Box
           sx={(theme) => ({
             mb: 2,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundSize: "contain", // Ensure the image scales to fit within its container
+            backgroundPosition: "center", // Center the image
             minHeight: 280,
             backgroundImage: "var(--items-imageLight)",
             ...theme.applyStyles("dark", {
@@ -156,15 +159,14 @@ export default function Features() {
           gutterBottom
           sx={{ color: "text.primary" }}
         >
-          Product features
+          School Features
         </Typography>
         <Typography
           variant="body1"
           sx={{ color: "text.secondary", mb: { xs: 2, sm: 4 } }}
         >
-          Provide a brief overview of the key features of the product. For
-          example, you could list the number of features, their types or
-          benefits, and add-ons.
+          Explore the key features of our school, from courses to events and
+          assignments.
         </Typography>
       </Box>
       <Box
@@ -254,7 +256,10 @@ export default function Features() {
                 m: "auto",
                 width: 420,
                 height: 500,
-                backgroundSize: "contain",
+                backgroundSize: "contain", // Adjusted to contain
+                backgroundPosition: "center", // Center the image
+                backgroundRepeat: "no-repeat",
+
                 backgroundImage: "var(--items-imageLight)",
                 ...theme.applyStyles("dark", {
                   backgroundImage: "var(--items-imageDark)",

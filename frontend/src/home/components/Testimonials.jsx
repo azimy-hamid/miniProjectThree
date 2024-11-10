@@ -13,74 +13,74 @@ const userTestimonials = [
   {
     avatar: (
       <Avatar
-        alt="Remy Sharp"
+        alt="Sarah Johnson"
         src="homeAssets/statics/images/testimonialsImages/1.jpg"
       />
     ),
-    name: "Remy Sharp",
-    occupation: "Senior Engineer",
+    name: "Sarah Johnson",
+    occupation: "Student, Grade 12",
     testimonial:
-      "I absolutely love how versatile this product is! Whether I'm tackling work projects or indulging in my favorite hobbies, it seamlessly adapts to my changing needs. Its intuitive design has truly enhanced my daily routine, making tasks more efficient and enjoyable.",
+      "Attending this school has been an incredible journey. The teachers are so supportive, and the curriculum really prepares us for the real world. I’ve gained confidence in my abilities, and I’m excited about the future!",
   },
   {
     avatar: (
       <Avatar
-        alt="Travis Howard"
+        alt="Mr. Alan Parker"
         src="homeAssets/statics/images/testimonialsImages/2.jpg"
       />
     ),
-    name: "Travis Howard",
-    occupation: "Lead Product Designer",
+    name: "Mr. Alan Parker",
+    occupation: "Math Teacher",
     testimonial:
-      "One of the standout features of this product is the exceptional customer support. In my experience, the team behind this product has been quick to respond and incredibly helpful. It's reassuring to know that they stand firmly behind their product.",
+      "It's been a pleasure teaching here. The school fosters a great learning environment, and it's amazing to see the students grow academically and personally. I’m proud to be part of such a supportive community.",
   },
   {
     avatar: (
       <Avatar
-        alt="Cindy Baker"
+        alt="Emily Davis"
         src="homeAssets/statics/images/testimonialsImages/3.jpg"
       />
     ),
-    name: "Cindy Baker",
-    occupation: "CTO",
+    name: "Emily Davis",
+    occupation: "Student, Grade 10",
     testimonial:
-      "The level of simplicity and user-friendliness in this product has significantly simplified my life. I appreciate the creators for delivering a solution that not only meets but exceeds user expectations.",
+      "I love the extra-curricular activities offered here, from sports to music clubs. It’s great that we have so many opportunities to explore our passions while also getting a solid education.",
   },
   {
     avatar: (
       <Avatar
-        alt="Remy Sharp"
+        alt="Mrs. Linda Carter"
         src="homeAssets/statics/images/testimonialsImages/4.jpg"
       />
     ),
-    name: "Julia Stewart",
-    occupation: "Senior Engineer",
+    name: "Mrs. Linda Carter",
+    occupation: "Science Teacher",
     testimonial:
-      "I appreciate the attention to detail in the design of this product. The small touches make a big difference, and it's evident that the creators focused on delivering a premium experience.",
+      "This school’s commitment to hands-on learning has been incredible. The students are highly engaged, and we’ve implemented innovative teaching techniques that make science come alive for them.",
   },
   {
     avatar: (
       <Avatar
-        alt="Travis Howard"
+        alt="James Brown"
         src="homeAssets/statics/images/testimonialsImages/5.jpg"
       />
     ),
-    name: "John Smith",
-    occupation: "Product Designer",
+    name: "James Brown",
+    occupation: "Student, Grade 11",
     testimonial:
-      "I've tried other similar products, but this one stands out for its innovative features. It's clear that the makers put a lot of thought into creating a solution that truly addresses user needs.",
+      "The school spirit here is amazing. We really come together as a community, whether it's for sports events or school plays. This environment motivates me to push myself to do my best.",
   },
   {
     avatar: (
       <Avatar
-        alt="Cindy Baker"
+        alt="Dr. Susan Lee"
         src="homeAssets/statics/images/testimonialsImages/6.jpg"
       />
     ),
-    name: "Daniel Wolf",
-    occupation: "CDO",
+    name: "Dr. Susan Lee",
+    occupation: "Principal",
     testimonial:
-      "The quality of this product exceeded my expectations. It's durable, well-designed, and built to last. Definitely worth the investment!",
+      "It’s an honor to lead this school. We strive to provide a nurturing and academically rigorous environment, where every student feels valued and prepared for success beyond the classroom.",
   },
 ];
 
@@ -136,12 +136,12 @@ export default function Testimonials() {
           gutterBottom
           sx={{ color: "text.primary" }}
         >
-          Testimonials
+          Student and Teacher Testimonials
         </Typography>
         <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          See what our customers love about our products. Discover how we excel
-          in efficiency, durability, and satisfaction. Join us for quality,
-          innovation, and reliable support.
+          Hear from our students and faculty about the positive learning
+          environment we offer. Discover why our school is the perfect place for
+          academic and personal growth.
         </Typography>
       </Box>
       <Grid container spacing={2}>

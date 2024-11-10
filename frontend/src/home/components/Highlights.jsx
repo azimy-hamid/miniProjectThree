@@ -1,53 +1,53 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid2';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import AutoFixHighRoundedIcon from '@mui/icons-material/AutoFixHighRounded';
-import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
-import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
-import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRounded';
-import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
-import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid2";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import SchoolIcon from "@mui/icons-material/School";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 
 const items = [
   {
-    icon: <SettingsSuggestRoundedIcon />,
-    title: 'Adaptable performance',
+    icon: <SchoolIcon />,
+    title: "Quality Education",
     description:
-      'Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.',
+      "Our institution offers a high standard of education, focusing on both academic excellence and personal growth.",
   },
   {
-    icon: <ConstructionRoundedIcon />,
-    title: 'Built to last',
+    icon: <LocalLibraryIcon />,
+    title: "Extensive Resources",
     description:
-      'Experience unmatched durability that goes above and beyond with lasting investment.',
+      "With a wide variety of learning materials, libraries, and online resources, we ensure our students have the best tools to succeed.",
   },
   {
-    icon: <ThumbUpAltRoundedIcon />,
-    title: 'Great user experience',
+    icon: <GroupAddIcon />,
+    title: "Inclusive Community",
     description:
-      'Integrate our product into your routine with an intuitive and easy-to-use interface.',
+      "We foster an inclusive, supportive environment where every student feels valued and encouraged to participate.",
   },
   {
-    icon: <AutoFixHighRoundedIcon />,
-    title: 'Innovative functionality',
+    icon: <EventAvailableIcon />,
+    title: "Extracurricular Opportunities",
     description:
-      'Stay ahead with features that set new standards, addressing your evolving needs better than the rest.',
+      "From sports to arts, our school offers various extracurricular activities that help students develop their interests and skills.",
   },
   {
-    icon: <SupportAgentRoundedIcon />,
-    title: 'Reliable support',
+    icon: <SupportAgentIcon />,
+    title: "Dedicated Support",
     description:
-      'Count on our responsive customer support, offering assistance that goes beyond the purchase.',
+      "Our counselors and faculty are always available to guide students through both academic challenges and personal development.",
   },
   {
-    icon: <QueryStatsRoundedIcon />,
-    title: 'Precision in every detail',
+    icon: <VerifiedUserIcon />,
+    title: "Accredited Curriculum",
     description:
-      'Enjoy a meticulously crafted product where small touches make a significant impact on your overall experience.',
+      "We offer an accredited curriculum that prepares students for future success, equipping them with essential life skills.",
   },
 ];
 
@@ -58,32 +58,32 @@ export default function Highlights() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        color: 'white',
-        bgcolor: 'grey.900',
+        color: "white",
+        bgcolor: "grey.900",
       }}
     >
       <Container
         sx={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           gap: { xs: 3, sm: 6 },
         }}
       >
         <Box
           sx={{
-            width: { sm: '100%', md: '60%' },
-            textAlign: { sm: 'left', md: 'center' },
+            width: { sm: "100%", md: "60%" },
+            textAlign: { sm: "left", md: "center" },
           }}
         >
           <Typography component="h2" variant="h4" gutterBottom>
             Highlights
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
+          <Typography variant="body1" sx={{ color: "grey.400" }}>
             Explore why our product stands out: adaptability, durability,
-            user-friendly design, and innovation. Enjoy reliable customer support and
-            precision in every detail.
+            user-friendly design, and innovation. Enjoy reliable customer
+            support and precision in every detail.
           </Typography>
         </Box>
         <Grid container spacing={2}>
@@ -95,19 +95,19 @@ export default function Highlights() {
                 spacing={1}
                 useFlexGap
                 sx={{
-                  color: 'inherit',
+                  color: "inherit",
                   p: 3,
-                  height: '100%',
-                  borderColor: 'hsla(220, 25%, 25%, 0.3)',
-                  backgroundColor: 'grey.800',
+                  height: "100%",
+                  borderColor: "hsla(220, 25%, 25%, 0.3)",
+                  backgroundColor: "grey.800",
                 }}
               >
-                <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
+                <Box sx={{ opacity: "50%" }}>{item.icon}</Box>
                 <div>
-                  <Typography gutterBottom sx={{ fontWeight: 'medium' }}>
+                  <Typography gutterBottom sx={{ fontWeight: "medium" }}>
                     {item.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'grey.400' }}>
+                  <Typography variant="body2" sx={{ color: "grey.400" }}>
                     {item.description}
                   </Typography>
                 </div>
