@@ -37,4 +37,9 @@ studentRoutes.get(
   studentControllers.getAllStudentCodes
 );
 
+studentRoutes.get(
+  "/get-student-by-code/:studentCode",
+  studentControllers.getStudentByCode
+);
+
 export default studentRoutes;

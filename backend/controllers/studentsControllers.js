@@ -410,6 +410,41 @@ const getAllStudentCodes = async (req, res) => {
   }
 };
 
+const getStudentByCode = async (req, res) => {
+  const { studentCode } = req.params;
+
+  try {
+    const student = await Students.findOne({
+      where: { student_code: studentCode, is_deleted: false },
+      include: [
+        {
+          model: Grades,
+          as: "Grade",
+          attributes: ["grade_code"],
+        },
+        {
+          model: Semesters,
+          as: "Semester",
+          attributes: ["semester_number"],
+        },
+      ],
+    });
+
+    if (!student) {
+      return res.status(404).json({ getStudentMessage: "Student not found!" });
+    }
+
+    return res.status(200).json(student);
+  } catch (error) {
+    console.error("Error fetching student by code:", error);
+    return res.status(500).json({
+      getStudentMessage: "Server error. Please try again later.",
+      getStudentByCodeCatchBlkErr:
+        error.message || error.toString() || "Unknown error",
+    });
+  }
+};
+
 export {
   createStudent,
   getAllStudents,
@@ -420,4 +455,5 @@ export {
   getStudentSubjects,
   getNumberOfStudents,
   getAllStudentCodes,
+  getStudentByCode,
 };
