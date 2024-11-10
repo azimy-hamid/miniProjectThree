@@ -195,9 +195,81 @@ export default function AllStudentsOfASubjectTable({ subject }) {
                   </Typography>
                 </Grid>
 
-                {/* Additional student details */}
-                {/* Render more fields as needed */}
+                <Grid item xs={6}>
+                  <Typography variant="body2">Student Code:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.student_code}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Grade:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.Grade.grade_code}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Semester:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.Semester.semester_number}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Date of Birth:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {new Date(selectedStudent.dob).toLocaleDateString()}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Email:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.email}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Gender:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.gender}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Phone:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {selectedStudent.phone}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">Join Date:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    {new Date(selectedStudent.join_date).toLocaleDateString()}
+                  </Typography>
+                </Grid>
+
+                {/* Additional fields can be added as needed */}
               </Grid>
+
               <Button
                 onClick={handleCloseModal}
                 fullWidth

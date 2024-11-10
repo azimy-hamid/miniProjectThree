@@ -96,7 +96,7 @@ export default function AllSubjectsForTheTeacherTable({ teacher }) {
             navigate(`/teacher/subject-details/${params.row.subject_id_pk}`)
           } // Adjust the path as necessary
         >
-          View Details
+          Mark Attendance
         </Button>
       ),
     },
