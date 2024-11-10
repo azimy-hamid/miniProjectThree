@@ -9,12 +9,14 @@ import {
   Snackbar,
   Alert,
   Checkbox,
+  TextField,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useParams } from "react-router-dom";
 import { getStudentsForSubject } from "../../../../../services/subjectEndpoints";
 import { getSpecificStudent } from "../../../../../services/studentEndpoints";
 import { markAttendanceForASubject } from "../../../../../services/attendanceEndpoints";
+import { createMark } from "../../../../../services/markEndpoints";
 
 export default function AllStudentsOfASubjectTable({ subject }) {
   const { subjectId } = useParams();
@@ -28,6 +30,8 @@ export default function AllStudentsOfASubjectTable({ subject }) {
     message: "",
     severity: "success",
   });
+  const [marks, setMarks] = useState({});
+  const [markedStudents, setMarkedStudents] = useState([]); // Track marked students
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +41,13 @@ export default function AllStudentsOfASubjectTable({ subject }) {
         if (response && response.students) {
           setStudents(response.students);
           setStudentCount(response.student_count);
+          // Track students who are already marked
+          const alreadyMarked = response.students.filter(
+            (student) => student.marked
+          );
+          setMarkedStudents(
+            alreadyMarked.map((student) => student.student_id_pk)
+          );
         } else {
           console.error("No students found in response.");
         }
@@ -54,6 +65,13 @@ export default function AllStudentsOfASubjectTable({ subject }) {
         ? prev.filter((id) => id !== studentId)
         : [...prev, studentId]
     );
+  };
+
+  const handleMarkChange = (studentId, value) => {
+    setMarks((prevMarks) => ({
+      ...prevMarks,
+      [studentId]: value,
+    }));
   };
 
   const handleOpenModal = async (studentId) => {
@@ -100,6 +118,39 @@ export default function AllStudentsOfASubjectTable({ subject }) {
     }
   };
 
+  const handleSubmitMarks = async () => {
+    // Create marksArray with all students and their marks
+    const marksArray = students.map((student) => {
+      return {
+        student_id_fk: student.student_id_pk,
+        subject_id_fk: subjectId,
+        subject_mark: marks[student.student_id_pk] || "", // Use empty string if no mark is provided
+      };
+    });
+
+    try {
+      const response = await createMark(marksArray);
+      console.log(response);
+
+      setSnackbar({
+        open: true,
+        message: response.createMarkMessage || "Marks submitted successfully!",
+        severity: "success",
+      });
+
+      // Reset marks and selected students
+      setMarks({});
+      setSelectedStudentIds([]);
+    } catch (error) {
+      console.error("Error submitting marks:", error);
+      setSnackbar({
+        open: true,
+        message: error?.response?.data?.createMarkMessage || error.message,
+        severity: "error",
+      });
+    }
+  };
+
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -119,6 +170,27 @@ export default function AllStudentsOfASubjectTable({ subject }) {
     { field: "student_code", headerName: "Student Code", flex: 1 },
     { field: "student_first_name", headerName: "First Name", flex: 1 },
     { field: "student_last_name", headerName: "Last Name", flex: 1 },
+    {
+      field: "marks",
+      headerName: "Marks",
+      flex: 1,
+      renderCell: (params) => {
+        const isMarked = markedStudents.includes(params.row.student_id_pk);
+        return (
+          <TextField
+            type="number"
+            variant="outlined"
+            size="small"
+            value={marks[params.row.student_id_pk] || ""}
+            onChange={(e) =>
+              handleMarkChange(params.row.student_id_pk, e.target.value)
+            }
+            placeholder={isMarked ? "This student is marked" : ""}
+            disabled={isMarked} // Optionally, disable input for marked students
+          />
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -158,13 +230,22 @@ export default function AllStudentsOfASubjectTable({ subject }) {
         autoHeight
       />
       <Button
-        variant="contained"
+        variant="outlined"
         color="primary"
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, mr: 2 }}
         onClick={handleSubmitAttendance}
-        disabled={selectedStudentIds.length === 0}
+        disabled={selectedStudentIds.length === 0} // Disable attendance button when no students are selected
       >
         Mark Attendance
+      </Button>
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ mt: 2 }}
+        onClick={handleSubmitMarks}
+        disabled={Object.keys(marks).length === 0} // Disable marks button when no marks are set
+      >
+        Submit Marks
       </Button>
 
       {/* Modal for displaying student details */}
@@ -185,91 +266,19 @@ export default function AllStudentsOfASubjectTable({ subject }) {
                 Student Details
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">Name:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.student_first_name}{" "}
-                    {selectedStudent.student_last_name}
+                <Grid item xs={12}>
+                  <Typography>
+                    <strong>First Name:</strong> {selectedStudent.first_name}
                   </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Student Code:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.student_code}
+                  <Typography>
+                    <strong>Last Name:</strong> {selectedStudent.last_name}
                   </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Grade:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.Grade.grade_code}
+                  <Typography>
+                    <strong>Email:</strong> {selectedStudent.email}
                   </Typography>
+                  {/* Add other student details here */}
                 </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Semester:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.Semester.semester_number}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Date of Birth:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {new Date(selectedStudent.dob).toLocaleDateString()}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Email:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.email}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Gender:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.gender}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Phone:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {selectedStudent.phone}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="body2">Join Date:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {new Date(selectedStudent.join_date).toLocaleDateString()}
-                  </Typography>
-                </Grid>
-
-                {/* Additional fields can be added as needed */}
               </Grid>
-
               <Button
                 onClick={handleCloseModal}
                 fullWidth

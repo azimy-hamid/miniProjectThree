@@ -14,6 +14,7 @@ import homeRoutes from "./home/homeRoutes.jsx";
 import superRoutes from "./priorityLevel/super/routes/superRoutes.jsx";
 import adminRoutes from "./priorityLevel/admin/routes/adminRoutes.jsx";
 import teacherRoutes from "./priorityLevel/teacher/routes/teacherRoutes.jsx";
+import studentRoutes from "./priorityLevel/student/routes/studentRoutes.jsx";
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL}/authanticate/verifyToken`;
 
@@ -119,6 +120,10 @@ function App() {
         ))}
 
         {teacherRoutes({ isAuthenticated, userRole }).map((route, index) => (
+          <React.Fragment key={index}>{route}</React.Fragment>
+        ))}
+
+        {studentRoutes({ isAuthenticated, userRole }).map((route, index) => (
           <React.Fragment key={index}>{route}</React.Fragment>
         ))}
 

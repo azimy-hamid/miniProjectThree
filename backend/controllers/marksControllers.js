@@ -4,65 +4,129 @@ import Subjects from "../models/Subjects.js";
 
 // Create a new mark
 const createMark = async (req, res) => {
-  const { student_id_fk, subject_id_fk, subject_mark } = req.body;
+  const marksArray = req.body; // Array of objects containing student_id_fk, subject_id_fk, subject_mark
 
-  // Validate required input
-  if (!student_id_fk || !subject_id_fk || subject_mark === undefined) {
+  if (!Array.isArray(marksArray) || marksArray.length === 0) {
     return res.status(400).json({
-      createMarkMessage:
-        "Student ID, Subject ID, and Subject Mark are required.",
+      createMarkMessage: "A non-empty array of marks is required.",
     });
   }
 
   try {
-    // Check if the student exists
-    const student = await Students.findOne({
-      where: { student_id_pk: student_id_fk },
-    });
+    const results = [];
+    const studentsAlreadyMarked = [];
 
-    if (!student) {
-      return res.status(404).json({
-        createMarkMessage: "Student not found.",
+    // Step 1: Check for any students who already have a mark for the subject
+    for (const mark of marksArray) {
+      const { student_id_fk, subject_id_fk } = mark;
+
+      // Check if the student already has a mark for the subject
+      const existingMark = await Marks.findOne({
+        where: {
+          student_id_fk,
+          subject_id_fk,
+        },
+      });
+
+      if (existingMark) {
+        studentsAlreadyMarked.push({
+          student_id_fk,
+          subject_id_fk,
+          message: "Student has already been marked for this subject.",
+        });
+      }
+    }
+
+    // If there are students already marked, return them and stop the process
+    if (studentsAlreadyMarked.length > 0) {
+      return res.status(400).json({
+        createMarkMessage:
+          "Some students have already been marked for the subject.",
+        studentsAlreadyMarked,
       });
     }
 
-    // Check if the student is deleted
-    if (student.is_deleted) {
-      return res.status(404).json({
-        createMarkMessage: "Student is deleted.",
+    // Step 2: Proceed with adding marks for students who are not already marked
+    for (const mark of marksArray) {
+      const { student_id_fk, subject_id_fk, subject_mark } = mark;
+
+      // Validate required fields for each mark entry
+      if (!student_id_fk || !subject_id_fk || subject_mark === undefined) {
+        results.push({
+          success: false,
+          message: "Missing required fields.",
+          student_id_fk,
+          subject_id_fk,
+        });
+        continue;
+      }
+
+      // Check if the student exists and is not deleted
+      const student = await Students.findOne({
+        where: { student_id_pk: student_id_fk },
+      });
+
+      if (!student) {
+        results.push({
+          success: false,
+          message: "Student not found.",
+          student_id_fk,
+        });
+        continue;
+      }
+
+      if (student.is_deleted) {
+        results.push({
+          success: false,
+          message: "Student is deleted.",
+          student_id_fk,
+        });
+        continue;
+      }
+
+      // Check if the subject exists and is not deleted
+      const subject = await Subjects.findOne({
+        where: { subject_id_pk: subject_id_fk },
+      });
+
+      if (!subject) {
+        results.push({
+          success: false,
+          message: "Subject not found.",
+          subject_id_fk,
+        });
+        continue;
+      }
+
+      if (subject.is_deleted) {
+        results.push({
+          success: false,
+          message: "Subject is deleted.",
+          subject_id_fk,
+        });
+        continue;
+      }
+
+      // Create the mark entry
+      const newMark = await Marks.create({
+        student_id_fk,
+        subject_id_fk,
+        subject_mark,
+      });
+
+      results.push({
+        success: true,
+        message: "Mark created successfully!",
+        newMark,
       });
     }
-
-    // Check if the subject exists
-    const subject = await Subjects.findOne({
-      where: { subject_id_pk: subject_id_fk },
-    });
-
-    if (!subject) {
-      return res.status(404).json({
-        createMarkMessage: "Subject not found.",
-      });
-    }
-
-    if (subject.is_deleted) {
-      return res.status(404).json({
-        createMarkMessage: "Subject is deleted.",
-      });
-    }
-
-    // Create a new mark entry
-    const newMark = await Marks.create({
-      student_id_fk,
-      subject_id_fk,
-      subject_mark,
-    });
 
     return res.status(201).json({
-      createMarkMessage: "Mark created successfully!",
-      newMark,
+      createMarkMessage: "Batch processing complete. Marks Added!",
+      results,
     });
   } catch (error) {
-    console.error("Error creating mark:", error);
+    console.error("Error creating marks:", error);
     return res.status(500).json({
       createMarkMessage: "Server error. Please try again later.",
       createMarkCatchBlkErr:

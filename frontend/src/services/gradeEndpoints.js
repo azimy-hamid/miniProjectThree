@@ -6,7 +6,7 @@ export const createGrade = async (gradeData) => {
   try {
     const token = localStorage.getItem("token");
 
-    const response = await axios.post(`${API_URL}/create-semester`, gradeData, {
+    const response = await axios.post(`${API_URL}/create-grade`, gradeData, {
       headers: { "Content-Type": "application/json" },
       Authorization: `Bearer ${token}`,
     });
