@@ -7,6 +7,7 @@ import { alpha } from "@mui/material/styles";
 import { Typography, Grid } from "@mui/material"; // Import Grid component
 import AllStudentsTable from "./components/AllStudentsTable.jsx";
 import CreateStudentForm from "./components/CreateStudentForm.jsx";
+import { getStudentByCode } from "../../../../services/studentEndpoints.js";
 
 const StudentOverviewPage = () => {
   return (
