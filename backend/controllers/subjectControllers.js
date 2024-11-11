@@ -7,6 +7,7 @@ import Teacher_Subjects from "../models/TeacherSubjects.js";
 import Teachers from "../models/Teachers.js";
 import Students from "../models/Students.js";
 import Student_Subjects from "../models/StudentSubjects.js";
+import Marks from "../models/Marks.js";
 
 // Create a new subject
 const createSubject = async (req, res) => {
@@ -542,7 +543,7 @@ const getSubjectsForStudent = async (req, res) => {
       });
     }
 
-    // Get all subjects associated with the student using the join table
+    // Get all subjects associated with the student, including marks
     const studentSubjects = await Student_Subjects.findAll({
       where: { student_id_fk: studentId }, // Filter by student ID
       include: [
@@ -561,6 +562,12 @@ const getSubjectsForStudent = async (req, res) => {
               as: "classroom", // Assuming a relationship with the Classrooms model
               required: true,
             },
+            {
+              model: Marks,
+              as: "marks", // Include the Marks model for each subject
+              where: { student_id_fk: studentId }, // Filter marks by student ID
+              required: false, // Allow subjects even if no marks exist for them
+            },
           ],
         },
       ],
@@ -572,16 +579,20 @@ const getSubjectsForStudent = async (req, res) => {
       });
     }
 
-    // Extract the subject, teacher, and classroom data
+    // Extract subject, teacher, classroom, and mark data
     const subjectsWithDetails = studentSubjects.map((studentSubject) => ({
-      subject: studentSubject.subject, // Assuming 'name' is the subject's name
-      teacher: studentSubject.subject.teacher, // Assuming teacher has a 'name' field
-      classroom: studentSubject.subject.classroom, // Assuming classroom has a 'room_number' field
+      subject: studentSubject.subject,
+      teacher: studentSubject.subject.teacher,
+      classroom: studentSubject.subject.classroom,
+      mark:
+        studentSubject.subject.marks.length > 0
+          ? studentSubject.subject.marks // If a mark is found, retrieve it
+          : null, // Otherwise, set mark to null if not available
     }));
 
     return res.status(200).json({
       getSubjectsMessage:
-        "Subjects, teachers, and classrooms retrieved successfully!",
+        "Subjects, teachers, classrooms, and marks retrieved successfully!",
       subjects: subjectsWithDetails,
     });
   } catch (error) {
