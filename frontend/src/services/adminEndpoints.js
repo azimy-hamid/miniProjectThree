@@ -19,4 +19,25 @@ const createAdmin = async (userData) => {
   }
 };
 
-export { createAdmin };
+const getAdminById = async (adminId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-specific-admin/${adminId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error; // Propagate the error to handle it where the function is called
+  }
+};
+
+export { createAdmin, getAdminById };

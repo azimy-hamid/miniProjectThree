@@ -13,7 +13,6 @@ export default function AllSubjectsTable() {
       try {
         const data = await getAllSubject();
         setSubjects(data.subjects);
-        console.log(subjects);
       } catch (error) {
         console.error("Error fetching subjects:", error);
       }
@@ -105,7 +104,6 @@ export default function AllSubjectsTable() {
     <Box sx={{ height: 600, width: "100%", marginTop: 4 }}>
       <Typography variant="h4" component="h1" align="center" gutterBottom>
         Subjects Directory
-        {console.log(subjects)}
       </Typography>
       <Typography
         variant="subtitle1"

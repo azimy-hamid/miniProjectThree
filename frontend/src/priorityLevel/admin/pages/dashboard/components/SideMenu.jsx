@@ -8,6 +8,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import MenuContent from "./MenuContent";
 import ProfileMenu from "./profileBtn";
+import SitemarkIcon from "../../../../../home/components/SitemarkIcon";
+import { getAdminById } from "../../../../../services/adminEndpoints";
 
 const drawerWidth = 240;
 
@@ -26,6 +28,24 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+  const [admin, setAdmin] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchAdminData = async () => {
+      const adminId = localStorage.getItem("user_id_fk");
+      if (adminId) {
+        try {
+          const response = await getAdminById(adminId);
+          setAdmin(response.admin);
+        } catch (error) {
+          console.error("Failed to fetch student data:", error);
+        }
+      }
+    };
+
+    fetchAdminData();
+  }, []);
+
   return (
     <Drawer
       variant="permanent"
@@ -37,7 +57,16 @@ export default function SideMenu() {
       }}
     >
       {/* Top Section */}
-      <Box>
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <SitemarkIcon sx={{ height: 50, width: 150 }} />
+        <Divider sx={{ width: "100%", my: 2 }} />
         <MenuContent />
       </Box>
 
@@ -54,7 +83,11 @@ export default function SideMenu() {
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
+          alt={`${
+            admin
+              ? `${admin.admin_first_name} ${admin.admin_last_name}`
+              : "Admin"
+          }`}
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
         />
@@ -63,10 +96,14 @@ export default function SideMenu() {
             variant="body2"
             sx={{ fontWeight: 500, lineHeight: "16px" }}
           >
-            Riley Carter
+            {admin
+              ? `${admin.admin_first_name} ${admin.admin_last_name}`
+              : "Loading..."}
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            riley@email.com
+            {admin
+              ? `${admin.admin_first_name} ${admin.admin_last_name}`
+              : "Loading..."}
           </Typography>
         </Box>
         <ProfileMenu />
