@@ -40,13 +40,12 @@ const UpdateSubjectForm = ({ subject }) => {
     section: subject?.section || "",
     grade_code: subject?.Grade?.grade_code || "",
     day_of_week: subject?.schedules
-      ? subject?.schedules?.map((schedule) => schedule.day_of_week).flat()
-      : [], // Adjust according to your data structure
+      ? subject.schedules.map((schedule) => schedule.day_of_week)
+      : [],
     start_time: subject?.schedules ? subject?.schedules[0]?.start_time : "", // Assuming the first schedule is representative
     end_time: subject?.schedules ? subject?.schedules[0]?.end_time : "",
-    teacher_code: subject?.teacher_code || "", // Adjust according to your data structure
+    teacher_code: subject?.Teachers[0]?.teacher_code || "", // Adjust according to your data structure
   });
-  console.log(subject?.subject_name);
 
   const [notification, setNotification] = useState({
     open: false,
@@ -78,6 +77,8 @@ const UpdateSubjectForm = ({ subject }) => {
         setSemesterNumbers(semesterNumbers);
         setGradeCodes(gradeCodes);
         setTeacherCodes(teacherCodes);
+
+        setSelectedDays(formData.day_of_week);
       } catch (error) {
         console.error("Failed to fetch data", error);
       }
@@ -248,9 +249,9 @@ const UpdateSubjectForm = ({ subject }) => {
                       key={day}
                       control={
                         <Checkbox
-                          checked={selectedDays.includes(day)}
+                          checked={selectedDays.includes(day.toLowerCase())}
                           onChange={handleDayChange}
-                          value={day}
+                          value={day.toLowerCase()}
                         />
                       }
                       label={day}
