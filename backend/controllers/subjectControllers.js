@@ -9,6 +9,8 @@ import Students from "../models/Students.js";
 import Student_Subjects from "../models/StudentSubjects.js";
 import Marks from "../models/Marks.js";
 
+import { Op } from "sequelize";
+
 // Create a new subject
 const createSubject = async (req, res) => {
   const {
@@ -42,8 +44,8 @@ const createSubject = async (req, res) => {
   try {
     // Validate that the classroom exists
     const classroom = await Classrooms.findOne({
-      where: { classroom_code: classroom_code },
-      paranoid: false, // Include soft-deleted records if necessary
+      where: { classroom_code },
+      paranoid: false,
     });
     if (!classroom) {
       return res.status(404).json({
@@ -53,7 +55,7 @@ const createSubject = async (req, res) => {
 
     // Validate that the grade exists
     const grade = await Grades.findOne({
-      where: { grade_code: grade_code },
+      where: { grade_code },
     });
     if (!grade) {
       return res.status(404).json({
@@ -63,7 +65,7 @@ const createSubject = async (req, res) => {
 
     // Validate that the semester exists
     const semester = await Semesters.findOne({
-      where: { semester_number: semester_number },
+      where: { semester_number },
     });
     if (!semester) {
       return res.status(404).json({
@@ -73,7 +75,7 @@ const createSubject = async (req, res) => {
 
     // Validate that the teacher exists
     const teacher = await Teachers.findOne({
-      where: { teacher_code: teacher_code },
+      where: { teacher_code },
     });
     if (!teacher) {
       return res.status(404).json({
@@ -81,39 +83,70 @@ const createSubject = async (req, res) => {
       });
     }
 
+    // Get the teacher's working days (assumes 'working_days' is a comma-separated string of days)
+    const workingDays = teacher.working_days
+      ? teacher.working_days.split(",")
+      : [];
+
     // Split the days into an array
     const daysArray = day_of_week
       .split(",")
       .map((day) => day.trim().toLowerCase());
 
-    // Check for existing class schedule conflicts and create class schedules
+    // Check if the teacher works on the given days
     for (const day of daysArray) {
-      const existingSchedule = await ClassSchedule.findOne({
-        where: {
-          classroom_id_fk: classroom.classroom_id_pk,
-          day_of_week: day,
-          start_time,
-          end_time,
-          is_deleted: false, // Exclude deleted schedules
-        },
-      });
-      if (existingSchedule) {
+      if (!workingDays.includes(day)) {
         return res.status(400).json({
-          createSubjectMessage: `A class schedule already exists for ${day}.`,
+          createSubjectMessage: `Teacher does not work on ${day}.`,
         });
       }
     }
 
-    // Check for existing subject conflict
-    const existingSubject = await Subjects.findOne({
-      where: {
-        subject_name,
-      },
+    // Get the subjects assigned to the teacher
+    const teacherSubjects = await Teacher_Subjects.findAll({
+      where: { teacher_id_fk: teacher.teacher_id_pk },
     });
-    if (existingSubject) {
-      return res.status(400).json({
-        createSubjectMessage: "This subject already exists!.",
+
+    // Check for teacher schedule conflicts manually
+    for (const day of daysArray) {
+      // Check for conflicts with teacher's existing schedule
+      for (const teacherSubject of teacherSubjects) {
+        const subject_id_fk = teacherSubject.subject_id_fk;
+
+        // Check if the teacher has any class scheduled on the same day and time
+        const teacherScheduleConflict = await ClassSchedule.findOne({
+          where: {
+            subject_id_fk, // Check for the subject associated with the teacher
+            day_of_week: day,
+            start_time: { [Op.lt]: end_time },
+            end_time: { [Op.gt]: start_time },
+            is_deleted: false, // Exclude deleted schedules
+          },
+        });
+
+        if (teacherScheduleConflict) {
+          return res.status(400).json({
+            createSubjectMessage: `Teacher has a scheduling conflict on ${day} from ${start_time} to ${end_time}.`,
+          });
+        }
+      }
+
+      // Then, check for classroom conflicts
+      const classroomScheduleConflict = await ClassSchedule.findOne({
+        where: {
+          day_of_week: day,
+          classroom_id_fk: classroom.classroom_id_pk,
+          start_time: { [Op.lt]: end_time },
+          end_time: { [Op.gt]: start_time },
+          is_deleted: false, // Exclude deleted schedules
+        },
       });
+
+      if (classroomScheduleConflict) {
+        return res.status(400).json({
+          createSubjectMessage: `Classroom has a scheduling conflict on ${day} from ${start_time} to ${end_time}.`,
+        });
+      }
     }
 
     // Create the new subject
@@ -214,6 +247,11 @@ const getSubjectById = async (req, res) => {
           model: ClassSchedule,
           as: "schedules", // Include the class schedules associated with the subject
         },
+        {
+          model: Teachers,
+          as: "Teachers", // Include teachers associated with the subject
+          through: { attributes: [] }, // Exclude the `Teacher_Subjects` through table attributes
+        },
       ],
     });
 
@@ -310,6 +348,26 @@ const updateSubject = async (req, res) => {
           updateSubjectMessage: "Teacher not found.",
         });
       }
+
+      // Get the teacher's working days (assumes 'working_days' is a comma-separated string of days)
+      const workingDays = teacher.working_days
+        ? teacher.working_days.split(",")
+        : [];
+
+      // Split the days into an array
+      const daysArray = day_of_week
+        ? day_of_week.split(",").map((day) => day.trim().toLowerCase())
+        : [];
+
+      // Check if the teacher works on the given days
+      for (const day of daysArray) {
+        if (!workingDays.includes(day)) {
+          return res.status(400).json({
+            updateSubjectMessage: `Teacher does not work on ${day}.`,
+          });
+        }
+      }
+
       // Optionally, update teacher-subject association here if needed
     }
 
@@ -319,20 +377,50 @@ const updateSubject = async (req, res) => {
 
     // Check for schedule conflicts if day and time are provided
     if (day_of_week && start_time && end_time) {
-      const existingSchedule = await ClassSchedule.findOne({
-        where: {
-          classroom_id_fk: subject.classroom_id_fk,
-          day_of_week,
-          start_time,
-          end_time,
-          is_deleted: false, // Exclude deleted schedules
-        },
+      // Check for teacher schedule conflicts manually
+      const teacherSubjects = await Teacher_Subjects.findAll({
+        where: { teacher_id_fk: subject.teacher_id_fk },
       });
-      if (existingSchedule) {
-        return res.status(400).json({
-          updateSubjectMessage:
-            "A class schedule already exists for this time.",
+
+      for (const day of daysArray) {
+        // Check for conflicts with teacher's existing schedule
+        for (const teacherSubject of teacherSubjects) {
+          const subject_id_fk = teacherSubject.subject_id_fk;
+
+          // Check if the teacher has any class scheduled on the same day and time
+          const teacherScheduleConflict = await ClassSchedule.findOne({
+            where: {
+              subject_id_fk, // Check for the subject associated with the teacher
+              day_of_week: day,
+              start_time: { [Op.lt]: end_time },
+              end_time: { [Op.gt]: start_time },
+              is_deleted: false, // Exclude deleted schedules
+            },
+          });
+
+          if (teacherScheduleConflict) {
+            return res.status(400).json({
+              updateSubjectMessage: `Teacher has a scheduling conflict on ${day} from ${start_time} to ${end_time}.`,
+            });
+          }
+        }
+
+        // Then, check for classroom conflicts
+        const classroomScheduleConflict = await ClassSchedule.findOne({
+          where: {
+            day_of_week: day,
+            classroom_id_fk: subject.classroom_id_fk,
+            start_time: { [Op.lt]: end_time },
+            end_time: { [Op.gt]: start_time },
+            is_deleted: false, // Exclude deleted schedules
+          },
         });
+
+        if (classroomScheduleConflict) {
+          return res.status(400).json({
+            updateSubjectMessage: `Classroom has a scheduling conflict on ${day} from ${start_time} to ${end_time}.`,
+          });
+        }
       }
     }
 
@@ -367,6 +455,19 @@ const deleteSubject = async (req, res) => {
       });
     }
 
+    // Check if there are any students enrolled in this subject
+    const enrolledStudents = await Student_Subjects.findAll({
+      where: { subject_id_fk: subjectId },
+    });
+
+    if (enrolledStudents.length > 0) {
+      return res.status(400).json({
+        deleteSubjectMessage:
+          "Subject cannot be deleted because there are students enrolled in it.",
+      });
+    }
+
+    // Mark the subject as deleted (soft delete)
     subject.is_deleted = true;
     await subject.save();
 
