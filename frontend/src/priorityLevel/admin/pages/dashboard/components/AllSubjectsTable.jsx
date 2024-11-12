@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { getAllSubject } from "../../../../../services/subjectEndpoints";
+import {
+  getAllSubject,
+  deleteSubject,
+} from "../../../../../services/subjectEndpoints";
 import { useNavigate } from "react-router-dom";
 
 export default function AllSubjectsTable() {
   const [subjects, setSubjects] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success", "error", etc.
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,8 +31,40 @@ export default function AllSubjectsTable() {
     navigate(`/admin/subject-details/${subjectId}`);
   };
 
-  const handleUpdateClick = (subjectId) => {
-    navigate(`/admin/update-subject/${subjectId}`);
+  const handleDeleteClick = async (subjectId) => {
+    try {
+      const deletedSubject = await deleteSubject(subjectId);
+      console.log(deleteSubject);
+
+      if (deletedSubject.deleteSubjectMessage) {
+        setSnackbarMessage(deletedSubject.deleteSubjectMessage);
+        setSnackbarSeverity(deletedSubject.deleteSubjectMessage);
+
+        // Remove the subject from the list after deletion
+        setSubjects((prevSubjects) =>
+          prevSubjects.filter((subject) => subject.subject_id_pk !== subjectId)
+        );
+      } else {
+        setSnackbarMessage(deletedSubject.deleteSubjectMessage);
+        setSnackbarSeverity("error");
+      }
+
+      // Open the snackbar
+      setSnackbarOpen(true);
+    } catch (error) {
+      const errorMessage =
+        error.response && error.response.data.deleteSubjectMessage
+          ? error.response.data.deleteSubjectMessage
+          : "Server error. Please try again later.";
+
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   const columns = [
@@ -46,7 +84,7 @@ export default function AllSubjectsTable() {
       field: "section",
       headerName: "Section",
       flex: 1,
-      valueGetter: (value, row) => row?.subject_section || "N/A",
+      valueGetter: (value, row) => row?.section || "N/A",
     },
     {
       field: "classroom_id_fk",
@@ -83,16 +121,16 @@ export default function AllSubjectsTable() {
       filterable: false,
     },
     {
-      field: "update",
-      headerName: "Update",
+      field: "delete",
+      headerName: "Delete",
       flex: 1,
       renderCell: (params) => (
         <Button
           variant="outlined"
           color="primary"
-          onClick={() => handleUpdateClick(params.row.subject_id_pk)}
+          onClick={() => handleDeleteClick(params.row.subject_id_pk)}
         >
-          Update
+          Delete Subject
         </Button>
       ),
       sortable: false,
@@ -122,6 +160,21 @@ export default function AllSubjectsTable() {
         disableSelectionOnClick
         autoHeight={false}
       />
+
+      {/* Snackbar for feedback */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

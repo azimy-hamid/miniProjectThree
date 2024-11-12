@@ -137,7 +137,7 @@ function App() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }} // Adjust as needed
       >
-        <Alert onClose={handleCloseSnackbar} severity="warning">
+        <Alert onClose={handleCloseSnackbar} severity="info">
           {snackbarMessage}
         </Alert>
       </Snackbar>

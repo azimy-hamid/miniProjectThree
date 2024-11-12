@@ -165,3 +165,24 @@ export const getSubjectsForStudent = async (studentId) => {
     throw error;
   }
 };
+
+export const deleteSubject = async (studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.delete(
+      `${API_URL}/delete-subject/${studentId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting one subject details:", error);
+    throw error;
+  }
+};
