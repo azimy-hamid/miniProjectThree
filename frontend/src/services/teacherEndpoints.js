@@ -123,3 +123,24 @@ export const getAssignedSubjects = async (teacherId) => {
     throw error;
   }
 };
+
+export const deleteTeacher = async (teacherId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.delete(
+      `${API_URL}/delete-teacher/${teacherId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting all teacher codes:", error);
+    throw error;
+  }
+};
