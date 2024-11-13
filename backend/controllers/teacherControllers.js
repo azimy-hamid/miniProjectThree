@@ -187,6 +187,15 @@ const deleteTeacher = async (req, res) => {
         .json({ deleteTeacherMessage: "Teacher not found!" });
     }
 
+    // Check if the teacher is assigned any subjects
+    const subjects = await teacher.getSubjects();
+    if (subjects.length > 0) {
+      return res.status(400).json({
+        deleteTeacherMessage:
+          "Cannot delete teacher. Teacher is assigned to a subject.",
+      });
+    }
+
     // Mark teacher as deleted
     await teacher.update({ is_deleted: true });
 
