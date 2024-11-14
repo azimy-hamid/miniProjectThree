@@ -83,6 +83,21 @@ const createSubject = async (req, res) => {
       });
     }
 
+    const teachersGrade = await Grades.findOne({
+      where: { grade_id_pk: teacher.grade_id_fk },
+    });
+    if (!grade) {
+      return res.status(404).json({
+        createSubjectMessage: "Teacher's Grade not found.",
+      });
+    }
+
+    if (teacher.grade_id_fk !== grade.grade_id_pk) {
+      return res.status(400).json({
+        createSubjectMessage: `Teacher does not teach the specified grade. This teacher teaches ${teachersGrade.grade_code}`,
+      });
+    }
+
     // Get the teacher's working days (assumes 'working_days' is a comma-separated string of days)
     const workingDays = teacher.working_days
       ? teacher.working_days.split(",")
