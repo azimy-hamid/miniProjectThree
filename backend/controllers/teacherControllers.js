@@ -17,6 +17,7 @@ const createTeacher = async (req, res) => {
     phone,
     join_date,
     working_days,
+    grade_code, // This is now part of the request body
   } = req.body;
 
   // Validate input
@@ -26,7 +27,8 @@ const createTeacher = async (req, res) => {
     !gender ||
     !dob ||
     !email ||
-    !working_days
+    !working_days ||
+    !grade_code // Ensure grade_code is provided
   ) {
     return res
       .status(400)
@@ -48,7 +50,15 @@ const createTeacher = async (req, res) => {
       });
     }
 
-    // Create a new teacher
+    // Find the grade_id_pk associated with the grade_code
+    const grade = await Grades.findOne({ where: { grade_code } });
+    if (!grade) {
+      return res.status(400).json({
+        createTeacherMessage: "Invalid grade code provided.",
+      });
+    }
+
+    // Create a new teacher with grade_id_fk set to grade_id_pk from Grades
     const newTeacher = await Teachers.create({
       teacher_first_name,
       teacher_last_name,
@@ -58,6 +68,7 @@ const createTeacher = async (req, res) => {
       phone: phone || null, // Optional field
       join_date: join_date || null, // Optional field
       working_days,
+      grade_id_fk: grade.grade_id_pk, // Set foreign key
     });
 
     return res.status(201).json({

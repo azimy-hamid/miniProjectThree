@@ -1,5 +1,6 @@
 import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../config/dbConfig.js";
+import Grades from "./Grades.js";
 
 const Teachers = sequelize.define(
   "Teachers",
@@ -74,6 +75,18 @@ const Teachers = sequelize.define(
           });
         },
       },
+    },
+
+    grade_id_fk: {
+      type: DataTypes.UUID,
+      references: {
+        model: Grades, // Name of the referenced model
+        key: "grade_id_pk", // Primary key in the Semesters model
+      },
+      allowNull: true, // Allow null if the subject might not have a semester assigned
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+      onDelete: "CASCADE",
     },
 
     is_deleted: {
