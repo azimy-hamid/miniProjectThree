@@ -28,6 +28,8 @@ import Semesters from "./models/Semesters.js";
 import { setupAssociations } from "./models/associations.js";
 
 import seedSuper from "./seedData/seedSuper.js";
+import { populateDatabase } from "./seedData/populateDatabase.js";
+import seedAdmin from "./seedData/seedAdmin.js";
 
 dotenv.config();
 
@@ -35,7 +37,16 @@ setupAssociations();
 
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true }); // You can use { force: true } during development to reset the tables { alter: true } to alter
+    await sequelize.sync({ force: true }); // You can use { force: true } during development to reset the tables { alter: true } to alter
+    const studentCount = await Students.count();
+
+    if (studentCount === 0) {
+      // If no students exist, populate the database
+      await populateDatabase();
+      console.log("Database populated with initial data!");
+    } else {
+      console.log("Database already populated, skipping data population.");
+    }
     console.log("Database & tables created!");
   } catch (error) {
     console.error("Error creating database & tables:", error);
@@ -46,6 +57,7 @@ const startServer = async () => {
   await syncDatabase();
 
   await seedSuper();
+  await seedAdmin();
 
   app.listen(process.env.PORT_NUMBER, () => {
     console.log(
