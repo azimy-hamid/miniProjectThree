@@ -75,6 +75,13 @@ const setupAssociations = () => {
       targetKey: "grade_id_pk",
     });
 
+    // subjects and grades:
+
+    Teachers.belongsTo(Grades, {
+      foreignKey: "grade_id_fk",
+      targetKey: "grade_id_pk",
+    });
+
     // subjects - class schedual - classrooms
 
     Subjects.hasMany(ClassSchedule, {
