@@ -27,23 +27,14 @@ import {
   checkUserExists,
 } from "../../../../../services/userAuth.js";
 
+import { getAllGrades } from "../../../../../services/gradeEndpoints.js";
+
 const Card = styled(MuiCard)(({ theme }) => ({
-  // display: "flex",
-  // flexDirection: "column",
-  // alignSelf: "center",
-  // width: "100%",
-  // padding: theme.spacing(4),
-  // gap: theme.spacing(2),
-  // margin: "auto",
-  // [theme.breakpoints.up("sm")]: {
-  //   maxWidth: "450px",
-  // },
+  // styling options
 }));
 
 const CreateTeacherFormContainer = styled(Stack)(({ theme }) => ({
-  // minHeight: "100%",
-  // padding: theme.spacing(2),
-  // marginTop: theme.spacing(18),
+  // styling options
 }));
 
 export default function CreateTeacherForm() {
@@ -55,15 +46,31 @@ export default function CreateTeacherForm() {
     email: "",
     phone: "",
     join_date: "",
-    working_days: [], // Change to array
+    working_days: [],
     password: "",
     username: "",
+    grade_code: "", // Add grade_code
   });
 
   const [errors, setErrors] = React.useState({});
   const [generalError, setGeneralError] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
   const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [grades, setGrades] = React.useState([]); // Store grades for dropdown
+
+  React.useEffect(() => {
+    // Fetch grades on component mount
+    const fetchGrades = async () => {
+      try {
+        const gradesData = await getAllGrades();
+        console.log(gradesData);
+        setGrades(gradesData.grades);
+      } catch (error) {
+        console.error("Failed to fetch grades:", error);
+      }
+    };
+    fetchGrades();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,6 +100,7 @@ export default function CreateTeacherForm() {
       "email",
       "password",
       "username",
+      "grade_code", // Validate grade_code
     ];
 
     requiredFields.forEach((field) => {
@@ -129,7 +137,7 @@ export default function CreateTeacherForm() {
 
     if (userCheckResponse.userExists) {
       setGeneralError(userCheckResponse.checkUserExistsMessage);
-      return; // Stop execution if user exists
+      return;
     }
 
     try {
@@ -142,6 +150,7 @@ export default function CreateTeacherForm() {
         phone: formData.phone || null,
         join_date: formData.join_date || null,
         working_days: formData.working_days.join(","),
+        grade_code: formData.grade_code, // Send grade_code
       });
 
       if (teacherResponse?.newTeacher) {
@@ -166,9 +175,10 @@ export default function CreateTeacherForm() {
             email: "",
             phone: "",
             join_date: "",
-            working_days: [], // Reset the array
+            working_days: [],
             password: "",
             username: "",
+            grade_code: "", // Reset grade_code
           });
 
           setOpenSnackbar(true);
@@ -229,8 +239,7 @@ export default function CreateTeacherForm() {
                               verticalAlign: "middle",
                               fontSize: "1rem",
                             }}
-                          />{" "}
-                          {/* Use Info icon */}
+                          />
                         </span>
                       </Tooltip>
                     )}
@@ -257,7 +266,7 @@ export default function CreateTeacherForm() {
               </Grid>
             ))}
 
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <FormLabel htmlFor="gender">Gender</FormLabel>
                 <Select
@@ -283,58 +292,73 @@ export default function CreateTeacherForm() {
 
             <Grid item xs={12}>
               <FormControl fullWidth>
+                <FormLabel htmlFor="grade_code">Grade Code</FormLabel>
+                <Select
+                  id="grade_code"
+                  name="grade_code"
+                  value={formData.grade_code}
+                  onChange={handleChange}
+                  error={!!errors.grade_code}
+                  displayEmpty
+                >
+                  <MenuItem value="">Select grade</MenuItem>
+                  {grades.map((grade) => (
+                    <MenuItem key={grade.grade_code} value={grade.grade_code}>
+                      {grade.grade_code}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Typography variant="caption" color="error">
+                  {errors.grade_code}
+                </Typography>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth>
                 <FormLabel>Working Days</FormLabel>
                 <Grid container spacing={2}>
-                  {[
-                    "monday",
-                    "tuesday",
-                    "wednesday",
-                    "thursday",
-                    "friday",
-                    "saturday",
-                    "sunday",
-                  ].map((day) => (
-                    <Grid item xs={4} key={day}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={formData.working_days.includes(day)}
-                            onChange={handleCheckboxChange}
-                            value={day}
+                  {["monday", "tuesday", "wednesday", "thursday", "friday"].map(
+                    (day) => (
+                      <Grid item xs={4} key={day}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={formData.working_days.includes(day)}
+                                onChange={handleCheckboxChange}
+                                value={day}
+                              />
+                            }
+                            label={day.charAt(0).toUpperCase() + day.slice(1)}
                           />
-                        }
-                        label={day.charAt(0).toUpperCase() + day.slice(1)}
-                      />
-                    </Grid>
-                  ))}
+                        </FormGroup>
+                      </Grid>
+                    )
+                  )}
                 </Grid>
-                {errors.working_days && (
-                  <Typography variant="caption" color="error">
-                    {errors.working_days}
-                  </Typography>
-                )}
+                <Typography variant="caption" color="error">
+                  {errors.working_days}
+                </Typography>
               </FormControl>
             </Grid>
           </Grid>
 
+          <Button type="submit" variant="contained" color="primary">
+            Create Teacher
+          </Button>
           {generalError && (
-            <Typography color="error" variant="body2">
+            <Typography variant="caption" color="error">
               {generalError}
             </Typography>
           )}
-
-          <Stack direction="column" spacing={1} sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained">
-              Create Teacher
-            </Button>
-          </Stack>
         </Box>
       </Card>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        message={successMessage} // Show success message
+        message={successMessage}
       />
     </CreateTeacherFormContainer>
   );

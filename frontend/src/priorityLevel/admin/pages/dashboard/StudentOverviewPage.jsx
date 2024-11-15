@@ -8,6 +8,7 @@ import { Typography, Grid } from "@mui/material"; // Import Grid component
 import AllStudentsTable from "./components/AllStudentsTable.jsx";
 import CreateStudentForm from "./components/CreateStudentForm.jsx";
 import { getStudentByCode } from "../../../../services/studentEndpoints.js";
+import { NumberOfStudentsChart } from "./components/NumberOfStudentsChart.jsx";
 
 const StudentOverviewPage = () => {
   return (
@@ -34,6 +35,10 @@ const StudentOverviewPage = () => {
           <Header />
           {/* Grid layout for table and form */}
           <Grid container spacing={3} mt={3}>
+            <Grid item xs={12} md={12}>
+              <NumberOfStudentsChart />
+            </Grid>
+
             <Grid item xs={12} md={7}>
               <AllStudentsTable />
             </Grid>
