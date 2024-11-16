@@ -4,112 +4,109 @@ import Subjects from "../models/Subjects.js";
 
 // Create a new attendance record
 const createAttendance = async (req, res) => {
-  const {
-    student_ids_fk, // Expecting an array of student IDs
-    subject_id_fk,
-    attendance_date,
-    attendance_status,
-    reason,
-  } = req.body;
+  const attendanceRecords = req.body; // Expecting an array of attendance objects
 
-  // Validate required input
-  if (
-    !student_ids_fk ||
-    !Array.isArray(student_ids_fk) ||
-    student_ids_fk.length === 0 ||
-    !subject_id_fk ||
-    !attendance_status
-  ) {
+  // Validate input
+  if (!Array.isArray(attendanceRecords) || attendanceRecords.length === 0) {
     return res.status(400).json({
-      createAttendanceMessage:
-        "Missing required fields or invalid student list.",
+      createAttendanceMessage: "Invalid attendance data provided.",
     });
   }
 
   try {
-    // Validate if the subject exists
-    const subjectExists = await Subjects.findOne({
-      where: { subject_id_pk: subject_id_fk },
-    });
-    if (!subjectExists) {
-      return res.status(404).json({
-        createAttendanceMessage: "Subject not found!",
-      });
-    }
+    const createdRecords = [];
+    const skippedRecords = [];
 
-    // Create attendance records for each student in the list
-    const attendanceRecords = [];
-    const skippedStudents = [];
+    for (const record of attendanceRecords) {
+      const {
+        student_ids_fk,
+        subject_id_fk,
+        attendance_date,
+        attendance_status,
+        reason,
+      } = record;
 
-    // Normalize the attendance date to ignore time (e.g., set to midnight)
-    const normalizedAttendanceDate = new Date(attendance_date).setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-    for (const student_id_fk of student_ids_fk) {
-      // Validate if each student exists
-      const studentExists = await Students.findOne({
-        where: { student_id_pk: student_id_fk, is_deleted: false },
-      });
-      if (!studentExists) {
-        // If a student is not found, skip this iteration and log the missing student
-        console.warn(`Student with ID ${student_id_fk} not found, skipping.`);
-        skippedStudents.push(student_id_fk);
+      if (
+        !student_ids_fk ||
+        !subject_id_fk ||
+        !attendance_date ||
+        !attendance_status
+      ) {
+        skippedRecords.push({ record, reason: "Missing required fields" });
         continue;
       }
 
-      // Check if attendance already exists for this student on the same date (ignoring time)
+      // Validate if the subject exists
+      const subjectExists = await Subjects.findOne({
+        where: { subject_id_pk: subject_id_fk },
+      });
+      if (!subjectExists) {
+        skippedRecords.push({ record, reason: "Subject not found" });
+        continue;
+      }
+
+      // Validate if the student exists
+      const studentExists = await Students.findOne({
+        where: { student_id_pk: student_ids_fk, is_deleted: false },
+      });
+      if (!studentExists) {
+        skippedRecords.push({ record, reason: "Student not found" });
+        continue;
+      }
+
+      // Normalize the attendance date to ignore time
+      const normalizedAttendanceDate = new Date(attendance_date).setHours(
+        0,
+        0,
+        0,
+        0
+      );
+
+      // Check if attendance already exists
       const attendanceExists = await Attendance.findOne({
         where: {
-          student_id_fk,
+          student_id_fk: student_ids_fk,
           subject_id_fk,
           attendance_date: new Date(normalizedAttendanceDate).toISOString(),
         },
       });
-
       if (attendanceExists) {
-        // If attendance already exists, skip this student
-        console.warn(
-          `Attendance already marked for student ID ${student_id_fk} on ${attendance_date}`
-        );
-        skippedStudents.push(student_id_fk);
+        skippedRecords.push({
+          record,
+          reason: "Attendance already marked for this date",
+        });
         continue;
       }
 
-      // Create a new attendance record for each student
+      // Create attendance record
       const newAttendance = await Attendance.create({
-        student_id_fk,
+        student_id_fk: student_ids_fk,
         subject_id_fk,
-        attendance_date: normalizedAttendanceDate, // Ensure correct date format
+        attendance_date: normalizedAttendanceDate,
         attendance_status,
         reason,
       });
-      attendanceRecords.push(newAttendance);
+      createdRecords.push(newAttendance);
     }
 
-    // Check if any records were created
-    if (attendanceRecords.length === 0) {
+    if (createdRecords.length === 0) {
       return res.status(404).json({
         createAttendanceMessage:
-          "No valid students found to create attendance records, or students already have attendance marked.",
-        skippedStudents,
+          "No attendance records created. All records were skipped.",
+        skippedRecords,
       });
     }
 
     return res.status(201).json({
       createAttendanceMessage: "Attendance records created successfully!",
-      attendanceRecords,
-      skippedStudents, // List of students who were skipped (either not found or already had attendance marked)
+      createdRecords,
+      skippedRecords,
     });
   } catch (error) {
     console.error("Error creating attendance:", error);
     return res.status(500).json({
       createAttendanceMessage: "Server error. Please try again later.",
-      createAttendanceCatchBlkErr:
-        error.message || error.toString() || "Unknown error",
+      error: error.message || "Unknown error",
     });
   }
 };
@@ -290,6 +287,76 @@ const recoverAttendance = async (req, res) => {
   }
 };
 
+const getStudentAttendanceGroupedBySubject = async (req, res) => {
+  const { studentId } = req.params; // Expecting student ID from request parameters
+
+  if (!studentId) {
+    return res.status(400).json({
+      getAttendanceMessage: "Student ID is required.",
+    });
+  }
+
+  try {
+    // Fetch attendance records grouped by subject
+    const attendanceRecords = await Attendance.findAll({
+      where: { student_id_fk: studentId },
+      include: [
+        {
+          model: Subjects,
+          as: "subject",
+          attributes: ["subject_id_pk", "subject_code", "subject_name"],
+        },
+      ],
+      attributes: [
+        "attendance_date",
+        "attendance_status",
+        "reason",
+        "subject_id_fk",
+      ],
+      order: [["attendance_date", "ASC"]],
+    });
+
+    if (!attendanceRecords || attendanceRecords.length === 0) {
+      return res.status(404).json({
+        getAttendanceMessage: "No attendance records found for this student.",
+      });
+    }
+
+    // Group attendance by subject
+    const groupedAttendance = attendanceRecords.reduce((acc, record) => {
+      const subjectCode = record.subject.subject_code;
+      const subjectName = record.subject.subject_name;
+
+      if (!acc[subjectCode]) {
+        acc[subjectCode] = {
+          subjectName,
+          subjectCode,
+          attendance: [],
+        };
+      }
+
+      acc[subjectCode].attendance.push({
+        date: record.attendance_date,
+        status: record.attendance_status,
+        reason: record.reason,
+      });
+
+      return acc;
+    }, {});
+
+    return res.status(200).json({
+      getAttendanceMessage: "Attendance records retrieved successfully!",
+      groupedAttendance,
+    });
+  } catch (error) {
+    console.error("Error retrieving attendance:", error);
+    return res.status(500).json({
+      getAttendanceMessage: "Server error. Please try again later.",
+      error: error.message || "Unknown error",
+    });
+  }
+};
+
 export {
   createAttendance,
   getAllAttendance,
@@ -297,4 +364,5 @@ export {
   updateAttendance,
   deleteAttendance,
   recoverAttendance,
+  getStudentAttendanceGroupedBySubject,
 };
