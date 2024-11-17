@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Navigate } from "react-router-dom";
 
 import StudentDashboard from "../pages/dashboard/StudentDashboard.jsx";
+import AttendanceDetailsPage from "../pages/dashboard/AttendanceDetailsPage.jsx";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
@@ -28,6 +29,18 @@ const studentRoutes = ({ isAuthenticated, userRole }) => {
       element={
         isAuthenticated && userRole === roleAllowed ? (
           navigateBasedOnRole(userRole)
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="student-dashboard"
+    />,
+
+    <Route
+      path="/student/attendance-details/:subjectId"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <AttendanceDetailsPage />
         ) : (
           <Navigate to="/" />
         )
