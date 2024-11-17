@@ -20,6 +20,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 const SubjectDetailsCard = ({ subject }) => {
   return (
     <Card variant="outlined">
+      {console.log(subject)}
       <CardContent>
         <Typography variant="h4" sx={{ color: "primary.main" }}>
           Subject Details
@@ -48,26 +49,8 @@ const SubjectDetailsCard = ({ subject }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1">
-              <strong>Capacity:</strong>
-              {subject.classroom ? subject.classroom.capacity : "N/A"}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
               <strong>Room Type:</strong>
               {subject.classroom ? subject.classroom.room_type : "N/A"}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Room Description:</strong>
-              {subject.classroom ? subject.classroom.description : "N/A"}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              <strong>Grade Level:</strong>
-              {subject.Grade ? subject.Grade.grade_level : "N/A"}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>

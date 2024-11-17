@@ -14,6 +14,7 @@ export default function AllSubjectsForTheStudentTable({ student }) {
       try {
         // Fetch the assigned subjects for the selected student
         const response = await getSubjectsForStudent(studentId);
+        console.log(response);
 
         // Check if subjects are in response
         if (response && response.subjects) {
@@ -34,30 +35,38 @@ export default function AllSubjectsForTheStudentTable({ student }) {
       field: "subject_code",
       headerName: "Subject Code",
       flex: 1,
-      valueGetter: (value, row) => row.subject.subject_code,
+      valueGetter: (value, row) =>
+        row.subject && row.subject.subject_code
+          ? row.subject.subject_code
+          : "N/A",
     },
     {
       field: "subject_name",
       headerName: "Subject Name",
       flex: 1,
-      valueGetter: (value, row) => row.subject.subject_name,
+      valueGetter: (value, row) =>
+        row.subject && row.subject.subject_name
+          ? row.subject.subject_name
+          : "N/A",
     },
     {
       field: "teacher",
       headerName: "Teacher",
       flex: 1,
       renderCell: (params) => {
-        // Ensure that the teacher's details exist
         if (
+          !params.row.subject ||
           !params.row.subject.Teachers ||
           params.row.subject.Teachers.length === 0
         ) {
-          return <Typography>No teacher assigned</Typography>;
+          return <Typography>N/A</Typography>;
         }
-
         const teacher = params.row.subject.Teachers[0]; // Assuming one teacher per subject
         return (
-          <Typography>{`${teacher.teacher_first_name} ${teacher.teacher_last_name}`}</Typography>
+          <Typography>
+            {teacher.teacher_first_name || "N/A"}{" "}
+            {teacher.teacher_last_name || "N/A"}
+          </Typography>
         );
       },
     },
@@ -66,52 +75,67 @@ export default function AllSubjectsForTheStudentTable({ student }) {
       headerName: "Classroom",
       flex: 1,
       valueGetter: (value, row) =>
-        row.subject.classroom?.classroom_code || "N/A",
+        row.subject &&
+        row.subject.classroom &&
+        row.subject.classroom.classroom_code
+          ? row.subject.classroom.classroom_code
+          : "N/A",
     },
     {
       field: "capacity",
       headerName: "Capacity",
       flex: 1,
-      valueGetter: (value, row) => row.subject.classroom?.capacity || "N/A",
+      valueGetter: (value, row) =>
+        row.subject && row.subject.classroom && row.subject.classroom.capacity
+          ? row.subject.classroom.capacity
+          : "N/A",
     },
     {
       field: "room_type",
       headerName: "Room Type",
       flex: 1,
-      valueGetter: (value, row) => row.subject.classroom?.room_type || "N/A",
+      valueGetter: (value, row) =>
+        row.subject && row.subject.classroom && row.subject.classroom.room_type
+          ? row.subject.classroom.room_type
+          : "N/A",
     },
     {
       field: "section",
       headerName: "Section",
       flex: 1,
-      valueGetter: (value, row) => row.subject.section || "N/A",
+      valueGetter: (value, row) =>
+        row.subject && row.subject.section ? row.subject.section : "N/A",
     },
-
     {
       field: "marks",
       headerName: "Marks",
       flex: 1,
-      valueGetter: (value, row) => row.subject.marks[0].subject_mark || "N/A",
+      valueGetter: (value, row) =>
+        row.subject &&
+        row.subject.marks &&
+        row.subject.marks[0] &&
+        row.subject.marks[0].subject_mark
+          ? row.subject.marks[0].subject_mark
+          : "N/A",
     },
-
-    // {
-    //   field: "details",
-    //   headerName: "Details",
-    //   flex: 1,
-    //   renderCell: (params) => (
-    //     <Button
-    //       variant="contained"
-    //       color="primary"
-    //       onClick={() =>
-    //         navigate(
-    //           `/student/subject-details/${params.row.subject.subject_id_pk}`
-    //         )
-    //       }
-    //     >
-    //       View Details
-    //     </Button>
-    //   ),
-    // },
+    {
+      field: "details",
+      headerName: "Details",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() =>
+            navigate(
+              `/student/attendance-details/${params.row.subject.subject_id_pk}`
+            )
+          }
+        >
+          View Your Attendance
+        </Button>
+      ),
+    },
   ];
 
   return (

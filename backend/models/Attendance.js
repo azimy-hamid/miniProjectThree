@@ -31,7 +31,7 @@ const Attendance = sequelize.define(
     attendance_status: {
       type: DataTypes.ENUM(
         "present",
-        "pbsent",
+        "absent",
         "late",
         "excused" // You can add more statuses as needed
       ),

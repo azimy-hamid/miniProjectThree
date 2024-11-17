@@ -13,6 +13,7 @@ import Subjects from "../models/Subjects.js";
 import ClassSchedule from "../models/ClassSchedule.js";
 import Student_Subjects from "../models/StudentSubjects.js";
 import Teacher_Subjects from "../models/TeacherSubjects.js";
+import Attendance from "../models/Attendance.js";
 
 export async function createStudents() {
   // Fetch semester IDs and grade IDs
@@ -114,10 +115,7 @@ export async function createStudents() {
       );
 
       // Hash the password for the student
-      const hashedPassword = await bcrypt.hash(
-        `defaultpassword${student.student_first_name.charAt(0)}`,
-        10
-      );
+      const hashedPassword = await bcrypt.hash(`Password123@`, 10);
 
       // Create the user in the Users table
       const user = await Users.create({
@@ -153,8 +151,9 @@ export async function createStudents() {
       // Get the subject IDs associated with the student's grade_code
       const subjectIds = groupedSubjects[gradeCode];
 
-      // Enroll the student in their subjects
+      // Enroll the student in their subjects and create attendance records
       for (const subjectId of subjectIds) {
+        // Enroll the student in the subject
         await Student_Subjects.create({
           student_id_fk: createdStudent.student_id_pk, // Link to the student
           subject_id_fk: subjectId, // Link to the subject
@@ -162,6 +161,51 @@ export async function createStudents() {
         console.log(
           `Enrolled student ${createdStudent.student_first_name} ${createdStudent.student_last_name} in subject with ID: ${subjectId}`
         );
+
+        // Array of possible absence reasons
+        const absenceReasons = [
+          "Sick",
+          "Family Emergency",
+          "Personal Reasons",
+          "Vacation",
+          "Late Arrival",
+          "Appointment",
+          "Unforeseen Circumstances",
+          "Other",
+        ];
+
+        // Create 10 attendance records for the student in this subject
+        for (let day = 1; day <= 10; day++) {
+          const attendanceStatus = Math.random() > 0.2 ? "present" : "absent"; // 80% chance of being present
+          const attendanceDate = new Date();
+          attendanceDate.setDate(attendanceDate.getDate() - (10 - day)); // Setting the date for the last 10 days
+
+          let absenceReason = null;
+
+          // If the student is absent, randomly pick an absence reason
+          if (attendanceStatus === "absent") {
+            absenceReason =
+              absenceReasons[Math.floor(Math.random() * absenceReasons.length)];
+          }
+
+          await Attendance.create({
+            student_id_fk: createdStudent.student_id_pk,
+            subject_id_fk: subjectId,
+            attendance_date: attendanceDate,
+            attendance_status: attendanceStatus,
+            reason: absenceReason, // Add the reason if the status is absent
+          });
+
+          console.log(
+            `Created attendance for ${createdStudent.student_first_name} ${
+              createdStudent.student_last_name
+            } on ${attendanceDate.toDateString()} for subject ${subjectId} with status: ${attendanceStatus}${
+              attendanceStatus === "absent"
+                ? " and reason: " + absenceReason
+                : ""
+            }`
+          );
+        }
       }
     } catch (error) {
       console.error(
@@ -172,7 +216,7 @@ export async function createStudents() {
   }
 
   console.log(
-    "All students, their corresponding users, and subject enrollments have been created successfully."
+    "All students, their corresponding users, subject enrollments, and attendance records have been created successfully."
   );
 }
 
@@ -272,6 +316,8 @@ export async function createSubjectsForGrades() {
     // Get classroom IDs via the getClassroomIds function
     const classroomIds = await getClassroomIds();
 
+    const semesterIds = await getSemesterIds();
+
     // Ensure there are enough lecture halls to assign to each grade (12 lecture halls)
     if (classroomIds.lectureHalls.length < grades.length) {
       throw new Error("Not enough lecture halls available for all grades.");
@@ -298,9 +344,9 @@ export async function createSubjectsForGrades() {
         const subject = await Subjects.create({
           subject_name: `Subject ${j} for ${grade.grade_code}`, // Dynamic subject name based on grade
           grade_id_fk: grade.grade_id_pk, // Reference to the grade
-          semester_id_fk: null, // Optionally set a semester, if needed
+          semester_id_fk: semesterIds.semester1Id, // Optionally set a semester, if needed
           classroom_id_fk: assignedClassroomId, // Classroom ID assigned uniquely per grade
-          section: `Section ${j}`, // Section name
+          section: `A`, // Section name
         });
 
         console.log(

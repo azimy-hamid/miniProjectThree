@@ -27,5 +27,9 @@ attendanceRoutes.put(
   "/recover-attendance-by-id/:attendanceId",
   attendanceControllers.recoverAttendance
 );
+attendanceRoutes.get(
+  "/get-student-attendance-grouped-by-subject/:studentId",
+  attendanceControllers.getStudentAttendanceGroupedBySubject
+);
 
 export default attendanceRoutes;

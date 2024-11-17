@@ -63,3 +63,24 @@ export const getAllAttendance = async () => {
     throw error;
   }
 };
+
+export const getStudentAttendanceGroupedBySubject = async (studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-student-attendance-grouped-by-subject/${studentId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting all attendances:", error);
+    throw error;
+  }
+};

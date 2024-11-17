@@ -42,6 +42,7 @@ const loginUser = async (credentials) => {
 const logoutUser = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
+  localStorage.removeItem("user_id_fk");
 };
 
 // Update User Profile Service

@@ -85,8 +85,8 @@ export default function AllSubjectsForTheTeacherTable({ teacher }) {
       valueGetter: (value, row) => row.Grade?.grade_level || "N/A",
     },
     {
-      field: "details",
-      headerName: "Details",
+      field: "markStudentMarks",
+      headerName: "Mark Student Marks",
       flex: 1,
       renderCell: (params) => (
         <Button
@@ -96,7 +96,26 @@ export default function AllSubjectsForTheTeacherTable({ teacher }) {
             navigate(`/teacher/subject-details/${params.row.subject_id_pk}`)
           } // Adjust the path as necessary
         >
-          Mark Attendance/Mark
+          Mark Student Marks
+        </Button>
+      ),
+    },
+
+    {
+      field: "markStudentAttendance",
+      headerName: "Mark Student Attendance",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() =>
+            navigate(
+              `/teacher/mark-student-attendance/${params.row.subject_id_pk}`
+            )
+          } // Adjust the path as necessary
+        >
+          Mark Attendance
         </Button>
       ),
     },

@@ -4,6 +4,8 @@ import { Route, Navigate } from "react-router-dom";
 import TeacherDashboard from "../pages/dashboard/TeacherDashboard.jsx";
 import TeacherSubjectsOverviewPage from "../pages/dashboard/TeacherSubjectsOverviewPage.jsx";
 import SubjectDetailsPage from "../pages/dashboard/SubjectDetailsPage.jsx";
+import MarkStudentAttendancePage from "../pages/dashboard/MarkStudentAttendancePage.jsx";
+import AttendanceDetailsPage from "../pages/dashboard/AttendanceDetailsPage.jsx";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
@@ -60,6 +62,30 @@ const teacherRoutes = ({ isAuthenticated, userRole }) => {
         )
       }
       key="teacher-subject-overview"
+    />,
+
+    <Route
+      path="/teacher/mark-student-attendance/:subjectId"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <MarkStudentAttendancePage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="teacher-subject-overview"
+    />,
+
+    <Route
+      path="/teacher/attendance-details/:subjectId/:studentId"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <AttendanceDetailsPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="attendance-details"
     />,
   ];
 };
