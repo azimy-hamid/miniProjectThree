@@ -60,8 +60,6 @@ export default function MarketingPage() {
         <Divider />
         <Testimonials />
         <Divider />
-        <Highlights />
-        <Divider />
         <FAQ />
         <Divider />
         <Footer />
