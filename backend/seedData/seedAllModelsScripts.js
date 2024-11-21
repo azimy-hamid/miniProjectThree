@@ -14,6 +14,8 @@ import ClassSchedule from "../models/ClassSchedule.js";
 import Student_Subjects from "../models/StudentSubjects.js";
 import Teacher_Subjects from "../models/TeacherSubjects.js";
 import Attendance from "../models/Attendance.js";
+import Academic_History from "../models/Academic_History.js";
+import Marks from "../models/Marks.js";
 
 export async function createStudents() {
   // Fetch semester IDs and grade IDs
@@ -147,7 +149,20 @@ export async function createStudents() {
 
       // Retrieve the grade code
       const gradeCode = grade.grade_code;
+      const academicYear = grade.grade_level;
 
+      // Create the academic history for the student
+      const currentYear = new Date().getFullYear();
+      await Academic_History.create({
+        student_id_fk: createdStudent.student_id_pk,
+        calendar_year: currentYear, // Current year as the calendar year
+        academic_year: academicYear, // Academic year from the grade level
+        total_mark: null, // Initial total_marks is set to 0
+      });
+
+      console.log(
+        `Created academic history for student: ${createdStudent.student_first_name} ${createdStudent.student_last_name}`
+      );
       // Get the subject IDs associated with the student's grade_code
       const subjectIds = groupedSubjects[gradeCode];
 
@@ -160,6 +175,20 @@ export async function createStudents() {
         });
         console.log(
           `Enrolled student ${createdStudent.student_first_name} ${createdStudent.student_last_name} in subject with ID: ${subjectId}`
+        );
+
+        // Generate a random mark between 50 and 100 for each student
+        const mark = Math.floor(Math.random() * 51) + 50; // Marks between 50 and 100
+
+        // Create the mark record for the student
+        await Marks.create({
+          student_id_fk: createdStudent.student_id_pk,
+          subject_id_fk: subjectId,
+          subject_mark: 100,
+        });
+
+        console.log(
+          `Assigned mark of ${mark} to student ${createdStudent.student_first_name} ${createdStudent.student_last_name} for subject with ID: ${subjectId}`
         );
 
         // Array of possible absence reasons
