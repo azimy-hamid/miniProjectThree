@@ -37,7 +37,7 @@ setupAssociations();
 
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ force: true }); // You can use { force: true } during development to reset the tables { alter: true } to alter
+    await sequelize.sync(); // You can use { force: true } during development to reset the tables { alter: true } to alter
     const studentCount = await Students.count();
 
     if (studentCount === 0) {
