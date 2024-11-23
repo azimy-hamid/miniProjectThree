@@ -21,11 +21,21 @@ import User_Roles from "./UserRoles.js";
 import Student_Subjects from "./StudentSubjects.js";
 import Teacher_Subjects from "./TeacherSubjects.js";
 import Semesters from "./Semesters.js";
+import Academic_History from "./Academic_History.js";
 
 const setupAssociations = () => {
   // attendace and students
 
   try {
+    Students.hasMany(Academic_History, {
+      foreignKey: "student_id_fk",
+      as: "academic_history",
+    });
+    Academic_History.belongsTo(Students, {
+      foreignKey: "student_id_fk",
+      as: "student",
+    });
+
     Students.hasMany(Attendance, {
       foreignKey: "student_id_fk",
       as: "attendance",
