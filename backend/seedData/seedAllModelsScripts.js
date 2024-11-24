@@ -184,7 +184,7 @@ export async function createStudents() {
         await Marks.create({
           student_id_fk: createdStudent.student_id_pk,
           subject_id_fk: subjectId,
-          subject_mark: 100,
+          subject_mark: 60,
         });
 
         console.log(
