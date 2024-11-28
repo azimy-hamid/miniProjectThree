@@ -31,4 +31,9 @@ teacherRoutes.get(
   teacherControllers.getAssignedSubjects
 );
 
+teacherRoutes.get(
+  "/get-students-for-teacher/:teacherId",
+  teacherControllers.getStudentsForTeacher
+);
+
 export default teacherRoutes;

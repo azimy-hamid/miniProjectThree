@@ -5,6 +5,9 @@ import Teacher_Subjects from "../models/TeacherSubjects.js";
 import Subjects from "../models/Subjects.js";
 import Classrooms from "../models/Classrooms.js";
 import Grades from "../models/Grades.js";
+import Students from "../models/Students.js";
+import Marks from "../models/Marks.js";
+import Student_Subjects from "../models/StudentSubjects.js";
 
 // Create Teacher Controller
 const createTeacher = async (req, res) => {
@@ -368,6 +371,104 @@ const getAssignedSubjects = async (req, res) => {
   }
 };
 
+const getStudentsForTeacher = async (req, res) => {
+  const { teacherId } = req.params;
+
+  try {
+    // Fetch the teacher and their subjects
+    const teacher = await Teachers.findOne({
+      where: { teacher_id_pk: teacherId },
+      attributes: ["teacher_first_name", "teacher_last_name", "teacher_code"], // Include teacher details
+      include: [
+        {
+          model: Subjects,
+          through: { attributes: [] },
+          attributes: ["subject_id_pk", "subject_name", "subject_code"],
+        },
+      ],
+    });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    const subjects = teacher.Subjects;
+
+    // Fetch students and marks for all subjects
+    const studentsMap = {};
+
+    for (const subject of subjects) {
+      // Fetch students for this subject
+      const studentSubjects = await Student_Subjects.findAll({
+        where: { subject_id_fk: subject.subject_id_pk },
+        include: [
+          {
+            model: Students,
+            as: "student",
+            attributes: [
+              "student_id_pk",
+              "student_first_name",
+              "student_last_name",
+            ],
+          },
+        ],
+      });
+
+      // Fetch marks for this subject
+      const studentIds = studentSubjects.map((ss) => ss.student.student_id_pk);
+      const marks = await Marks.findAll({
+        where: {
+          student_id_fk: studentIds,
+          subject_id_fk: subject.subject_id_pk,
+        },
+        attributes: ["mark_id_pk", "subject_mark", "student_id_fk"],
+      });
+
+      // Organize students by their IDs
+      for (const ss of studentSubjects) {
+        const student = ss.student;
+        const studentId = student.student_id_pk;
+
+        if (!studentsMap[studentId]) {
+          studentsMap[studentId] = {
+            studentId: studentId,
+            student_first_name: student.student_first_name,
+            student_last_name: student.student_last_name,
+            subjects: [],
+          };
+        }
+
+        const studentMarks = marks.filter(
+          (mark) => mark.student_id_fk === studentId
+        );
+
+        studentsMap[studentId].subjects.push({
+          subjectId: subject.subject_id_pk,
+          subjectName: subject.subject_name,
+          subjectCode: subject.subject_code,
+          marks: studentMarks.map((mark) => ({
+            markId: mark.mark_id_pk,
+            mark: mark.subject_mark,
+          })),
+        });
+      }
+    }
+
+    // Convert the map into an array
+    const studentsWithSubjectsAndMarks = Object.values(studentsMap);
+
+    return res.status(200).json({
+      teacherId,
+      teacherName: `${teacher.teacher_first_name} ${teacher.teacher_last_name}`,
+      teacherCode: teacher.teacher_code,
+      students: studentsWithSubjectsAndMarks,
+    });
+  } catch (error) {
+    console.error("Error fetching students and subjects:", error);
+    return res.status(500).json({ message: "An error occurred", error });
+  }
+};
+
 export {
   createTeacher,
   getAllTeachers,
@@ -378,4 +479,5 @@ export {
   getSubjectsForATeacher,
   getAllTeacherCodes,
   getAssignedSubjects,
+  getStudentsForTeacher,
 };

@@ -10,6 +10,8 @@ import Teachers from "../models/Teachers.js";
 import Teacher_Subjects from "../models/TeacherSubjects.js";
 import Classrooms from "../models/Classrooms.js";
 import ClassSchedule from "../models/ClassSchedule.js";
+import Marks from "../models/Marks.js";
+import Academic_History from "../models/Academic_History.js";
 
 // Create Student Controller
 const createStudent = async (req, res) => {
@@ -72,9 +74,53 @@ const createStudent = async (req, res) => {
       grade_id_fk,
     });
 
+    // Get the academic_year from the grade's grade_level field
+    const academicYear = grade ? grade.grade_level : null; // Assuming 'grade_level' is the academic year
+
+    // If academicYear is not found, you can handle it with a fallback (e.g., set to current year)
+    if (!academicYear) {
+      return res.status(400).json({
+        createStudentMessage:
+          "Academic year could not be determined for the grade.",
+      });
+    }
+
+    // Create an academic history record for the new student
+    const currentYear = new Date().getFullYear();
+    const academicHistory = await Academic_History.create({
+      student_id_fk: newStudent.student_id_pk,
+      calendar_year: currentYear, // You can set this to the current year
+      academic_year: academicYear, // Set academic year from the grade's grade_level
+      total_marks: 0, // Start with total_marks set to 0
+    });
+
+    // Enroll the student in subjects related to their grade
+    const subjects = await Subjects.findAll({
+      where: { grade_id_fk }, // Assuming grade_id_fk is used to associate subjects with grades
+    });
+
+    // If no subjects found, return an error
+    if (!subjects.length) {
+      return res.status(400).json({
+        createStudentMessage: "No subjects found for the specified grade.",
+      });
+    }
+
+    // Enroll the student in each subject
+    const studentSubjectsPromises = subjects.map((subject) =>
+      Student_Subjects.create({
+        student_id_fk: newStudent.student_id_pk,
+        subject_id_fk: subject.subject_id_pk, // Assuming subject_id_pk is the primary key for subjects
+      })
+    );
+
+    await Promise.all(studentSubjectsPromises);
+
     return res.status(201).json({
-      createStudentMessage: "Student created successfully!",
+      createStudentMessage:
+        "Student created and enrolled in subjects successfully!",
       newStudent,
+      academicHistory, // Return the created academic history as part of the response
     });
   } catch (error) {
     console.error("Error creating student:", error);
@@ -118,6 +164,13 @@ const getStudentById = async (req, res) => {
           model: Semesters,
           as: "Semester",
           attributes: ["semester_number"],
+        },
+        {
+          model: Marks,
+          as: "marks",
+          attributes: ["subject_id_fk", "student_id_fk", "subject_mark"],
+          where: { is_done: false },
+          required: false,
         },
       ],
     });
@@ -445,6 +498,152 @@ const getStudentByCode = async (req, res) => {
   }
 };
 
+const updateStudentAcademicHistoryStatus = async (req, res) => {
+  const { student_id_fk, calendar_year, status } = req.body;
+
+  // Validate the status
+  if (!["passed", "failed"].includes(status)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid status. Use 'passed' or 'failed'." });
+  }
+
+  try {
+    // Find the academic history record by student_id_fk and calendar_year
+    const academicHistory = await Academic_History.findOne({
+      where: {
+        student_id_fk: student_id_fk,
+        calendar_year: calendar_year,
+      },
+    });
+
+    if (!academicHistory) {
+      return res
+        .status(404)
+        .json({ error: "Academic history record not found." });
+    }
+
+    // Update the academic history status
+    academicHistory.academic_history_status = status;
+    await academicHistory.save();
+
+    return res
+      .status(200)
+      .json({ message: "Student status updated successfully." });
+  } catch (error) {
+    console.error(error);
+    if (error.name === "SequelizeValidationError") {
+      return res.status(400).json({ error: error.message });
+    }
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const updateStudentsAcademicHistoryStatus = async (req, res) => {
+  const students = req.body; // Array of objects with student_id_fk, calendar_year, and status
+  console.error(req.body);
+
+  if (!Array.isArray(students) || students.length === 0) {
+    return res.status(400).json({
+      error: "Invalid data. Ensure 'students' is a non-empty array.",
+    });
+  }
+
+  // Validate the structure of the student data
+  for (const student of students) {
+    if (
+      !student.student_id_fk ||
+      !student.calendar_year ||
+      !["passed", "failed"].includes(student.status)
+    ) {
+      return res.status(400).json({
+        error:
+          "Each student must have a valid 'student_id_fk', 'calendar_year', and 'status' ('passed' or 'failed').",
+      });
+    }
+  }
+
+  try {
+    const updatedStudents = [];
+    const notFoundStudents = [];
+    const notUpdatedStudents = []; // To hold students that are not updated
+
+    // Loop through each student and update their academic status
+    for (const student of students) {
+      const { student_id_fk, calendar_year, status } = student;
+
+      // Fetch the student's first and last name
+      const studentDetails = await Students.findOne({
+        where: { student_id_pk: student_id_fk },
+        attributes: ["student_first_name", "student_last_name"], // Only retrieve first and last names
+      });
+
+      if (!studentDetails) {
+        // If the student is not found, add to notFoundStudents with their first and last name
+        notFoundStudents.push({ student_id_fk, calendar_year });
+        continue; // Skip this student and proceed with the next
+      }
+
+      // Find the academic history record by student_id_fk and calendar_year
+      const academicHistory = await Academic_History.findOne({
+        where: {
+          student_id_fk,
+          calendar_year,
+        },
+      });
+
+      // If no academic history found, mark as not found
+      if (!academicHistory) {
+        notFoundStudents.push({
+          student_id_fk,
+          student_first_name: studentDetails.student_first_name,
+          student_last_name: studentDetails.student_last_name,
+          calendar_year,
+        });
+        continue; // Skip this student and proceed with the next
+      }
+
+      // Check if the student already has a record for the given year
+      if (academicHistory.academic_history_status !== null) {
+        // If the record already exists, add them to notUpdatedStudents with their first and last name
+        notUpdatedStudents.push({
+          student_id_fk,
+          student_first_name: studentDetails.student_first_name,
+          student_last_name: studentDetails.student_last_name,
+          calendar_year,
+          status: academicHistory.academic_history_status,
+        });
+        continue; // Skip updating this student
+      }
+
+      // Update the academic history status
+      academicHistory.academic_history_status = status;
+      await academicHistory.save();
+
+      // Add the updated student with their first and last name
+      updatedStudents.push({
+        student_id_fk,
+        student_first_name: studentDetails.student_first_name,
+        student_last_name: studentDetails.student_last_name,
+        calendar_year,
+        status,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Students' statuses processed successfully.",
+      updatedStudents,
+      notFoundStudents, // Include students whose records weren't found
+      notUpdatedStudents, // Include students whose records were not updated
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while updating the student statuses.",
+    });
+  }
+};
+
 export {
   createStudent,
   getAllStudents,
@@ -456,4 +655,6 @@ export {
   getNumberOfStudents,
   getAllStudentCodes,
   getStudentByCode,
+  updateStudentAcademicHistoryStatus,
+  updateStudentsAcademicHistoryStatus,
 };

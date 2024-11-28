@@ -42,4 +42,14 @@ studentRoutes.get(
   studentControllers.getStudentByCode
 );
 
+studentRoutes.post(
+  "/update-student-academic-history-status",
+  studentControllers.updateStudentAcademicHistoryStatus
+);
+
+studentRoutes.post(
+  "/update-multiple-students-academic-history-status",
+  studentControllers.updateStudentsAcademicHistoryStatus
+);
+
 export default studentRoutes;

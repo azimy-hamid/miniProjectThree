@@ -35,10 +35,27 @@ const createStudentSubject = async (req, res) => {
     }
 
     // Check if the student's grade_code matches the subject's grade_code
-    if (student.grade_code !== subject.grade_code) {
+    if (student.grade_id_fk !== subject.grade_id_fk) {
       return res.status(400).json({
         createStudentSubjectMessage:
           "You are not in the grade in which this subject is taught.",
+      });
+    }
+
+    // Check if the student is already enrolled in the subject
+    const existingEnrollment = await Student_Subjects.findOne({
+      where: {
+        student_id_fk,
+        subject_id_fk: subject.subject_id_pk,
+        is_done: false,
+        is_deleted: false, // Ensure it's not a deleted record
+      },
+    });
+
+    if (existingEnrollment) {
+      return res.status(400).json({
+        createStudentSubjectMessage:
+          "Student is already enrolled in this subject.",
       });
     }
 
