@@ -114,9 +114,8 @@ export default function SignIn(props) {
       }
     } catch (error) {
       const errorMsg =
-        error.response?.data?.loginUserMessage ||
-        "Login failed. Please try again.";
-      console.error("Login failed:", errorMsg);
+        error?.loginUserMessage || "Login failed. Please try again.";
+      console.error("Login failed:", error);
       setApiError(errorMsg); // Set the API error message
     }
   };
