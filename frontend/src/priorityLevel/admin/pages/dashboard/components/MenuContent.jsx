@@ -21,16 +21,6 @@ const SIDEBAR_ITEMS = [
         label: "Teacher Overview",
         link: "/admin/teacher-overview",
       },
-      {
-        id: "create-teacher",
-        label: "Create Teacher",
-        link: "/admin/create-teacher",
-      },
-      {
-        id: "teacher-list",
-        label: "Teacher List",
-        link: "/admin/teacher-list",
-      },
     ],
   },
   {
@@ -41,17 +31,6 @@ const SIDEBAR_ITEMS = [
         id: "student-overview",
         label: "Student Overview",
         link: "/admin/student-overview",
-      },
-
-      {
-        id: "create-student",
-        label: "Create Student",
-        link: "/admin/create-student",
-      },
-      {
-        id: "student-list",
-        label: "Student List",
-        link: "/admin/student-list",
       },
     ],
   },
@@ -64,28 +43,6 @@ const SIDEBAR_ITEMS = [
         label: "Classroom Overview",
         link: "/admin/classroom-overview",
       },
-      {
-        id: "create-classroom",
-        label: "Create Classroom",
-        link: "/admin/create-classroom",
-      },
-      {
-        id: "class-schedule",
-        label: "Class Schedule",
-        link: "/admin/create-class-schedule",
-      },
-      {
-        id: "manage-classes",
-        label: "Manage Classes",
-        link: "/admin/manage-classes",
-      },
-    ],
-  },
-  {
-    id: "fees-management",
-    label: "Fees Management",
-    children: [
-      { id: "manage-fees", label: "Manage Fees", link: "/admin/manage-fees" },
     ],
   },
   {
@@ -96,21 +53,6 @@ const SIDEBAR_ITEMS = [
         id: "subject-overview",
         label: "Subject Overview",
         link: "/admin/subject-overview",
-      },
-      {
-        id: "create-subject",
-        label: "Create Subject",
-        link: "/admin/create-subject",
-      },
-      {
-        id: "view-subject",
-        label: "View Subject",
-        link: "/admin/view-subject",
-      },
-      {
-        id: "manage-subject",
-        label: "Manage Subject",
-        link: "/admin/manage-subject",
       },
     ],
   },
