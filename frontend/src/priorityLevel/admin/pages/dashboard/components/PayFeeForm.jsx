@@ -54,7 +54,7 @@ export default function PayFeeForm({ student }) {
     fee_type: "",
     fee_amount: "",
     due_date: "",
-    payment_status: "",
+    payment_status: "paid",
     payment_date: "",
     penalty: "",
     discounts: "",

@@ -79,6 +79,7 @@ export default function AllStudentsOfASubjectTable({ subject }) {
       const studentDetails = await getSpecificStudent(studentId);
       setSelectedStudent(studentDetails);
       setIsModalOpen(true);
+      console.log(studentDetails);
     } catch (error) {
       console.error("Error fetching student details:", error);
     }
@@ -220,6 +221,7 @@ export default function AllStudentsOfASubjectTable({ subject }) {
       >
         {`Total students enrolled: ${studentCount}`}
       </Typography>
+      {console.log(students)}
       <DataGrid
         rows={students}
         columns={columns}
@@ -247,7 +249,6 @@ export default function AllStudentsOfASubjectTable({ subject }) {
       >
         Submit Marks
       </Button>
-
       {/* Modal for displaying student details */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Paper
@@ -268,15 +269,25 @@ export default function AllStudentsOfASubjectTable({ subject }) {
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography>
-                    <strong>First Name:</strong> {selectedStudent.first_name}
+                    <strong>First Name:</strong>{" "}
+                    {selectedStudent.student_first_name}
                   </Typography>
                   <Typography>
-                    <strong>Last Name:</strong> {selectedStudent.last_name}
+                    <strong>Last Name:</strong>{" "}
+                    {selectedStudent.student_last_name}
                   </Typography>
                   <Typography>
                     <strong>Email:</strong> {selectedStudent.email}
                   </Typography>
-                  {/* Add other student details here */}
+                  <Typography>
+                    <strong>Mark Acquired For this Subject:</strong>{" "}
+                    {
+                      // Find the subject mark based on subject_id_fk
+                      selectedStudent.marks.find(
+                        (mark) => mark.subject_id_fk === subject.subject_id_pk
+                      )?.subject_mark || "No marks available"
+                    }{" "}
+                  </Typography>
                 </Grid>
               </Grid>
               <Button
@@ -294,7 +305,6 @@ export default function AllStudentsOfASubjectTable({ subject }) {
           )}
         </Paper>
       </Modal>
-
       {/* Snackbar for success and error messages */}
       <Snackbar
         open={snackbar.open}
