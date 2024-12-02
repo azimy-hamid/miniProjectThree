@@ -1,80 +1,188 @@
-
 # Student Management System (SMS)
 
-The **Student Management System (SMS)** is a web-based platform that allows institutions to manage students, courses, teachers, attendance, fees, grades, and various other academic activities. This system aims to streamline operations for educational institutions, providing efficient management and access to critical student data.
+The **Student Management System (SMS)** is a comprehensive web-based platform designed to help educational institutions efficiently manage student data, courses, teachers, attendance, fees, grades, and more. This system simplifies academic operations while ensuring secure and streamlined access to critical information.
 
 ## Features
 
-- **Student Information Management**: Create, update, and manage student records including personal details, academic history, and enrollment status.
-- **Subject & Class Management**: Manage course catalogs, create class schedules, and allow students to register for courses.
-- **Attendance Tracking**: Track student attendance, generate reports, and manage attendance statuses.
-- **Fee Management**: Manage student fees, payments, and generate receipts.
-- **User Authentication & Roles**: Secure authentication with different roles (Admin, Teacher, Student) controlling access to various system features.
-- **Notifications & Announcements**: Send notifications and updates to students regarding events, assignments, and other important information.
-- **Reporting & Analytics**: Generate reports on academic performance, fee payments, course registrations, and other statistics.
-- **Mobile & Web Access**: Accessible on both mobile and web for staff and students to manage their information on the go.
-- **API Integration**: Provides RESTful APIs for integration with other systems, such as external learning platforms, payment gateways, and more.
-
-## Database Schema
-
-The SMS database is structured around the following key tables:
-
-- **Students**: Stores student personal information and enrollment details.
-- **Teachers**: Holds teacher information and assigned courses.
-- **Subjects**: Manages courses offered by the institution.
-- **Classrooms**: Tracks classroom details, capacity, and room type.
-- **Class Schedule**: Stores class schedules with day, time, and location.
-- **Attendance**: Tracks student attendance with a `status` column that can only be one of the following values: `'Present'`, `'Absent'`, `'Late'`, or `'Excused'`.
-- **Marks**: Stores student marks for various subjects.
-- **Fees**: Manages fee payments, including due dates, payment status, and penalties.
-- **Events**: Records events and extracurricular activities for student participation.
-- **Users & Roles**: Manages user authentication and role assignments.
+- **Student Information Management**: Manage student records, including personal details, enrollment status, and academic history.
+- **Subject & Class Management**: Handle course catalogs, create class schedules, and enable course registration.
+- **Attendance Tracking**: Monitor student attendance, update attendance statuses, and generate detailed attendance reports.
+- **Fee Management**: Process student payments, manage fees, and generate receipts.
+- **User Authentication & Roles**: Secure authentication with role-based access (Admin, Teacher, Student).
+- **Notifications & Announcements**: Send updates about events, assignments, and announcements.
+- **Reporting & Analytics**: Create reports on academic performance, attendance, fee payments, and registrations.
+- **Mobile & Web Access**: Use the system on both web and mobile platforms for real-time data access.
+- **API Integration**: Integrate with external learning platforms, payment gateways, and more using RESTful APIs.
 
 ## Technologies Used
 
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (or any relational database depending on your setup)
-- **Frontend**: HTML, CSS, JavaScript, Bootstrap
-- **Authentication**: JWT, Bcrypt for password hashing
-- **Others**: RESTful APIs, Email/SMS integration for notifications
+### Backend Technologies and Dependencies
+
+#### Dependencies:
+
+- **bcryptjs**: ^2.4.3  
+  Password hashing library for Node.js.
+- **body-parser**: ^1.20.3  
+  Middleware for parsing request bodies.
+- **cors**: ^2.8.5  
+  Middleware to enable Cross-Origin Resource Sharing.
+- **dayjs**: ^1.11.13  
+  Lightweight date utility library.
+- **dotenv**: ^16.4.5  
+  Module for loading environment variables from `.env`.
+- **express**: ^4.21.0  
+  Web application framework for Node.js.
+- **express-session**: ^1.18.0  
+  Middleware for managing session data.
+- **jest**: ^29.7.0  
+  JavaScript testing framework.
+- **jsonwebtoken**: ^9.0.2  
+  Token-based authentication library.
+- **mysql2**: ^3.11.3  
+  Node.js client for MySQL databases.
+- **sequelize**: ^6.37.4  
+  ORM for relational databases.
+- **uuid**: ^10.0.0  
+  Generate unique identifiers.
+- **validator**: ^13.12.0  
+  Library for validating and sanitizing strings.
+
+#### DevDependencies:
+
+- **@babel/core**: ^7.26.0  
+  Babel compiler core library.
+- **@babel/preset-env**: ^7.26.0  
+  Babel preset for modern JavaScript.
+- **babel-jest**: ^29.7.0  
+  Jest plugin for Babel compatibility.
+- **nodemon**: ^3.1.7  
+  Utility for automatically restarting Node.js server during development.
+
+### Frontend Technologies and Dependencies
+
+#### Dependencies:
+
+- **@emotion/react**: ^11.13.3  
+  Library for writing CSS styles with JavaScript.
+- **@emotion/styled**: ^11.13.0  
+  Styled components for Emotion.
+- **@mui/icons-material**: ^6.1.4  
+  Material-UI icon library.
+- **@mui/material**: ^6.1.4  
+  Material-UI components library.
+- **@mui/x-charts**: ^7.21.0  
+  Charting components for Material-UI.
+- **@mui/x-data-grid**: ^7.21.0  
+  Data grid components for Material-UI.
+- **@mui/x-date-pickers**: ^7.22.2  
+  Date pickers for Material-UI.
+- **@mui/x-tree-view**: ^7.21.0  
+  Tree view components for Material-UI.
+- **axios**: ^1.7.7  
+  Promise-based HTTP client for the browser and Node.js.
+- **dayjs**: ^1.11.13  
+  Lightweight date utility library.
+- **react**: ^18.3.1  
+  JavaScript library for building user interfaces.
+- **react-dom**: ^18.3.1  
+  React package for working with the DOM.
+- **react-router-dom**: ^6.27.0  
+  Routing library for React.
+
+#### DevDependencies:
+
+- **@eslint/js**: ^9.11.1  
+  ESLint configuration package.
+- **@types/react**: ^18.3.10  
+  TypeScript type definitions for React.
+- **@types/react-dom**: ^18.3.0  
+  TypeScript type definitions for React DOM.
+- **@vitejs/plugin-react**: ^4.3.2  
+  Vite plugin for React.
+- **eslint**: ^9.11.1  
+  Linter for JavaScript and TypeScript.
+- **eslint-plugin-react**: ^7.37.0  
+  ESLint plugin for React.
+- **eslint-plugin-react-hooks**: ^5.1.0-rc.0  
+  ESLint plugin for React hooks.
+- **eslint-plugin-react-refresh**: ^0.4.12  
+  ESLint plugin for React Refresh.
+- **globals**: ^15.9.0  
+  List of global variables for ESLint.
+- **vite**: ^5.4.8  
+  Next-generation front-end tool for building web applications.
 
 ## Getting Started
 
-1. Clone this repository:
+### Backend Setup
+
+1. Clone the repository:
+
    ```bash
-   git clone https://github.com/yourusername/student-management-system.git
+   git clone https://github.com/azimy-hamid/miniProjectThree
+   cd backend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
-3. Set up environment variables:
-   - Create a `.env` file in the root directory.
-   - Set necessary environment variables (database URI, API keys, etc.).
+3. Configure environment variables:
 
-4. Run the application:
+   - Create a `.env` file in the root directory.
+   - Add environment variables such as `DB_URI`, `JWT_SECRET`, etc.
+
+4. Start the backend server:
+
    ```bash
    npm start
    ```
 
-5. Open your browser and go to `http://localhost:3000` (or your designated port).
+   By default, the server runs on `http://localhost:4000`.
+
+### Frontend Setup
+
+1. Navigate to the `frontend` folder:
+
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   By default, the frontend runs on `http://localhost:5173`.
 
 ## How to Contribute
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-name`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add feature'`).
-5. Push to the branch (`git push origin feature-name`).
-6. Open a Pull Request.
+2. Create a new branch:
 
-## License
+   ```bash
+   git checkout -b feature-name
+   ```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+3. Make your changes and commit them:
 
-## Acknowledgements
+   ```bash
+   git commit -m "Add feature"
+   ```
 
-- Inspiration from other open-source student management systems.
-- Thanks to all contributors for making this project better.
+4. Push to the branch:
+
+   ```bash
+   git push origin feature-name
+   ```
+
+5. Open a Pull Request.
