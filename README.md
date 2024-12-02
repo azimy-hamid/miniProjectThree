@@ -160,6 +160,7 @@ The **Student Management System (SMS)** is a comprehensive web-based platform de
 
    Open MySQL Workbench.
    Create a database with the name same name as the db name you have in the backend .env.
+   Note: Once you run npm start tables and data will directly be injected into the db you created.
 
 5. Start the backend server:
 
