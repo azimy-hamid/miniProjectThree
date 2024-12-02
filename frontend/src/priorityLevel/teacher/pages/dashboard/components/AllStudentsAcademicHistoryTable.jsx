@@ -33,7 +33,7 @@ export default function AllStudentsAcademicHistoryTable({ teacher }) {
   });
 
   const currentMonth = new Date().getMonth(); // 0 = January, 11 = December
-  const isDecember = currentMonth === 10;
+  const isDecember = currentMonth === 11;
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -299,7 +299,8 @@ export default function AllStudentsAcademicHistoryTable({ teacher }) {
               <ul>
                 {modal.updatedStudents.map((student, index) => (
                   <li key={index}>
-                    {student.student_id_fk} - {student.status}
+                    {student.student_first_name} {student.student_last_name} -{" "}
+                    {student.calendar_year}
                   </li>
                 ))}
               </ul>

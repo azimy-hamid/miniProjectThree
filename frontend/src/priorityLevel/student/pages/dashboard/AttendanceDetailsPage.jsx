@@ -34,9 +34,9 @@ const AttendanceDetailsPage = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
-      <SideMenu />
+      {/* <SideMenu /> */}
       {/* Main content */}
-      <Box
+      {/* <Box
         component="main"
         sx={(theme) => ({
           flexGrow: 1,
@@ -45,30 +45,26 @@ const AttendanceDetailsPage = () => {
             : alpha(theme.palette.background.default, 1),
           overflow: "auto",
         })}
+      > */}
+      <Stack
+        sx={{
+          alignItems: "stretch",
+          mx: 3,
+          mt: { xs: 8, md: 0 },
+        }}
       >
-        <Stack
-          sx={{
-            alignItems: "stretch",
-            mx: 3,
-            mt: { xs: 8, md: 0 },
-          }}
-        >
-          <Header />
-          <Grid container spacing={2} mt={5}>
-            <Grid item xs={12} md={12}>
-              {subject && <SubjectDetailsCard subject={subject} />}
-            </Grid>
-            <Grid item xs={12} md={12}>
-              {subject && <ShowAllAttendanceASubjectTable subject={subject} />}
-            </Grid>
-
-            {/* <Grid item xs={12} md={12}>
-              {<AssignedSubjectsTable />}
-            </Grid> */}
+        <Header />
+        <Grid container spacing={2} mt={5}>
+          <Grid item xs={12} md={12}>
+            {subject && <SubjectDetailsCard subject={subject} />}
           </Grid>
-        </Stack>
-      </Box>
+          <Grid item xs={12} md={12}>
+            {subject && <ShowAllAttendanceASubjectTable subject={subject} />}
+          </Grid>
+        </Grid>
+      </Stack>
     </Box>
+    // </Box>
   );
 };
 

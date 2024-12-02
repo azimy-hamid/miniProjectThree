@@ -1,8 +1,8 @@
-// seed.js or a similar setup file
 import bcrypt from "bcryptjs";
 import Users from "../models/Users.js";
 import User_Roles from "../models/UserRoles.js";
 import User_Role_Assignment from "../models/UserRoleAssignment.js";
+import Admins from "../models/Admins.js";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 
@@ -11,44 +11,42 @@ dotenv.config(); // Load environment variables
 const seedAdmin = async () => {
   try {
     // Step 1: Create super role if it doesn't exist
-    const [adminRole, createdRole] = await User_Roles.findOrCreate({
+    const [adminRole] = await User_Roles.findOrCreate({
       where: { role_name: "admin" },
+      defaults: { role_description: "Admin user with all access" },
+    });
+
+    console.log("Admin role created:", adminRole.role_name);
+
+    // Step 2: Create admin in Admins table
+    const [admin] = await Admins.findOrCreate({
+      where: { email_address: process.env.ADMIN_USER_EMAIL },
       defaults: {
-        role_description: "Admin user with all access",
+        username: process.env.ADMIN_USER_USERNAME,
+        password_hash: process.env.ADMIN_USER_PASSWORD,
+        email_address: process.env.ADMIN_USER_EMAIL,
+        admin_first_name: process.env.ADMIN_USER_FIRST_NAME,
+        admin_last_name: process.env.ADMIN_USER_LAST_NAME,
       },
     });
 
-    if (createdRole) {
-      console.log("Admin role created:", adminRole.role_name);
-    } else {
-      console.log("Admin role already exists:", adminRole.role_name);
-    }
+    console.log("Admin created:", admin.username);
 
-    // Step 2: Create super user if it doesn't exist
-    const adminUserEmail = process.env.ADMIN_USER_EMAIL; // Use env variable
-    const [adminUser, createdUser] = await Users.findOrCreate({
-      where: { email: adminUserEmail },
+    // Step 3: Create super user in Users table with the correct admin_id_fk
+    const [adminUser] = await Users.findOrCreate({
+      where: { email: process.env.ADMIN_USER_EMAIL },
       defaults: {
-        user_id_fk: uuidv4(), // or set as needed
+        user_id_fk: admin.admin_id_pk, // Directly use the admin's ID
         user_type: "admin",
-        username: process.env.ADMIN_USER_USERNAME, // Use env variable
-        password_hash: await bcrypt.hash(process.env.ADMIN_USER_PASSWORD, 10), // Hash the password from env variable
+        username: process.env.ADMIN_USER_USERNAME,
+        password_hash: await bcrypt.hash(process.env.ADMIN_USER_PASSWORD, 10),
         is_deleted: false,
       },
     });
 
-    if (createdUser) {
-      console.log("Admin user created:", adminUser.username);
-      await adminUser.update({ user_id_fk: adminUser.user_id_pk });
-      console.log(
-        "Admin user foreign key updated to user_id_pk:",
-        adminUser.user_id_fk
-      );
-    } else {
-      console.log("Admin user already exists:", adminUser.username);
-    }
+    console.log("Admin user created:", adminUser.username);
 
-    // Step 3: Assign the role to the super user
+    // Step 4: Assign the role to the super user
     const existingAssignment = await User_Role_Assignment.findOne({
       where: {
         user_id_fk: adminUser.user_id_pk,
@@ -66,7 +64,7 @@ const seedAdmin = async () => {
       console.log("Admin user already has the role assigned.");
     }
   } catch (error) {
-    console.error("Error creating super user:", error);
+    console.error("Error creating admin user:", error);
   }
 };
 

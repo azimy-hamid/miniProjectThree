@@ -20,7 +20,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 const SubjectDetailsCard = ({ subject }) => {
   return (
     <Card variant="outlined">
-      {console.log(subject)}
       <CardContent>
         <Typography variant="h4" sx={{ color: "primary.main" }}>
           Subject Details

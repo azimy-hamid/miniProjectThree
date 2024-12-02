@@ -10,8 +10,10 @@ export const createSemester = async (semesterDate) => {
       `${API_URL}/create-semester`,
       semesterDate,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -29,8 +31,10 @@ export const getAllSemesters = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-semesters`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -47,8 +51,10 @@ export const getAllSemestersNumbers = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-semester-numbers`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;

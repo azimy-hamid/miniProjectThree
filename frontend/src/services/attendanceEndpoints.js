@@ -10,8 +10,10 @@ export const markAttendanceForASubject = async (subjectData) => {
       `${API_URL}/create-attendance`,
       subjectData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -32,8 +34,10 @@ export const updateAttendance = async (attendanceData, attendanceId) => {
       `${API_URL}/update-subject-details-by-id/${attendanceData}`,
       attendanceData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -51,8 +55,10 @@ export const getAllAttendance = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-attendances`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -71,8 +77,10 @@ export const getStudentAttendanceGroupedBySubject = async (studentId) => {
     const response = await axios.get(
       `${API_URL}/get-student-attendance-grouped-by-subject/${studentId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

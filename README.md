@@ -1,4 +1,4 @@
-# Student Management System (SMS)
+# Student Management System (EduTrack)
 
 The **Student Management System (SMS)** is a comprehensive web-based platform designed to help educational institutions efficiently manage student data, courses, teachers, attendance, fees, grades, and more. This system simplifies academic operations while ensuring secure and streamlined access to critical information.
 

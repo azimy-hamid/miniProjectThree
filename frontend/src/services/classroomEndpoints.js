@@ -10,8 +10,10 @@ export const createClassroom = async (classroomData) => {
       `${API_URL}/create-classroom`,
       classroomData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -29,8 +31,10 @@ export const getAllClassroom = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-classrooms`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -47,8 +51,10 @@ export const getAllClassroomCodes = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-classroom-codes`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -67,7 +73,10 @@ export const getClassroomById = async (classroomId) => {
     const response = await axios.get(
       `${API_URL}/get-specific-classroom/${classroomId}`,
       {
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -88,8 +97,10 @@ export const updateClassroom = async (classroomData, classroomId) => {
       `${API_URL}/update-classroom-details-by-id/${classroomId}`,
       classroomData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -109,7 +120,10 @@ export const getClassroomSchedule = async (classroomId) => {
     const response = await axios.get(
       `${API_URL}/get-classroom-schedule/${classroomId}`,
       {
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

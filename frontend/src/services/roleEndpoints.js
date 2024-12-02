@@ -31,7 +31,10 @@ const getAllRoles = async () => {
     const token = getAuthToken();
 
     const response = await axios.get(`${API_URL}/get-all-roles`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
@@ -46,7 +49,10 @@ const getRoleById = async (roleID) => {
     const token = getAuthToken();
 
     const response = await axios.get(`${API_URL}/get-role-by-id/${roleID}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
@@ -61,7 +67,10 @@ const getRoleByName = async (name) => {
     const token = getAuthToken();
 
     const response = await axios.get(`${API_URL}/get-role-by-name/${name}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
@@ -97,7 +106,10 @@ const deleteRole = async (roleID) => {
     const token = getAuthToken();
 
     const response = await axios.delete(`${API_URL}/delete/${roleID}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {

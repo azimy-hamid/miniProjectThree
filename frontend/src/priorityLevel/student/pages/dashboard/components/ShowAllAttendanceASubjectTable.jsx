@@ -61,11 +61,11 @@ export default function ShowAllAttendanceASubjectTable({ subject }) {
       valueGetter: (value, row) => new Date(row.date).toLocaleDateString(),
     },
     { field: "status", headerName: "Status", flex: 1 },
-    { field: "reason", headerName: "Reason", flex: 2 },
+    { field: "reason", headerName: "Reason", flex: 1 },
   ];
 
   return (
-    <Box sx={{ height: 600, width: "100%", marginTop: 4 }}>
+    <Box sx={{ height: 600, marginTop: 4 }}>
       <Typography variant="h4" component="h1" align="center" gutterBottom>
         Attendance for {subject.subjectName} ({subject.subject_code})
       </Typography>

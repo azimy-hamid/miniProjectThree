@@ -5,68 +5,14 @@ import { useNavigate } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
   {
-    id: "dashboard",
-    label: "Dashboard",
+    id: "subject-overview",
+    label: "Subject Overview",
     children: [
-      { id: "overview", label: "Overview", link: "/admin/dashboard" },
-      { id: "analytics", label: "Analytics", link: "/admin/analytics" },
-    ],
-  },
-  {
-    id: "student-management",
-    label: "Student Management",
-    children: [
+      { id: "overview", label: "Overview", link: "/teacher/dashboard" },
       {
-        id: "student-overview",
-        label: "Student Overview",
-        link: "/teacher/student-overview",
-      },
-    ],
-  },
-  {
-    id: "class-management",
-    label: "Class Management",
-    children: [
-      {
-        id: "classroom-overview",
-        label: "Classroom Overview",
-        link: "/admin/classroom-overview",
-      },
-      {
-        id: "create-classroom",
-        label: "Create Classroom",
-        link: "/admin/create-classroom",
-      },
-      {
-        id: "class-schedule",
-        label: "Class Schedule",
-        link: "/admin/create-class-schedule",
-      },
-      {
-        id: "manage-classes",
-        label: "Manage Classes",
-        link: "/admin/manage-classes",
-      },
-    ],
-  },
-  {
-    id: "subject-management",
-    label: "Subject Management",
-    children: [
-      {
-        id: "subject-overview",
-        label: "Subject Overview",
-        link: "/teacher/subject-overview",
-      },
-      {
-        id: "view-subject",
-        label: "View Subject",
-        link: "/admin/view-subject",
-      },
-      {
-        id: "manage-subject",
-        label: "Manage Subject",
-        link: "/admin/manage-subject",
+        id: "update-students",
+        label: "Update Students",
+        link: "/teacher/update-students",
       },
     ],
   },

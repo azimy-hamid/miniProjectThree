@@ -186,7 +186,7 @@ export default function CreateTeacherForm() {
       }
     } catch (error) {
       setGeneralError(
-        error.response?.createTeacherMessage ||
+        error.response?.data?.createTeacherMessage ||
           error.response?.signupUserMessage ||
           "Failed to create teacher and user."
       );

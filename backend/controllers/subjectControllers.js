@@ -661,7 +661,7 @@ const getSubjectsForStudent = async (req, res) => {
 
     // Get all subjects associated with the student, including marks
     const studentSubjects = await Student_Subjects.findAll({
-      where: { student_id_fk: studentId }, // Filter by student ID
+      where: { student_id_fk: studentId, is_done: false, is_deleted: false }, // Filter by student ID
       include: [
         {
           model: Subjects,

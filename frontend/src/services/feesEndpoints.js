@@ -7,8 +7,10 @@ export const payFee = async (feeData) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(`${API_URL}/create-fee`, feeData, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -28,8 +30,10 @@ export const updateFee = async (feeData, feeId) => {
       `${API_URL}/update-student-details-by-id/${feeId}`,
       feeData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -47,8 +51,10 @@ export const getAllFees = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-fees`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;

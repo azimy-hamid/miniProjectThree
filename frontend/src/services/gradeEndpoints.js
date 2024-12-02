@@ -7,8 +7,10 @@ export const createGrade = async (gradeData) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(`${API_URL}/create-grade`, gradeData, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -25,8 +27,10 @@ export const getAllGrades = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-grades`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -43,8 +47,10 @@ export const getAllGradeCodes = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-grade-codes`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;

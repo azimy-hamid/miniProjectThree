@@ -6,6 +6,7 @@ import TeacherSubjectsOverviewPage from "../pages/dashboard/TeacherSubjectsOverv
 import SubjectDetailsPage from "../pages/dashboard/SubjectDetailsPage.jsx";
 import MarkStudentAttendancePage from "../pages/dashboard/MarkStudentAttendancePage.jsx";
 import AttendanceDetailsPage from "../pages/dashboard/AttendanceDetailsPage.jsx";
+import UpdateStudentPage from "../pages/dashboard/UpdateStudentPage.jsx";
 
 const navigateBasedOnRole = (role) => {
   switch (role) {
@@ -81,6 +82,18 @@ const teacherRoutes = ({ isAuthenticated, userRole }) => {
       element={
         isAuthenticated && userRole === roleAllowed ? (
           <AttendanceDetailsPage />
+        ) : (
+          <Navigate to="/" />
+        )
+      }
+      key="attendance-details"
+    />,
+
+    <Route
+      path="/teacher/update-students"
+      element={
+        isAuthenticated && userRole === roleAllowed ? (
+          <UpdateStudentPage />
         ) : (
           <Navigate to="/" />
         )

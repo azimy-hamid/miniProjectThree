@@ -1,0 +1,1515 @@
+{
+	"info": {
+		"_postman_id": "0e527fb8-5552-4b0b-a3d0-9363507e89c8",
+		"name": "third_mini_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38065980"
+	},
+	"item": [
+		{
+			"name": "user creation routes",
+			"item": [
+				{
+					"name": "sign up user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"shahen@example.com\",\n  \"username\": \"shahenazimi\",\n  \"password\": \"Shahen123@\",\n  \"user_id_fk\": \"550e8411-e29b-41d4-a716-446655440000\",\n  \"user_type\": \"admin\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/signup-user"
+					},
+					"response": []
+				},
+				{
+					"name": "login user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"hamidazimy875@gmail.com\",\n  \"username\": \"haamedazimi\",\n  \"password\": \"Haamed123@\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/login-user"
+					},
+					"response": []
+				},
+				{
+					"name": "update user details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkX3BrIjoiMGRjMzU3ZWYtZmZkZS00YTc3LTg0MDItMGY1N2E0YzE1MDRhIiwiaWF0IjoxNzI4NDg2OTQ3LCJleHAiOjE3Mjg0OTA1NDd9.0Y1ls398AU8pyVVtmC8Bn_8Ic8goLtuju53BrJGFM1g"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"hamidazimy@example.com\",\n  \"username\": \"hamidazimy\",\n  \"password\": \"Hamid@1234\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/update-user"
+					},
+					"response": []
+				},
+				{
+					"name": "delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkX3BrIjoiMGRjMzU3ZWYtZmZkZS00YTc3LTg0MDItMGY1N2E0YzE1MDRhIiwiaWF0IjoxNzI4NDg2OTQ3LCJleHAiOjE3Mjg0OTA1NDd9.0Y1ls398AU8pyVVtmC8Bn_8Ic8goLtuju53BrJGFM1g"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/user/delete-user"
+					},
+					"response": []
+				},
+				{
+					"name": "recover user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"hamidazimy@example.com\",\n  \"username\": \"hamidazimy\",\n  \"password\": \"Hamid@1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/user/recover-user"
+					},
+					"response": []
+				},
+				{
+					"name": "check user existance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/user/check-user-exists/shahen/shahin@gmail.com"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin routes",
+			"item": [
+				{
+					"name": "create admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"haamedazimi\",\n  \"password\": \"Haamed123@\",\n  \"email\": \"hamidazimy875@gmail.com\",\n  \"first_name\": \"Haamed\",\n  \"last_name\": \"Azimi\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/admin/create-admin"
+					},
+					"response": []
+				},
+				{
+					"name": "get all admins",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkX3BrIjoiNWE4ZmQzY2YtMzIyMi00OTAyLWJkMjAtODRlOTQ1OWUwYzRhIiwidXNlcl90eXBlIjoiYWRtaW4iLCJpYXQiOjE3MzEzMzc0NTEsImV4cCI6MTczMTM0MTA1MX0.emERRR3lI2QOlAvG07g5iJ823GA_BVceGjUHG3u5p4c"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/admin/get-all-admins"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/admin/get-specific-admin/e198d911-58cd-494c-a744-0182863d5eea"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "student routes",
+			"item": [
+				{
+					"name": "create student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"student_first_name\": \"John\",\n  \"student_last_name\": \"Doe\",\n  \"gender\": \"male\",\n  \"dob\": \"2000-05-15\",\n  \"email\": \"johndoe@example.com\",\n  \"phone\": \"123-456-7890\",\n  \"section\": \"A\",\n  \"join_date\": \"2024-09-01\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/student/create-student"
+					},
+					"response": []
+				},
+				{
+					"name": "get all students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-all-students"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific student",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-specific-student/869cb1da-19f2-4480-b903-ef63bd6f2ac1"
+					},
+					"response": []
+				},
+				{
+					"name": "update student by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"student_first_name\": \"Jane\",\n  \"student_last_name\": \"Doe\",\n  \"gender\": \"female\",\n  \"dob\": \"2001-08-10\",\n  \"email\": \"janedoe@example.com\",\n  \"phone\": \"987-654-3210\",\n  \"section\": \"B\",\n  \"join_date\": \"2024-10-01\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/student/update-student-details-by-id/d9de8d54-6528-40f4-902e-d3e460756f41"
+					},
+					"response": []
+				},
+				{
+					"name": "delete student",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/student/delete-student/d9de8d54-6528-40f4-902e-d3e460756f41"
+					},
+					"response": []
+				},
+				{
+					"name": "recover student by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/student/recover-student-by-id/d9de8d54-6528-40f4-902e-d3e460756f41"
+					},
+					"response": []
+				},
+				{
+					"name": "get student subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-student-subjects/44b54c5c-5b4b-4d33-b93c-5702703bbbef"
+					},
+					"response": []
+				},
+				{
+					"name": "get number of students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-number-of-students"
+					},
+					"response": []
+				},
+				{
+					"name": "get all student codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-all-student-codes"
+					},
+					"response": []
+				},
+				{
+					"name": "get-student-by-code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student/get-student-by-code/STU-1"
+					},
+					"response": []
+				},
+				{
+					"name": "update student academic history status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"5c383488-478a-4798-aa4b-f5e3f29010ac\",\n    \"calendar_year\": \"2024\",\n    \"status\": \"passed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/student/update-student-academic-history-status"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "teacher routes",
+			"item": [
+				{
+					"name": "create teacher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"teacher_first_name\": \"Alice\",\n    \"teacher_last_name\": \"Brown\",\n    \"gender\": \"female\",\n    \"dob\": \"1990-04-12\",\n    \"email\": \"alice.brown@example.com\",\n    \"phone\": \"+1234567891\",\n    \"join_date\": \"2023-09-01\",\n    \"working_days\": \"monday,friday\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/teacher/create-teacher"
+					},
+					"response": []
+				},
+				{
+					"name": "get all teachers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher/get-all-teachers"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific teacher",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher/get-specific-teacher/0637581f-bd4a-4bbb-9933-68b4ea0d5374"
+					},
+					"response": []
+				},
+				{
+					"name": "delete teacher",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/teacher/delete-teacher/695c9170-1988-41e8-9748-dfe2c1344487"
+					},
+					"response": []
+				},
+				{
+					"name": "recover teacher",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/teacher/recover-teacher-by-id/695c9170-1988-41e8-9748-dfe2c1344487"
+					},
+					"response": []
+				},
+				{
+					"name": "update teacher by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"teacher_first_name\": \"Alice\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/teacher/update-teacher-details-by-id/0637581f-bd4a-4bbb-9933-68b4ea0d5374"
+					},
+					"response": []
+				},
+				{
+					"name": "get-assigned-subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher/get-assigned-subjects/2dc1012c-1b2f-48db-99ed-34431dd50f1e"
+					},
+					"response": []
+				},
+				{
+					"name": "get students for teacher",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher/get-students-for-teacher/2dc1012c-1b2f-48db-99ed-34431dd50f1e"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "classrom routes",
+			"item": [
+				{
+					"name": "create classroom",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"capacity\": 30,\n  \"room_type\": \"library\",\n  \"description\": \"A spacious lecture hall with audio-visual facilities.\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/classroom/create-classroom"
+					},
+					"response": []
+				},
+				{
+					"name": "get all classrooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/classroom/get-all-classrooms"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific classroom",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/classroom/get-specific-classroom/f191c82a-58ce-4de5-be62-41f8c88e4872"
+					},
+					"response": []
+				},
+				{
+					"name": "delete classroom",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/classroom/delete-classroom/f191c82a-58ce-4de5-be62-41f8c88e4872"
+					},
+					"response": []
+				},
+				{
+					"name": "recover classroom",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/classroom/recover-classroom-by-id/f191c82a-58ce-4de5-be62-41f8c88e4872"
+					},
+					"response": []
+				},
+				{
+					"name": "update classroom by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"capacity\": 50,\n  \"room_type\": \"Computer Lab\",\n  \"description\": \"Equipped with computers for coding and design classes.\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/classroom/update-classroom-details-by-id/f191c82a-58ce-4de5-be62-41f8c88e4872"
+					},
+					"response": []
+				},
+				{
+					"name": "get all classroom codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/classroom/get-all-classroom-codes"
+					},
+					"response": []
+				},
+				{
+					"name": "get classroom schedule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/classroom/get-classroom-schedule/4a01559e-2e56-4d6d-a76c-eb96b29ed452"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "feedback routes",
+			"item": [
+				{
+					"name": "create feedback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"b7b11d05-c6f6-4f04-b8a1-1a079c5caa36\",\n    \"feedback_message\": \"The classroom environment is good\",\n    \"status\": \"open\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/feedback/create-feedback"
+					},
+					"response": []
+				},
+				{
+					"name": "get all feedbacks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/feedback/get-all-feedback"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific feedback by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/feedback/get-specific-feedback/34c6f7a4-7ebc-42dd-a344-0788eafe6c64"
+					},
+					"response": []
+				},
+				{
+					"name": "update feedback for student",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"b7b11d05-c6f6-4f04-b8a1-1a079c5caa36\",\n    \"feedback_message\": \"Updating feedback\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/feedback/update-feedback-details-by-id-student/34c6f7a4-7ebc-42dd-a344-0788eafe6c64"
+					},
+					"response": []
+				},
+				{
+					"name": "delete feedback",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/feedback/delete-feedback/34c6f7a4-7ebc-42dd-a344-0788eafe6c64"
+					},
+					"response": []
+				},
+				{
+					"name": "recover feedback",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/feedback/recover-feedback-by-id/34c6f7a4-7ebc-42dd-a344-0788eafe6c64"
+					},
+					"response": []
+				},
+				{
+					"name": "resolve feedback teachers and admins",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"resolution_message\": \"The issue has been addressed and resolved.\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/feedback/resolve-feedback-by-id/34c6f7a4-7ebc-42dd-a344-0788eafe6c64"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "marks routes",
+			"item": [
+				{
+					"name": "create mark",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"123e4567-e89b-12d3-a456-426614174000\", // Replace with a valid student ID\n    \"subject_id_fk\": \"223e4567-e89b-12d3-a456-426614174001\", // Replace with a valid subject ID\n    \"subject_mark\": 85.5 // Replace with the actual mark to be recorded\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/mark/create-mark"
+					},
+					"response": []
+				},
+				{
+					"name": "get all marks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/mark/get-all-marks"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific mark",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/mark/get-specific-mark/"
+					},
+					"response": []
+				},
+				{
+					"name": "update mark details by id teacher",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/mark/update-mark-details-by-id-teacher/"
+					},
+					"response": []
+				},
+				{
+					"name": "delete mark",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/mark/delete-mark/"
+					},
+					"response": []
+				},
+				{
+					"name": "recover mark by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/mark/recover-mark-by-id/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "class schedule routes",
+			"item": [
+				{
+					"name": "create class schedule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject_id_fk\": \"123e4567-e89b-12d3-a456-426614174000\", // Example Subject ID (replace with an actual UUID from your Subjects table)\n    \"classroom_id_fk\": \"123e4567-e89b-12d3-a456-426614174001\", // Example Classroom ID (replace with an actual UUID from your Classrooms table)\n    \"day_of_week\": \"monday\", // Must be one of: monday, tuesday, wednesday, thursday, friday, saturday, sunday, weekdays, weekends, or full week\n    \"start_time\": \"09:00:00\", // Start time in HH:MM:SS format\n    \"end_time\": \"10:00:00\" // End time in HH:MM:SS format\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/class-schedule/create-class-schedule"
+					},
+					"response": []
+				},
+				{
+					"name": "get all class schedules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/class-schedule/get-all-class-schedules"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific class schedule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/class-schedule/get-specific-class-schedule/"
+					},
+					"response": []
+				},
+				{
+					"name": "update class schedule details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/class-schedule/update-class-schedule-details-by-id/"
+					},
+					"response": []
+				},
+				{
+					"name": "delete class schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/class-schedule/delete-class-schedule/"
+					},
+					"response": []
+				},
+				{
+					"name": "recover class schedule by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/class-schedule/recover-class-schedule-by-id/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "fees routes",
+			"item": [
+				{
+					"name": "create fee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": 123, // change to uuid that exists\n    \"fee_type\": \"Tuition\",\n    \"fee_amount\": 5000,\n    \"due_date\": \"2024-11-01\",\n    \"payment_status\": \"Pending\",\n    \"payment_date\": null,\n    \"penalty\": 100,\n    \"discounts\": 200,\n    \"payment_mode\": \"Bank Transfer\",\n    \"semester\": \"Fall\",\n    \"year\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/fees/create-fee"
+					},
+					"response": []
+				},
+				{
+					"name": "get all fees",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/fees/get-all-fees"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific fee",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/fees/get-specific-fee/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "update fee details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fee_type\": \"Tuition\",\n    \"fee_amount\": 5200,\n    \"due_date\": \"2024-12-01\",\n    \"payment_status\": \"Paid\",\n    \"payment_date\": \"2024-11-15\",\n    \"penalty\": 50,\n    \"discounts\": 100,\n    \"payment_mode\": \"Credit Card\",\n    \"semester\": \"Fall\",\n    \"year\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/fees/update-fee-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete fee",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/fees/delete-fee/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover fee",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/fees/recover-fee-by-id/uuid"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "grade routes",
+			"item": [
+				{
+					"name": "create grade",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"grade_level\": 5\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/grade/create-grade"
+					},
+					"response": []
+				},
+				{
+					"name": "get all grades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/grade/get-all-grades"
+					},
+					"response": []
+				},
+				{
+					"name": "get grade by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/grade/get-grade-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "update grade details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/grade/update-grade-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete grade",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/grade/delete-grade/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover grade by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/grade/recover-grade-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "get all grade codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/grade/get-all-grade-codes"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "subjects routes",
+			"item": [
+				{
+					"name": "create subject",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subject_name\": \"Mathematics\",\n  \"classroom_code\": \"CLS-2\",\n  \"section\": \"A\",\n  \"grade_code\": \"GRD-10\",\n  \"semester_number\": 1,\n  \"teacher_code\": \"TEA-1\",\n  \"day_of_week\": \"monday\",\n  \"start_time\": \"09:00:00\",\n  \"end_time\": \"10:30:00\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/subject/create-subject"
+					},
+					"response": []
+				},
+				{
+					"name": "get all subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-all-subjects"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific subject",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-specific-subject/759d4637-a9a5-4e8c-b139-280cc4e4b87e"
+					},
+					"response": []
+				},
+				{
+					"name": "update subject details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subject_name\": \"Advanced Mathematics\",\n  \"classroom_id_fk\": \"uuid\",\n  \"section\": \"B\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/subject/update-subject-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete subject",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/subject/delete-subject/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover subject by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/subject/recover-subject-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "get all subject codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-all-subject-codes"
+					},
+					"response": []
+				},
+				{
+					"name": "get only one subject details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-only-one-subject-details/030145b3-5bf2-4cad-ab26-9e9a9699724c"
+					},
+					"response": []
+				},
+				{
+					"name": "get students for subject",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-students-for-subject/1bd46c8a-134e-4037-8419-1f76d29f15aa"
+					},
+					"response": []
+				},
+				{
+					"name": "get subjects for student",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/subject/get-subjects-for-student/44b54c5c-5b4b-4d33-b93c-5702703bbbef"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "semester routes",
+			"item": [
+				{
+					"name": "create semester",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"semester_number\": \"1\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/semester/create-semester"
+					},
+					"response": []
+				},
+				{
+					"name": "get all semesters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/semester/get-all-semesters"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific semester",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/semester/get-specific-semester/5953706f-9f70-4919-aa18-fa07120c73ef"
+					},
+					"response": []
+				},
+				{
+					"name": "update semester details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"semester_number\": \"2\",\n    \"year\": 2025\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/semester/update-semester-details-by-id/5953706f-9f70-4919-aa18-fa07120c73ef"
+					},
+					"response": []
+				},
+				{
+					"name": "delete semester",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/semester/delete-semester/5953706f-9f70-4919-aa18-fa07120c73ef"
+					},
+					"response": []
+				},
+				{
+					"name": "recover semester by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/semester/recover-semester-by-id/5953706f-9f70-4919-aa18-fa07120c73ef"
+					},
+					"response": []
+				},
+				{
+					"name": "get all semester numbers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/semester/get-all-semester-numbers"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "student subject routes",
+			"item": [
+				{
+					"name": "create student subject",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"85817a1d-2b41-4875-b16d-4512f41a1c31\",\n    \"subject_id_fk\": \"df572911-6e03-4b7e-9f26-d9a056ee0fb9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/student-subject/create-student-subject"
+					},
+					"response": []
+				},
+				{
+					"name": "get all student subject",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/student-subject/get-all-student-subject"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "teacher subject routes",
+			"item": [
+				{
+					"name": "create teacher subject",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"teacher_id_fk\": \"uuid\",\n    \"subject_id_fk\": \"uuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/teacher-subject/create-teacher-subject"
+					},
+					"response": []
+				},
+				{
+					"name": "get all teacher subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher-subject/get-all-teacher-subjects"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific teacher subject",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/teacher-subject/get-specific-teacher-subject/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "update teacher subject details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"teacher_id_fk\": \"uuid\",\n    \"subject_id_fk\": \"uuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/teacher-subject/update-teacher-subject-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete teacher subject",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/teacher-subject/delete-teacher-subject/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover teacher subject by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/teacher-subject/recover-teacher-subject-by-id/uuid"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "event routes",
+			"item": [
+				{
+					"name": "create event",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_name\": \"Annual Science Fair\",         \n  \"event_description\": \"A fair showcasing science projects from students.\", \n  \"event_start_date\": \"2024-05-01T09:00:00Z\",  \n  \"event_end_date\": \"2024-05-01T17:00:00Z\",    \n  \"event_capacity\": 100,                        \n  \"event_location\": \"Main Auditorium\"           \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/event/create-event"
+					},
+					"response": []
+				},
+				{
+					"name": "get all events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/event/get-all-events"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/event/get-specific-event/7a8efdfe-e6ed-4645-b21c-2514eb78c37c"
+					},
+					"response": []
+				},
+				{
+					"name": "update event details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_name\": \"Updated Annual Science Fair\", // Replace with the new event name\n  \"event_description\": \"Updated description for the science fair.\", // Optional\n  \"event_start_date\": \"2024-05-01T10:00:00Z\", // Optional, new start date in ISO format\n  \"event_end_date\": \"2024-05-01T18:00:00Z\",   // Optional, new end date in ISO format\n  \"event_capacity\": 150,                       // Optional, new capacity\n  \"event_location\": \"Updated Main Auditorium\"  // Optional, new location\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/event/update-event-details-by-id/5d06b11b-f170-4a61-968a-d94b91c00c90"
+					},
+					"response": []
+				},
+				{
+					"name": "delete event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/event/delete-event/5d06b11b-f170-4a61-968a-d94b91c00c90"
+					},
+					"response": []
+				},
+				{
+					"name": "recover event by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/event/recover-event-by-id/5d06b11b-f170-4a61-968a-d94b91c00c90"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "event registration routes",
+			"item": [
+				{
+					"name": "create event registration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"uuid\",\n    \"event_id_fk\": \"uuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/event-registration/create-event-registration"
+					},
+					"response": []
+				},
+				{
+					"name": "get all event registrations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/event-registration/get-all-event-registrations"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific event registration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/event-registration/get-specific-event-registration/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "update event registration details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"uuid\",\n    \"event_id_fk\": \"uuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/event-registration/update-event-registration-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete event registration",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/event-registration/delete-event-registration/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover event registration by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/event-registration/recover-event-registration-by-id/uuid"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "attendance routes",
+			"item": [
+				{
+					"name": "create attendance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id_fk\": \"uuid\",\n    \"semester_subject_id_fk\": \"uuid\",\n    \"attendance_date\": \"2024-10-15\",\n    \"attendance_status\": \"Present\",\n    \"attendance_type\": \"Lecture\",\n    \"reason\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/attendance/create-attendance"
+					},
+					"response": []
+				},
+				{
+					"name": "get all attendances",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/attendance/get-all-attendances"
+					},
+					"response": []
+				},
+				{
+					"name": "get specific attendance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/attendance/get-specific-attendance/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "update attendance details by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attendance_id_pk\": \"uuid\",\n    \"student_id_fk\": \"uuid\",\n    \"semester_subject_id_fk\": 203,\n    \"attendance_date\": \"2024-10-13\",\n    \"attendance_status\": \"Present\",\n    \"attendance_type\": \"In-Person\",\n    \"reason\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/attendance/update-attendance-details-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "delete attendance",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3000/attendance/delete-attendance/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "recover attendance by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:3000/attendance/recover-attendance-by-id/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "get student attendance grouped by subject",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/attendance/get-student-attendance-grouped-by-subject/65f75f53-646d-4e9a-bbfd-f5f5c032fde1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "verify token",
+			"item": [
+				{
+					"name": "verify token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkX3BrIjoiNDA3ZDc2MTItYzg5My00YWNkLWExYTQtNGNjYWQyZDBhOTVhIiwidXNlcl90eXBlIjoic3VwZXIiLCJpYXQiOjE3MjkzOTYyNjYsImV4cCI6MTcyOTM5OTg2Nn0.kKm8GRSvPaAqR9-AoYwynPx4c4KcOKQWi1OqNKaze4o"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"super\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/authanticate/verifyToken"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "role routes",
+			"item": [
+				{
+					"name": "create role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role_name\": \"admin\",\n  \"role_description\": \"Administrator with full access.\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/role/create-role"
+					},
+					"response": []
+				},
+				{
+					"name": "get role by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/role/get-role-by-name/admin"
+					},
+					"response": []
+				},
+				{
+					"name": "get all roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3000/role/get-all-roles"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

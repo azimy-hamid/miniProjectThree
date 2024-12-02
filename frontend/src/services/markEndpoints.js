@@ -7,8 +7,10 @@ export const createMark = async (markData) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(`${API_URL}/create-mark`, markData, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;

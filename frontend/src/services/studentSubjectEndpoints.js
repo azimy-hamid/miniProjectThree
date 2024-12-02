@@ -10,8 +10,10 @@ export const assignSubject = async (studentSubjectData) => {
       `${API_URL}/create-student-subject`,
       studentSubjectData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

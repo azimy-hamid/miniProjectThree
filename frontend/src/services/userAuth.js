@@ -10,8 +10,17 @@ const getAuthToken = () => {
 // Signup User Service
 const signupUser = async (userData) => {
   try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const response = await axios.post(`${API_URL}/signup-user`, userData, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     const data = response.data;
     return data;
@@ -25,7 +34,9 @@ const signupUser = async (userData) => {
 const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login-user`, credentials, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const data = response.data;
     if (data.token) {
@@ -48,10 +59,16 @@ const logoutUser = () => {
 // Update User Profile Service
 const updateUserProfile = async (updatedData) => {
   try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const response = await axios.put(`${API_URL}/update-user`, updatedData, {
       headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -63,12 +80,18 @@ const updateUserProfile = async (updatedData) => {
 
 const checkUserExists = async (username, email) => {
   try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const response = await axios.get(
       `${API_URL}/check-user-exists/${email}/${username}`,
       {
         headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );

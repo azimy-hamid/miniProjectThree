@@ -1,35 +1,43 @@
 import express from "express";
 import * as classroomStudentControllers from "../../controllers/classroomStudentControllers.js";
+import authenticate from "../../middlewares/authenticate.js";
 
 const classroomStudentRoutes = express.Router();
 
 classroomStudentRoutes.post(
   "/add-student-to-classroom",
+  authenticate(["admin"]),
   classroomStudentControllers.createClassroomStudent
 );
 classroomStudentRoutes.get(
   "/get-all-students-for-a-classroom",
+  authenticate(["admin"]),
   classroomStudentControllers.getAllClassroomStudents
 );
 classroomStudentRoutes.get(
-  "/get-specific-feedback/:feedbackId",
+  "/get-specific-classroom/:classroomId",
+  authenticate(["admin"]),
   classroomStudentControllers.getFeedbackById
 );
 classroomStudentRoutes.put(
-  "/update-feedback-details-by-id-student/:feedbackId",
+  "/update-classroom-details-by-id-student/:classroomId",
+  authenticate(["admin"]),
   classroomStudentControllers.updateFeedbackStudent
 );
 classroomStudentRoutes.delete(
-  "/delete-feedback/:feedbackId",
+  "/delete-classroom/:classroomId",
+  authenticate(["admin"]),
   classroomStudentControllers.deleteFeedback
 );
 classroomStudentRoutes.put(
-  "/recover-feedback-by-id/:feedbackId",
+  "/recover-classroom-by-id/:classroomId",
+  authenticate(["admin"]),
   classroomStudentControllers.recoverFeedback
 );
 
 classroomStudentRoutes.put(
-  "/resolve-feedback-by-id/:feedbackId",
+  "/resolve-classroom-by-id/:classroomId",
+  authenticate(["admin"]),
   classroomStudentControllers.resolveFeedback
 );
 

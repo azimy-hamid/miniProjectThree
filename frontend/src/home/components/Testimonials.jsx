@@ -13,11 +13,11 @@ const userTestimonials = [
   {
     avatar: (
       <Avatar
-        alt="Sarah Johnson"
+        alt="John Johnson"
         src="homeAssets/statics/images/testimonialsImages/1.jpg"
       />
     ),
-    name: "Sarah Johnson",
+    name: "John Johnson",
     occupation: "Student, Grade 12",
     testimonial:
       "Attending this school has been an incredible journey. The teachers are so supportive, and the curriculum really prepares us for the real world. I’ve gained confidence in my abilities, and I’m excited about the future!",
@@ -73,11 +73,11 @@ const userTestimonials = [
   {
     avatar: (
       <Avatar
-        alt="Dr. Susan Lee"
+        alt="Dr. Chris Lee"
         src="homeAssets/statics/images/testimonialsImages/6.jpg"
       />
     ),
-    name: "Dr. Susan Lee",
+    name: "Dr. Chris Lee",
     occupation: "Principal",
     testimonial:
       "It’s an honor to lead this school. We strive to provide a nurturing and academically rigorous environment, where every student feels valued and prepared for success beyond the classroom.",

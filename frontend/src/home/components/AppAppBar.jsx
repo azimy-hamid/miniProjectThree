@@ -63,7 +63,7 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 component={Link}
-                to="/features"
+                to="/"
               >
                 Features
               </Button>
@@ -73,7 +73,7 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 component={Link}
-                to="/testimonials"
+                to="/"
               >
                 Testimonials
               </Button>
@@ -82,7 +82,7 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 component={Link}
-                to="/highlights"
+                to="/"
               >
                 Highlights
               </Button>
@@ -91,7 +91,7 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 component={Link}
-                to="/pricing"
+                to="/"
               >
                 Pricing
               </Button>
@@ -101,7 +101,7 @@ export default function AppAppBar() {
                 size="small"
                 sx={{ minWidth: 0 }}
                 component={Link}
-                to="/faq"
+                to="/"
               >
                 FAQ
               </Button>
@@ -111,7 +111,7 @@ export default function AppAppBar() {
                 size="small"
                 sx={{ minWidth: 0 }}
                 component={Link}
-                to="/blog"
+                to="/"
               >
                 Blog
               </Button>

@@ -10,8 +10,10 @@ export const createTeacher = async (teacherData) => {
       `${API_URL}/create-teacher`,
       teacherData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -29,8 +31,10 @@ export const getAllTeachers = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-teachers`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -49,8 +53,10 @@ export const getTeacherById = async (teacherId) => {
     const response = await axios.get(
       `${API_URL}/get-specific-teacher/${teacherId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -71,8 +77,10 @@ export const updateTeacher = async (teacherId, teacherData) => {
       `${API_URL}/update-teacher-details-by-id/${teacherId}`,
       teacherData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -90,8 +98,10 @@ export const getAllTeacherCodes = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-teacher-codes`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -110,8 +120,10 @@ export const getAssignedSubjects = async (teacherId) => {
     const response = await axios.get(
       `${API_URL}/get-assigned-subjects/${teacherId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -131,8 +143,33 @@ export const deleteTeacher = async (teacherId) => {
     const response = await axios.delete(
       `${API_URL}/delete-teacher/${teacherId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error("Error getting all teacher codes:", error);
+    throw error;
+  }
+};
+
+export const getStudentsForTeacher = async (teacherId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `${API_URL}/get-students-for-teacher/${teacherId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

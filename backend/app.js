@@ -30,6 +30,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+const allowedOrigins = ["http://localhost:5173"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true); // Allow the request
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // If you're sending cookies or other credentials
+  })
+);
+
 app.get("/", authenticate(["admin"]), async (req, res) => {
   try {
     res.status(200).json({

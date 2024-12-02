@@ -10,6 +10,7 @@ const authenticate = (requiredRoles) => {
     try {
       // Check for token in Authorization header
       const token = req.headers.authorization?.split(" ")[1];
+      console.error("Extracted Token:", token);
 
       if (!token) {
         return res

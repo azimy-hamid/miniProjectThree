@@ -172,28 +172,22 @@ export default function UpdateTeacherForm({ teacher }) {
             <FormControl fullWidth>
               <FormLabel>Working Days</FormLabel>
               <Grid container spacing={2}>
-                {[
-                  "monday",
-                  "tuesday",
-                  "wednesday",
-                  "thursday",
-                  "friday",
-                  "saturday",
-                  "sunday",
-                ].map((day) => (
-                  <Grid item xs={4} key={day}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.working_days.includes(day)}
-                          onChange={handleCheckboxChange}
-                          value={day}
-                        />
-                      }
-                      label={day.charAt(0).toUpperCase() + day.slice(1)}
-                    />
-                  </Grid>
-                ))}
+                {["monday", "tuesday", "wednesday", "thursday", "friday"].map(
+                  (day) => (
+                    <Grid item xs={4} key={day}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={formData.working_days.includes(day)}
+                            onChange={handleCheckboxChange}
+                            value={day}
+                          />
+                        }
+                        label={day.charAt(0).toUpperCase() + day.slice(1)}
+                      />
+                    </Grid>
+                  )
+                )}
               </Grid>
               {errors.working_days && (
                 <Typography variant="caption" color="error">

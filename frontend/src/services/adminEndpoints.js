@@ -7,8 +7,10 @@ const createAdmin = async (userData) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(`${API_URL}/create-admin`, userData, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -27,6 +29,7 @@ const getAdminById = async (adminId) => {
       `${API_URL}/get-specific-admin/${adminId}`,
       {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }

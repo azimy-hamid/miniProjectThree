@@ -206,8 +206,8 @@ export default function SignIn(props) {
             Sign in
           </Button>
 
-          <Divider />
-          <Typography
+          {/* <Divider /> */}
+          {/* <Typography
             variant="body2"
             sx={{
               display: "flex",
@@ -219,7 +219,7 @@ export default function SignIn(props) {
             <span>or</span>
             <GoogleIcon />
             <FacebookIcon />
-          </Typography>
+          </Typography> */}
         </Box>
       </Card>
     </SignInContainer>

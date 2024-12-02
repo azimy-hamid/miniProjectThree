@@ -10,8 +10,10 @@ export const createSubject = async (subjectData) => {
       `${API_URL}/create-subject`,
       subjectData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -32,8 +34,10 @@ export const updateSubject = async (subjectData, subjectId) => {
       `${API_URL}/update-subject-details-by-id/${subjectId}`,
       subjectData,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -51,8 +55,10 @@ export const getAllSubject = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-subjects`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -69,8 +75,10 @@ export const getAllSubjectCodes = async () => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(`${API_URL}/get-all-subject-codes`, {
-      headers: { "Content-Type": "application/json" },
-      Authorization: `Bearer ${token}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     const data = response.data;
@@ -89,8 +97,10 @@ export const getSpecificSubject = async (subjectId) => {
     const response = await axios.get(
       `${API_URL}/get-specific-subject/${subjectId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -110,8 +120,10 @@ export const getOnlyOneSubjectDetails = async (subjectId) => {
     const response = await axios.get(
       `${API_URL}/get-only-one-subject-details/${subjectId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -131,8 +143,10 @@ export const getStudentsForSubject = async (subjectId) => {
     const response = await axios.get(
       `${API_URL}/get-students-for-subject/${subjectId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -152,8 +166,10 @@ export const getSubjectsForStudent = async (studentId) => {
     const response = await axios.get(
       `${API_URL}/get-subjects-for-student/${studentId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -173,8 +189,10 @@ export const deleteSubject = async (studentId) => {
     const response = await axios.delete(
       `${API_URL}/delete-subject/${studentId}`,
       {
-        headers: { "Content-Type": "application/json" },
-        Authorization: `Bearer ${token}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
