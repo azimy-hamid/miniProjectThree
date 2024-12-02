@@ -131,16 +131,43 @@ The **Student Management System (SMS)** is a comprehensive web-based platform de
 
 3. Configure environment variables:
 
-   - Create a `.env` file in the root directory.
-   - Add environment variables such as `DB_URI`, `JWT_SECRET`, etc.
+Create a .env file in the root directory.
 
-4. Start the backend server:
+Add the following environment variables:
 
-   ```bash
-   npm start
-   ```
+```plaintext
+DB_HOST=localhost
+DB_NAME=any_db_name
+DB_USER=root
+DB_PASS=your_mysql_password
+DB_DIALECT=mysql
+PORT_NUMBER=3000
 
-   By default, the server runs on `http://localhost:4000`.
+JWT_SECRET=you_can_create_a_password_online_and_use_that
+
+SUPER_USER_EMAIL=anyemail@exemple.com
+SUPER_USER_USERNAME=any.username
+SUPER_USER_PASSWORD=password_should_have_a_capital_letter_a_number_and_a_special_char_and_be_longer_than_6
+
+ADMIN_USER_EMAIL=anyemail@exemple.com
+ADMIN_USER_USERNAME=any.username
+ADMIN_USER_PASSWORD=password_should_have_a_capital_letter_a_number_and_a_special_char_and_be_longer_than_6
+ADMIN_USER_FIRST_NAME=First Name
+ADMIN_USER_LAST_NAME=Last Name
+```
+
+5. Create the database:
+
+Open MySQL Workbench.
+Create a database with the name same name as the db name you have in the backend .env.
+
+6. Start the backend server:
+
+```bash
+npm start
+```
+
+By default, the server runs on `http://localhost:4000`.
 
 ### Frontend Setup
 
@@ -156,7 +183,17 @@ The **Student Management System (SMS)** is a comprehensive web-based platform de
    npm install
    ```
 
-3. Start the development server:
+3. Configure environment variables:
+
+Create a .env or similar configuration file.
+Add the following variable:
+
+```plaintext
+Copy code
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+4. Start the development server:
 
    ```bash
    npm run dev
