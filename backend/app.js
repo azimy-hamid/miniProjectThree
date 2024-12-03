@@ -31,7 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const allowedOrigins = ["http://localhost:5173"];
-
 app.use(
   cors({
     origin: (origin, callback) => {
